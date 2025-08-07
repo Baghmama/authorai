@@ -6,10 +6,16 @@ import IdeaForm from './components/IdeaForm';
 import ChapterOutlines from './components/ChapterOutlines';
 import ChapterWriter from './components/ChapterWriter';
 import BookCompiler from './components/BookCompiler';
+import ConfigurationMessage from './components/ConfigurationMessage';
 import { BookIdea, ChapterOutline, AppStep, User } from './types';
 import { generateChapterOutlines } from './utils/geminiApi';
 import { supabase } from './lib/supabase';
 import { deductCreditsForChapterGeneration, getUserCredits } from './utils/creditManager';
+
+// Check if Supabase is properly configured
+const isSupabaseConfigured = () => {
+  return !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+};
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -20,6 +26,12 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
+    // If Supabase is not configured, show configuration message
+    if (!isSupabaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -131,6 +143,10 @@ function App() {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
       </div>
     );
+  }
+
+  if (!isSupabaseConfigured()) {
+    return <ConfigurationMessage />;
   }
 
   if (!user) {
