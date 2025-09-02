@@ -130,10 +130,10 @@ const CreditDisplay: React.FC = () => {
                 <div className="flex items-start space-x-3">
                   <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <h4 className="font-medium text-blue-900 mb-1">Demo & Manual Options</h4>
+                    <h4 className="font-medium text-blue-900 mb-1">Payment Options</h4>
                     <p className="text-sm text-blue-700">
-                      The Razorpay integration is in demo mode. For real credit purchases, 
-                      message me on X (Twitter) and I'll update your balance after payment.
+                      Razorpay integration is coming soon! For now, message me on X (Twitter) 
+                      to purchase credits and I'll update your balance manually after payment.
                     </p>
                   </div>
                 </div>
@@ -141,16 +141,6 @@ const CreditDisplay: React.FC = () => {
 
               {/* Contact Button */}
               <div className="space-y-3">
-                <button
-                  onClick={() => setShowPaymentModal(true)}
-                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="h-5 w-5" />
-                  <span>Try Demo Payment</span>
-                </button>
-
-                <div className="text-center text-sm text-gray-500">or</div>
-
                 <button
                   onClick={openTwitter}
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
