@@ -52,8 +52,8 @@ Deno.serve(async (req: Request) => {
     }
 
     // Create Razorpay order using test credentials
-    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID') || 'rzp_test_1234567890';
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || 'test_secret_key';
+    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID') || 'rzp_test_11111111111111';
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || 'test_secret_key_11111111111111';
 
     const orderData = {
       amount,
@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
     // For testing, we'll create a mock order response
     // In production, you would make an actual API call to Razorpay
     const mockOrder = {
-      id: `order_${Date.now()}`,
+      id: `order_test_${Date.now()}`,
       entity: 'order',
       amount,
       currency,

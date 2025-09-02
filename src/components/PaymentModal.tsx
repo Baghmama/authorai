@@ -148,9 +148,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
             <div className="flex items-start space-x-3">
               <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Secure Payment</h4>
+                <h4 className="font-medium text-blue-900 mb-1">Demo Mode</h4>
                 <p className="text-sm text-blue-700">
-                  Payments are processed securely through Razorpay. Your payment information is encrypted and never stored on our servers.
+                  This is a demo version. In production, payments would be processed securely through Razorpay with proper API keys.
                 </p>
               </div>
             </div>

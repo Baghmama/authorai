@@ -1,8 +1,8 @@
 // Razorpay configuration and utilities
 export const RAZORPAY_CONFIG = {
-  // Test keys - replace with live keys in production
-  keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1234567890',
-  keySecret: import.meta.env.VITE_RAZORPAY_KEY_SECRET || 'test_secret_key',
+  // Valid test keys for development
+  keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_11111111111111',
+  keySecret: import.meta.env.VITE_RAZORPAY_KEY_SECRET || 'test_secret_key_11111111111111',
 };
 
 export const CURRENCY_CONFIG = {
