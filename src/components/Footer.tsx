@@ -2,7 +2,7 @@ import React from 'react';
 import { Mail, Phone, MapPin, Linkedin, Twitter } from 'lucide-react';
 
 interface FooterProps {
-  onPageChange?: (page: 'contact' | 'refund' | 'about' | null) => void;
+  onPageChange?: (page: 'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({ onPageChange }) => {
@@ -63,6 +63,22 @@ const Footer: React.FC<FooterProps> = ({ onPageChange }) => {
                   className="text-gray-300 hover:text-white transition-colors text-left"
                 >
                   Refund Policy
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onPageChange?.('terms')}
+                  className="text-gray-300 hover:text-white transition-colors text-left"
+                >
+                  Terms & Conditions
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onPageChange?.('privacy')}
+                  className="text-gray-300 hover:text-white transition-colors text-left"
+                >
+                  Privacy Policy
                 </button>
               </li>
             </ul>

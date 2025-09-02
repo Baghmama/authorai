@@ -26,7 +26,7 @@ function App() {
   const [bookIdea, setBookIdea] = useState<BookIdea | null>(null);
   const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentLegalPage, setCurrentLegalPage] = useState<'contact' | 'refund' | 'about' | null>(null);
+  const [currentLegalPage, setCurrentLegalPage] = useState<'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null>(null);
 
   useEffect(() => {
     // If Supabase is not configured, show configuration message
