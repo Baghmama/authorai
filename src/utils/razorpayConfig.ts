@@ -25,26 +25,26 @@ export const CREDIT_PACKAGES = [
     id: 'starter',
     name: 'Starter Pack',
     credits: 90,
-    price: { usd: 1, inr: 88 },
+    price: { usd: 1, inr: 100 },
   },
   {
     id: 'popular',
     name: 'Popular Pack',
     credits: 450,
-    price: { usd: 5, inr: 440 },
+    price: { usd: 5, inr: 500 },
     popular: true,
   },
   {
     id: 'pro',
     name: 'Pro Pack',
     credits: 900,
-    price: { usd: 10, inr: 880 },
+    price: { usd: 10, inr: 1000 },
   },
   {
     id: 'enterprise',
     name: 'Enterprise Pack',
     credits: 2700,
-    price: { usd: 30, inr: 2640 },
+    price: { usd: 30, inr: 3000 },
   },
 ];
 

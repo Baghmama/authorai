@@ -122,13 +122,16 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     console.log('Razorpay script loaded successfully');
 
     // Calculate amount based on currency
-    const amount = pkg.price[currency.toLowerCase() as 'usd' | 'inr'];
+    // Force INR for Razorpay test keys (USD not supported in test mode)
+    const actualCurrency = 'INR';
+    const amount = pkg.price.inr;
     const receipt = `credits_${pkg.id}_${Date.now()}`;
     
-    console.log('Payment details:', { amount, currency, receipt });
+    console.log('Payment details:', { amount, currency: actualCurrency, receipt });
+    console.log('Note: Using INR because Razorpay test keys only support INR currency');
 
     // Create Razorpay order
-    const orderData = await createRazorpayOrder(amount, currency, receipt);
+    const orderData = await createRazorpayOrder(amount, actualCurrency, receipt);
     orderData.credits = pkg.credits;
     
     console.log('Order created:', orderData);

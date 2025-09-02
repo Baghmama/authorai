@@ -65,35 +65,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Currency Selection */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Select Currency</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setSelectedCurrency('USD')}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  selectedCurrency === 'USD'
-                    ? 'border-orange-500 bg-orange-50 text-orange-700'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="text-center">
-                  <div className="text-lg font-semibold">USD ($)</div>
-                  <div className="text-sm text-gray-600">United States Dollar</div>
-                </div>
-              </button>
-              <button
-                onClick={() => setSelectedCurrency('INR')}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  selectedCurrency === 'INR'
-                    ? 'border-orange-500 bg-orange-50 text-orange-700'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="text-center">
-                  <div className="text-lg font-semibold">INR (₹)</div>
-                  <div className="text-sm text-gray-600">Indian Rupee</div>
-                </div>
-              </button>
+          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="flex items-start space-x-3">
+              <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-blue-900 mb-1">Currency Notice</h4>
+                <p className="text-sm text-blue-700">
+                  Razorpay test keys only support INR (Indian Rupees). All payments will be processed in INR.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -123,7 +103,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                   <div className="text-center">
                     <h4 className="font-semibold text-gray-900 mb-2">{pkg.name}</h4>
                     <div className="text-2xl font-bold text-orange-600 mb-1">
-                      {formatCurrency(pkg.price[selectedCurrency.toLowerCase() as 'usd' | 'inr'], selectedCurrency)}
+                      ₹{pkg.price.inr}
                     </div>
                     <div className="text-sm text-gray-600 mb-3">
                       {pkg.credits.toLocaleString()} Credits
@@ -172,7 +152,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                 <>
                   <Zap className="h-5 w-5" />
                   <span>
-                    Pay {selectedPackage ? formatCurrency(selectedPackage.price[selectedCurrency.toLowerCase() as 'usd' | 'inr'], selectedCurrency) : 'Select Package'}
+                    Pay {selectedPackage ? `₹${selectedPackage.price.inr}` : 'Select Package'}
                   </span>
                 </>
               )}
