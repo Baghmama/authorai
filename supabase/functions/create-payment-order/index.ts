@@ -65,20 +65,7 @@ Deno.serve(async (req: Request) => {
       },
     };
 
-    // For testing, we'll create a mock order response
-    // In production, you would make an actual API call to Razorpay
-    const mockOrder = {
-      id: `order_test_${Date.now()}`,
-      entity: 'order',
-      amount,
-      currency,
-      receipt,
-      status: 'created',
-      created_at: Math.floor(Date.now() / 1000),
-    };
-
-    // In production, uncomment this and use actual Razorpay API:
-    /*
+    // Create actual Razorpay order
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
     const response = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
@@ -94,10 +81,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const order = await response.json();
-    */
 
     return new Response(
-      JSON.stringify(mockOrder),
+      JSON.stringify(order),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

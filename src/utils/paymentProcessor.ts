@@ -93,18 +93,9 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     const amount = pkg.price[currency.toLowerCase() as 'usd' | 'inr'];
     const receipt = `credits_${pkg.id}_${Date.now()}`;
 
-    // For testing, create a mock order since we don't have valid keys
-    const orderData = {
-      id: `order_test_${Date.now()}`,
-      amount: amount * 100, // Convert to smallest currency unit
-      currency: currency,
-      receipt: receipt,
-      credits: pkg.credits
-    };
-
-    // In production with valid keys, use this instead:
-    // const orderData = await createRazorpayOrder(amount, currency, receipt);
-    // orderData.credits = pkg.credits;
+    // Create actual Razorpay order
+    const orderData = await createRazorpayOrder(amount, currency, receipt);
+    orderData.credits = pkg.credits;
 
     // Configure Razorpay options
     const options = {
@@ -123,15 +114,14 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
       handler: async function (response: RazorpayResponse) {
         try {
           // Verify payment on backend
-          // await verifyPayment(response, orderData);
+          await verifyPayment(response, orderData);
           
           // Show success message
           alert(`Payment successful! ${pkg.credits} credits have been added to your account.`);
-          
           return true;
         } catch (error) {
           console.error('Payment verification failed:', error);
-          alert('This is a demo. In production, payment would be verified and credits added.');
+          alert('Payment verification failed. Please contact support if payment was deducted.');
           return false;
         }
       },

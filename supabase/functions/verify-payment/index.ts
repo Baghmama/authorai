@@ -67,13 +67,10 @@ Deno.serve(async (req: Request) => {
       .update(body)
       .digest('hex');
 
-    // For demo purposes, we'll skip signature verification
-    // In production, uncomment this:
-    /*
+    // Verify signature for security
     if (expectedSignature !== razorpay_signature) {
       throw new Error('Invalid payment signature');
     }
-    */
 
     // Add credits to user account using the database function
     const { data: creditResult, error: creditError } = await supabaseClient.rpc('add_credits', {
