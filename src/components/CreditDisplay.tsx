@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Coins, ShoppingCart, AlertCircle, X, MessageCircle } from 'lucide-react';
+import { Coins, ShoppingCart, AlertCircle, X, MessageCircle, CreditCard } from 'lucide-react';
 import { getUserCredits, getCreditTransactions, UserCredits, CreditTransaction } from '../utils/creditManager';
+import PaymentModal from './PaymentModal';
 
 const CreditDisplay: React.FC = () => {
   const [credits, setCredits] = useState<UserCredits | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,6 +35,12 @@ const CreditDisplay: React.FC = () => {
 
   const openTwitter = () => {
     window.open('https://x.com/shuvodip99', '_blank');
+  };
+
+  const handlePaymentSuccess = () => {
+    loadCredits(); // Refresh credits after successful payment
+    setShowPaymentModal(false);
+    setShowPurchaseModal(false);
   };
 
   if (loading) {
@@ -133,13 +141,25 @@ const CreditDisplay: React.FC = () => {
               </div>
 
               {/* Contact Button */}
-              <button
-                onClick={openTwitter}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
-              >
-                <MessageCircle className="h-5 w-5" />
-                <span>Message on X (Twitter)</span>
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setShowPaymentModal(true)}
+                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 flex items-center justify-center space-x-2"
+                >
+                  <CreditCard className="h-5 w-5" />
+                  <span>Pay with Razorpay</span>
+                </button>
+
+                <div className="text-center text-sm text-gray-500">or</div>
+
+                <button
+                  onClick={openTwitter}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  <span>Message on X (Twitter)</span>
+                </button>
+              </div>
 
               {/* Instructions */}
               <div className="text-sm text-gray-600 space-y-2">
@@ -155,6 +175,13 @@ const CreditDisplay: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Razorpay Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </>
   );
 };

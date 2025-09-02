@@ -25,3 +25,21 @@ export interface User {
   id: string;
   email: string;
 }
+
+export interface PaymentPackage {
+  id: string;
+  name: string;
+  credits: number;
+  price: {
+    usd: number;
+    inr: number;
+  };
+  popular?: boolean;
+}
+
+export interface PaymentOrder {
+  id: string;
+  amount: number;
+  currency: string;
+  receipt: string;
+}
