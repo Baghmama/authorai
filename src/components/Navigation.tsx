@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BookOpen, LogOut, Menu, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import CreditDisplay from './CreditDisplay';
+import ThemeToggle from './ThemeToggle';
 
 interface NavigationProps {
   userEmail?: string;
@@ -22,7 +23,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 relative">
+    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 relative transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -31,22 +32,24 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               <BookOpen className="h-6 w-6 text-white" />
             </div>
             <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900">
+            <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Author AI
             </h1>
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
+            <ThemeToggle />
             <CreditDisplay />
             
             {userEmail && (
-              <span className="text-sm text-gray-600 font-poppins max-w-48 truncate">
+              <span className="text-sm text-gray-600 dark:text-gray-300 font-poppins max-w-48 truncate">
                 {userEmail}
               </span>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span className="text-sm font-poppins">Sign Out</span>
@@ -57,7 +60,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -70,18 +73,24 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50">
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-lg z-50">
             <div className="px-4 py-4 space-y-4">
+              {/* Theme Toggle - Mobile */}
+              <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Theme:</p>
+                <ThemeToggle />
+              </div>
+              
               {/* Credits Display - Mobile */}
-              <div className="pb-4 border-b border-gray-200">
+              <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
                 <CreditDisplay />
               </div>
               
               {/* User Email - Mobile */}
               {userEmail && (
-                <div className="pb-4 border-b border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Signed in as:</p>
-                  <p className="text-sm font-medium text-gray-900 break-all">
+                <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Signed in as:</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white break-all">
                     {userEmail}
                   </p>
                 </div>
@@ -90,7 +99,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               {/* Sign Out Button - Mobile */}
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                className="w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="text-sm font-poppins">Sign Out</span>
@@ -103,7 +112,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
       {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div 
-          className="md:hidden fixed inset-0 bg-black bg-opacity-25 z-40"
+          className="md:hidden fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

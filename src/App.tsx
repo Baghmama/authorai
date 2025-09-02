@@ -167,7 +167,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <Navigation userEmail={user.email} onSignOut={handleSignOut} />
       
       <main className="py-8 px-4 sm:px-6 lg:px-8">
