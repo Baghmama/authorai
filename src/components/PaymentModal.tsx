@@ -111,6 +111,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                         to purchase credits and I'll update your balance manually after payment.
                       </p>
                     </div>
+                  </div>
                   
                   {selectedPackage?.id === pkg.id && (
                     <div className="absolute top-2 right-2">
