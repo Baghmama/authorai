@@ -130,7 +130,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
               <div>
                 <h4 className="font-medium text-blue-900 mb-1">Demo Mode</h4>
                 <p className="text-sm text-blue-700">
-                  This is a demo version. In production, payments would be processed securely through Razorpay with proper API keys.
+                  This is a demo version using test Razorpay keys. If payment fails, it may be due to invalid test keys. For real payments, contact support.
                 </p>
               </div>
             </div>
