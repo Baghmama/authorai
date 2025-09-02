@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
+import LegalPages from './components/LegalPages';
 import Auth from './components/Auth';
 import ProgressIndicator from './components/ProgressIndicator';
 import IdeaForm from './components/IdeaForm';
@@ -24,6 +26,7 @@ function App() {
   const [bookIdea, setBookIdea] = useState<BookIdea | null>(null);
   const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentLegalPage, setCurrentLegalPage] = useState<'contact' | 'refund' | 'about' | null>(null);
 
   useEffect(() => {
     // If Supabase is not configured, show configuration message
@@ -153,6 +156,16 @@ function App() {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
+  // Show legal pages
+  if (currentLegalPage) {
+    return (
+      <LegalPages
+        currentPage={currentLegalPage}
+        onClose={() => setCurrentLegalPage(null)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation userEmail={user.email} onSignOut={handleSignOut} />
@@ -192,6 +205,8 @@ function App() {
           />
         )}
       </main>
+      
+      <Footer onPageChange={setCurrentLegalPage} />
     </div>
   );
 }
