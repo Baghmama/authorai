@@ -31,7 +31,6 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
             <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-lg">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
-            <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900">
             <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Author AI
             </h1>
