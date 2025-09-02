@@ -106,12 +106,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                       ₹{pkg.price.inr}
                     </div>
                     <div className="text-sm text-gray-600 mb-3">
-                    <h4 className="font-medium text-blue-900 mb-1">Payment Options</h4>
+                      <p>
+                        Razorpay integration is coming soon! For now, message me on X (Twitter) 
+                        to purchase credits and I'll update your balance manually after payment.
+                      </p>
                     </div>
-                      Razorpay integration is coming soon! For now, message me on X (Twitter) 
-                      to purchase credits and I'll update your balance manually after payment.
-                    </div>
-                  </div>
                   
                   {selectedPackage?.id === pkg.id && (
                     <div className="absolute top-2 right-2">
