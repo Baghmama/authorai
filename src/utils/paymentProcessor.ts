@@ -35,6 +35,11 @@ function loadRazorpayScript(): Promise<boolean> {
   });
 }
 
+// Validate Razorpay key format
+function isValidRazorpayKey(key: string): boolean {
+  return key.startsWith('rzp_test_') || key.startsWith('rzp_live_');
+}
+
 // Create order on backend (simplified for testing)
 async function createRazorpayOrder(amount: number, currency: string, receipt: string) {
   try {
@@ -113,6 +118,15 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     }
     console.log('User authenticated:', user.email);
 
+    // Validate Razorpay key
+    const razorpayKey = RAZORPAY_CONFIG.keyId;
+    console.log('Razorpay key:', razorpayKey);
+    
+    if (!isValidRazorpayKey(razorpayKey)) {
+      console.error('Invalid Razorpay key format:', razorpayKey);
+      throw new Error('Invalid Razorpay configuration. Please contact support.');
+    }
+
     // Load Razorpay script
     console.log('Loading Razorpay script...');
     const isLoaded = await loadRazorpayScript();
@@ -121,8 +135,7 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     }
     console.log('Razorpay script loaded successfully');
 
-    // Calculate amount based on currency
-    // Force INR for Razorpay test keys (USD not supported in test mode)
+    // Force INR for test keys
     const actualCurrency = 'INR';
     const amount = pkg.price.inr;
     const receipt = `credits_${pkg.id}_${Date.now()}`;
@@ -136,9 +149,9 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     
     console.log('Order created:', orderData);
 
-    // Configure Razorpay options
+    // Configure Razorpay options with better error handling
     const options = {
-      key: RAZORPAY_CONFIG.keyId,
+      key: razorpayKey,
       amount: orderData.amount,
       currency: orderData.currency,
       name: 'Author AI',
@@ -169,7 +182,9 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
       modal: {
         ondismiss: function() {
           console.log('Payment modal closed by user');
-        }
+        },
+        escape: true,
+        backdropclose: false
       }
     };
 
@@ -180,15 +195,52 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
       throw new Error('Razorpay SDK not loaded');
     }
 
+    // Test the key by creating a Razorpay instance first
+    try {
+      console.log('Testing Razorpay key validity...');
+      const testRazorpay = new window.Razorpay({
+        key: razorpayKey,
+        amount: 100,
+        currency: 'INR',
+        name: 'Test',
+        handler: function() {}
+      });
+      console.log('Razorpay key test passed');
+    } catch (keyError) {
+      console.error('Razorpay key test failed:', keyError);
+      throw new Error('Invalid Razorpay key. Please check your configuration.');
+    }
+
     // Open Razorpay checkout
     console.log('Opening Razorpay checkout...');
     const razorpay = new window.Razorpay(options);
+    
+    razorpay.on('payment.failed', function (response: any) {
+      console.error('Payment failed:', response.error);
+      alert(`Payment failed: ${response.error.description}`);
+    });
+
     razorpay.open();
 
     return true;
   } catch (error) {
     console.error('Payment processing error:', error);
-    alert(`Payment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    
+    // Provide specific error messages
+    let errorMessage = 'Payment failed: ';
+    if (error instanceof Error) {
+      if (error.message.includes('Invalid Razorpay')) {
+        errorMessage += 'Invalid payment configuration. Please contact support.';
+      } else if (error.message.includes('SDK not loaded')) {
+        errorMessage += 'Payment system not available. Please try again.';
+      } else {
+        errorMessage += error.message;
+      }
+    } else {
+      errorMessage += 'Unknown error occurred.';
+    }
+    
+    alert(errorMessage);
     throw error;
   }
 }
