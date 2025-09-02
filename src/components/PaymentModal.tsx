@@ -106,10 +106,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                       ₹{pkg.price.inr}
                     </div>
                     <div className="text-sm text-gray-600 mb-3">
-                      {pkg.credits.toLocaleString()} Credits
+                    <h4 className="font-medium text-blue-900 mb-1">Payment Options</h4>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      ~{Math.floor(pkg.credits / 6)} chapter generations
+                      Razorpay integration is coming soon! For now, message me on X (Twitter) 
+                      to purchase credits and I'll update your balance manually after payment.
                     </div>
                   </div>
                   
