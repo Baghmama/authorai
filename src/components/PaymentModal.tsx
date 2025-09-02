@@ -141,6 +141,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
             <button
               disabled={true}
               className="flex-1 bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed flex items-center justify-center space-x-2"
+            >
               <CreditCard className="h-5 w-5" />
               <span>Razorpay - Coming Soon</span>
             </button>
@@ -149,5 +150,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
               onClick={onClose}
               className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <CreditCard className="h-5 w-5" />
-              <span>Razorpay - Coming Soon</span>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PaymentModal;
