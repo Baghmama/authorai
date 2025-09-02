@@ -139,23 +139,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={handlePayment}
-              disabled={!selectedPackage || isProcessing}
-              className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              disabled={true}
+              className="flex-1 bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              {isProcessing ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Processing...</span>
-                </>
-              ) : (
-                <>
-                  <Zap className="h-5 w-5" />
-                  <span>
-                    Pay {selectedPackage ? `₹${selectedPackage.price.inr}` : 'Select Package'}
-                  </span>
-                </>
-              )}
+              <CreditCard className="h-5 w-5" />
+              <span>Razorpay - Coming Soon</span>
             </button>
             
             <button
