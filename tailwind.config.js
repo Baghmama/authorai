@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -32,25 +31,6 @@ export default {
           800: '#854d0e',
           900: '#713f12',
         },
-      },
-      colors: {
-        // Theme-aware colors using CSS variables
-        theme: {
-          'bg-primary': 'rgb(var(--color-bg-primary) / <alpha-value>)',
-          'bg-secondary': 'rgb(var(--color-bg-secondary) / <alpha-value>)',
-          'bg-tertiary': 'rgb(var(--color-bg-tertiary) / <alpha-value>)',
-          'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
-          'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
-          'text-tertiary': 'rgb(var(--color-text-tertiary) / <alpha-value>)',
-          'border-primary': 'rgb(var(--color-border-primary) / <alpha-value>)',
-          'border-secondary': 'rgb(var(--color-border-secondary) / <alpha-value>)',
-          'accent-primary': 'rgb(var(--color-accent-primary) / <alpha-value>)',
-          'accent-secondary': 'rgb(var(--color-accent-secondary) / <alpha-value>)',
-        },
-      },
-      boxShadow: {
-        'theme': '0 1px 3px 0 rgba(var(--shadow-color), var(--shadow-opacity)), 0 1px 2px 0 rgba(var(--shadow-color), 0.06)',
-        'theme-lg': '0 10px 15px -3px rgba(var(--shadow-color), var(--shadow-opacity)), 0 4px 6px -2px rgba(var(--shadow-color), 0.05)',
       },
     },
   },
