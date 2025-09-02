@@ -56,15 +56,14 @@ const CreditDisplay: React.FC = () => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 w-full md:w-auto">
-      <div className="flex items-center justify-between space-x-2">
-        <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-full">
-            <Coins className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+      <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-1.5 rounded-full">
+            <Coins className="h-4 w-4 text-white" />
           </div>
           <div>
-            <p className="text-xs sm:text-sm text-gray-600">Available Credits</p>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
+            <p className="text-xs text-gray-500 leading-none">Credits</p>
+            <p className="text-lg font-bold text-gray-900 leading-none">
               {credits?.credits ?? 0}
             </p>
           </div>
@@ -72,23 +71,18 @@ const CreditDisplay: React.FC = () => {
         
         <button
           onClick={openPurchaseModal}
-          className="flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-gray-700 transition-colors p-1"
+          className="flex items-center space-x-1 text-gray-500 hover:text-orange-600 transition-colors p-2 rounded-lg hover:bg-orange-50"
         >
           <ShoppingCart className="h-4 w-4" />
-          <span className="text-xs sm:text-sm hidden sm:inline">Shop</span>
+          <span className="text-xs font-medium">Buy</span>
         </button>
-      </div>
 
-      {credits && credits.credits < 6 && (
-        <div className="mt-3 sm:mt-4 bg-red-50 border border-red-200 rounded-lg p-2 sm:p-3">
-          <div className="flex items-center space-x-2">
-            <AlertCircle className="h-4 w-4 text-red-500" />
-            <p className="text-xs sm:text-sm text-red-700">
-              Insufficient credits for chapter generation (6 credits required per chapter)
-            </p>
+        {credits && credits.credits < 6 && (
+          <div className="flex items-center space-x-1 text-red-600">
+            <AlertCircle className="h-4 w-4" />
+            <span className="text-xs font-medium">Low Credits</span>
           </div>
-        </div>
-      )}
+        )}
 
       </div>
 
