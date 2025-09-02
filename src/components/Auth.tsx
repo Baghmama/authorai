@@ -48,7 +48,6 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           <div className="bg-gradient-to-r from-orange-500 to-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="h-8 w-8 text-white" />
           </div>
-          <h2 className="font-poppins text-3xl font-bold text-gray-900 mb-2">
           <h2 className="font-poppins text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Author AI
           </h2>
