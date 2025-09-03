@@ -166,7 +166,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
         </div>
 
 
-        </div>
+
       </div>
     </div>
   );
