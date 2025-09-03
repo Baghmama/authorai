@@ -4,9 +4,10 @@ import { ArrowLeft, Mail, Phone, MapPin, Linkedin, Twitter, RefreshCw, Users, Fi
 
 interface LegalPagesProps {
   currentPage: 'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null;
+  onClose?: () => void;
 }
 
-const LegalPages: React.FC<LegalPagesProps> = ({ currentPage }) => {
+const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
   const navigate = useNavigate();
 
   if (!currentPage) return null;
@@ -118,7 +119,7 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage }) => {
               Sunday: Closed
             </p>
           </div>
-              onClick={handleBackClick}
+        </div>
       </div>
     </div>
   );
