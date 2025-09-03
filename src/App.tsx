@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
+import LandingPage from './components/LandingPage';
 import LegalPages from './components/LegalPages';
 import Auth from './components/Auth';
 import ProgressIndicator from './components/ProgressIndicator';
@@ -22,6 +23,7 @@ const isSupabaseConfigured = () => {
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAuth, setShowAuth] = useState(false);
   const [currentStep, setCurrentStep] = useState<AppStep>('idea');
   const [bookIdea, setBookIdea] = useState<BookIdea | null>(null);
   const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
@@ -131,13 +133,19 @@ function App() {
 
   const handleAuthSuccess = () => {
     // User state will be updated by the auth state change listener
+    setShowAuth(false);
   };
 
   const handleSignOut = () => {
     setUser(null);
+    setShowAuth(false);
     setCurrentStep('idea');
     setBookIdea(null);
     setOutlines([]);
+  };
+
+  const handleGetStarted = () => {
+    setShowAuth(true);
   };
 
   if (loading) {
@@ -152,8 +160,14 @@ function App() {
     return <ConfigurationMessage />;
   }
 
-  if (!user) {
+  // Show auth modal when requested
+  if (showAuth && !user) {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
+  }
+
+  // Show landing page for non-logged-in users
+  if (!user) {
+    return <LandingPage onGetStarted={handleGetStarted} />;
   }
 
   // Show legal pages
