@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import LegalPages from './components/LegalPages';
 import Auth from './components/Auth';
-import ProgressIndicator from './components/ProgressIndicator';
-import IdeaForm from './components/IdeaForm';
-import ChapterOutlines from './components/ChapterOutlines';
-import ChapterWriter from './components/ChapterWriter';
-import BookCompiler from './components/BookCompiler';
+import AppContent from './components/AppContent';
 import ConfigurationMessage from './components/ConfigurationMessage';
-import { BookIdea, ChapterOutline, AppStep, User } from './types';
-import { generateChapterOutlines } from './utils/geminiApi';
+import { User } from './types';
 import { supabase } from './lib/supabase';
-import { deductCreditsForChapterGeneration, getUserCredits } from './utils/creditManager';
 
 // Check if Supabase is properly configured
 const isSupabaseConfigured = () => {
@@ -24,11 +19,8 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
-  const [currentStep, setCurrentStep] = useState<AppStep>('idea');
-  const [bookIdea, setBookIdea] = useState<BookIdea | null>(null);
-  const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentLegalPage, setCurrentLegalPage] = useState<'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // If Supabase is not configured, show configuration message
@@ -64,84 +56,17 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const parseChapterOutlines = (text: string): ChapterOutline[] => {
-    const chapters: ChapterOutline[] = [];
-    const sections = text.split(/Chapter \d+:/);
-    
-    sections.slice(1).forEach((section, index) => {
-      const lines = section.trim().split('\n');
-      const title = lines[0]?.trim() || `Chapter ${index + 1}`;
-      const outline = lines.slice(1).join('\n').trim();
-      
-      chapters.push({
-        id: `chapter-${index + 1}`,
-        title: `Chapter ${index + 1}: ${title}`,
-        outline: outline || 'Chapter outline will be generated here.',
-        isWritten: false
-      });
-    });
-    
-    return chapters;
-  };
-
-  const handleIdeaSubmit = async (idea: BookIdea) => {
-    setIsGenerating(true);
-    setBookIdea(idea);
-    
-    try {
-      // Check and deduct credits first
-      const creditResult = await deductCreditsForChapterGeneration(idea.chapters);
-      
-      if (!creditResult.success) {
-        alert(creditResult.error || 'Failed to deduct credits');
-        setIsGenerating(false);
-        return;
-      }
-      
-      const outlinesText = await generateChapterOutlines(
-        idea.idea,
-        idea.language,
-        idea.chapters,
-        idea.type
-      );
-      
-      const parsedOutlines = parseChapterOutlines(outlinesText);
-      setOutlines(parsedOutlines);
-      setCurrentStep('outlines');
-    } catch (error) {
-      // If outline generation fails after credits were deducted,
-      // we should ideally refund the credits, but for now just show error
-      alert('Failed to generate chapter outlines. Please contact support if credits were deducted.');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleStartWriting = () => {
-    setCurrentStep('writing');
-  };
-
-  const handleCompleteWriting = () => {
-    setCurrentStep('book');
-  };
-
-  const handleNewProject = () => {
-    setCurrentStep('idea');
-    setBookIdea(null);
-    setOutlines([]);
-  };
-
   const handleAuthSuccess = () => {
     // User state will be updated by the auth state change listener
     setShowAuth(false);
+    navigate('/app');
   };
 
   const handleSignOut = () => {
+    supabase.auth.signOut();
     setUser(null);
     setShowAuth(false);
-    setCurrentStep('idea');
-    setBookIdea(null);
-    setOutlines([]);
+    navigate('/');
   };
 
   const handleGetStarted = () => {
@@ -160,68 +85,45 @@ function App() {
     return <ConfigurationMessage />;
   }
 
-  // Show auth modal when requested
-  if (showAuth && !user) {
-    return <Auth onAuthSuccess={handleAuthSuccess} />;
-  }
-
-  // Show landing page for non-logged-in users
-  if (!user) {
-    return <LandingPage onGetStarted={handleGetStarted} />;
-  }
-
-  // Show legal pages
-  if (currentLegalPage) {
-    return (
-      <LegalPages
-        currentPage={currentLegalPage}
-        onClose={() => setCurrentLegalPage(null)}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation userEmail={user.email} onSignOut={handleSignOut} />
+    <Routes>
+      {/* Landing page for non-logged-in users */}
+      <Route 
+        path="/" 
+        element={
+          !user ? (
+            <>
+              <LandingPage onGetStarted={handleGetStarted} />
+              {showAuth && <Auth onAuthSuccess={handleAuthSuccess} />}
+            </>
+          ) : (
+            <AppContent user={user} onSignOut={handleSignOut} />
+          )
+        } 
+      />
       
-      <main className="py-8 px-4 sm:px-6 lg:px-8">
-        <ProgressIndicator currentStep={currentStep} />
-        
-        {currentStep === 'idea' && (
-          <IdeaForm onSubmit={handleIdeaSubmit} isLoading={isGenerating} />
-        )}
-        
-        {currentStep === 'outlines' && bookIdea && (
-          <ChapterOutlines
-            outlines={outlines}
-            onUpdateOutlines={setOutlines}
-            onStartWriting={handleStartWriting}
-          />
-        )}
-        
-        {currentStep === 'writing' && bookIdea && (
-          <ChapterWriter
-            outlines={outlines}
-            bookIdea={bookIdea}
-            onUpdateOutlines={setOutlines}
-            onCompleteWriting={handleCompleteWriting}
-          />
-        )}
-        
-        {currentStep === 'book' && bookIdea && (
-          <BookCompiler
-            project={{
-              idea: bookIdea,
-              outlines,
-              isComplete: true
-            }}
-            onNewProject={handleNewProject}
-          />
-        )}
-      </main>
+      {/* App routes for logged-in users */}
+      <Route 
+        path="/app/*" 
+        element={
+          user ? (
+            <AppContent user={user} onSignOut={handleSignOut} />
+          ) : (
+            <>
+              <LandingPage onGetStarted={handleGetStarted} />
+              {showAuth && <Auth onAuthSuccess={handleAuthSuccess} />}
+            </>
+          )
+        } 
+      />
       
-      <Footer onPageChange={setCurrentLegalPage} />
-    </div>
+      {/* Legal pages with proper URLs */}
+      <Route path="/contact" element={<LegalPages currentPage="contact" />} />
+      <Route path="/refund" element={<LegalPages currentPage="refund" />} />
+      <Route path="/about" element={<LegalPages currentPage="about" />} />
+      <Route path="/terms" element={<LegalPages currentPage="terms" />} />
+      <Route path="/privacy" element={<LegalPages currentPage="privacy" />} />
+    </Routes>
   );
 }
 

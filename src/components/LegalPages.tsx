@@ -1,13 +1,19 @@
 import React from 'react';
-import { ArrowLeft, Mail, Phone, MapPin, Linkedin, Twitter, RefreshCw, Users, FileText, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Mail, Phone, MapPin, Linkedin, Twitter, RefreshCw, Users, FileText, Shield, BookOpen } from 'lucide-react';
 
 interface LegalPagesProps {
   currentPage: 'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null;
-  onClose: () => void;
 }
 
-const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
+const LegalPages: React.FC<LegalPagesProps> = ({ currentPage }) => {
+  const navigate = useNavigate();
+
   if (!currentPage) return null;
+
+  const handleBackClick = () => {
+    navigate('/');
+  };
 
   const renderContactPage = () => (
     <div className="max-w-4xl mx-auto">
@@ -112,7 +118,7 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
               Sunday: Closed
             </p>
           </div>
-        </div>
+              onClick={handleBackClick}
       </div>
     </div>
   );
@@ -576,13 +582,24 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button
-            onClick={onClose}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Author AI</span>
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={handleBackClick}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Author AI</span>
+            </button>
+            
+            <div className="flex items-center space-x-3">
+              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-lg">
+                <BookOpen className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="font-poppins text-xl font-bold text-gray-900">
+                Author AI
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
 

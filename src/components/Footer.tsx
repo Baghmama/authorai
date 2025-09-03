@@ -1,11 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Linkedin, Twitter } from 'lucide-react';
 
-interface FooterProps {
-  onPageChange?: (page: 'contact' | 'refund' | 'about' | 'terms' | 'privacy' | null) => void;
-}
-
-const Footer: React.FC<FooterProps> = ({ onPageChange }) => {
+const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -42,44 +39,44 @@ const Footer: React.FC<FooterProps> = ({ onPageChange }) => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <button
-                  onClick={() => onPageChange?.('about')}
-                  className="text-gray-300 hover:text-white transition-colors text-left"
+                <Link
+                  to="/about"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
                   About Us
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onPageChange?.('contact')}
-                  className="text-gray-300 hover:text-white transition-colors text-left"
+                <Link
+                  to="/contact"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
                   Contact Us
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onPageChange?.('refund')}
-                  className="text-gray-300 hover:text-white transition-colors text-left"
+                <Link
+                  to="/refund"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
                   Refund Policy
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onPageChange?.('terms')}
-                  className="text-gray-300 hover:text-white transition-colors text-left"
+                <Link
+                  to="/terms"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
                   Terms & Conditions
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onPageChange?.('privacy')}
-                  className="text-gray-300 hover:text-white transition-colors text-left"
+                <Link
+                  to="/privacy"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
                   Privacy Policy
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
