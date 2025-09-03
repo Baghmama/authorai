@@ -165,12 +165,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           </form>
         </div>
 
-        {/* Help Text */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            New users can create an account using Google signup above.
-            <br />
-          </p>
+
         </div>
       </div>
     </div>
