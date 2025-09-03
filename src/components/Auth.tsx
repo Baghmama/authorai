@@ -93,7 +93,8 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
               <span className="px-4 bg-white text-gray-500">Or sign in with email</span>
             </div>
             <p className="text-sm text-gray-600 mt-4 text-center">
-              New users can create an account using Google signup above.
+              New users can create an account using Google signup above.             Existing users can sign in with their email and password.
+
             </p>
           </div>
 
@@ -169,7 +170,6 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           <p className="text-sm text-gray-600">
             New users can create an account using Google signup above.
             <br />
-            Existing users can sign in with their email and password.
           </p>
         </div>
       </div>
