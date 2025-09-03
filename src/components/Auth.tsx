@@ -66,10 +66,6 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <p className="text-sm text-gray-600 mb-6 text-center">
-            New users can create an account using Google signup above.
-          </p>
-
           {/* Google Signup Button */}
           <div className="mb-6">
             <button
