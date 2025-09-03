@@ -91,6 +91,9 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white text-gray-500">Or sign in with email</span>
             </div>
+            <p className="text-sm text-gray-600 mt-4 text-center">
+              New users can create an account using Google signup above.
+            </p>
           </div>
 
           <form onSubmit={handleEmailLogin} className="space-y-6">
