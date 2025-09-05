@@ -7,8 +7,10 @@ import LegalPages from './components/LegalPages';
 import Auth from './components/Auth';
 import AppContent from './components/AppContent';
 import ConfigurationMessage from './components/ConfigurationMessage';
+import AdminPanel from './components/AdminPanel';
 import { User } from './types';
 import { supabase } from './lib/supabase';
+import { checkIsAdmin } from './utils/adminApi';
 
 // Check if Supabase is properly configured
 const isSupabaseConfigured = () => {
@@ -18,6 +20,7 @@ const isSupabaseConfigured = () => {
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,6 +38,9 @@ function App() {
           id: session.user.id,
           email: session.user.email || ''
         });
+        
+        // Check if user is admin
+        checkIsAdmin().then(setIsAdmin);
       }
       setLoading(false);
     });
@@ -46,8 +52,12 @@ function App() {
           id: session.user.id,
           email: session.user.email || ''
         });
+        
+        // Check if user is admin
+        checkIsAdmin().then(setIsAdmin);
       } else {
         setUser(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -63,6 +73,7 @@ function App() {
   const handleSignOut = () => {
     supabase.auth.signOut();
     setUser(null);
+    setIsAdmin(false);
     navigate('/');
   };
 
@@ -114,6 +125,25 @@ function App() {
         path="/app/*" 
         element={
           user ? <AppContent user={user} onSignOut={handleSignOut} /> : <LandingPage onGetStarted={handleGetStarted} />
+        } 
+      />
+      
+      {/* Admin panel route */}
+      <Route 
+        path="/admin" 
+        element={
+          user && isAdmin ? (
+            <AdminPanel />
+          ) : user ? (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+                <p className="text-gray-600">You don't have admin privileges.</p>
+              </div>
+            </div>
+          ) : (
+            <LandingPage onGetStarted={handleGetStarted} />
+          )
         } 
       />
       

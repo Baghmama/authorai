@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { BookOpen, LogOut, Menu, X } from 'lucide-react';
+import { BookOpen, LogOut, Menu, X, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CreditDisplay from './CreditDisplay';
+import { checkIsAdmin } from '../utils/adminApi';
 
 interface NavigationProps {
   userEmail?: string;
@@ -10,6 +12,13 @@ interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  React.useEffect(() => {
+    if (userEmail) {
+      checkIsAdmin().then(setIsAdmin);
+    }
+  }, [userEmail]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -38,6 +47,16 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <CreditDisplay />
+            
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <Shield className="h-4 w-4" />
+                <span className="text-sm font-poppins">Admin</span>
+              </Link>
+            )}
             
             {userEmail && (
               <span className="text-sm text-gray-600 font-poppins max-w-48 truncate">
@@ -76,6 +95,20 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               <div className="pb-4 border-b border-gray-200">
                 <CreditDisplay />
               </div>
+              
+              {/* Admin Link - Mobile */}
+              {isAdmin && (
+                <div className="pb-4 border-b border-gray-200">
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center space-x-2 bg-red-100 text-red-700 px-4 py-3 rounded-lg hover:bg-red-200 transition-colors"
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span className="text-sm font-poppins">Admin Panel</span>
+                  </Link>
+                </div>
+              )}
               
               {/* User Email - Mobile */}
               {userEmail && (
