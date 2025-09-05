@@ -8,6 +8,7 @@ import Auth from './components/Auth';
 import AppContent from './components/AppContent';
 import ConfigurationMessage from './components/ConfigurationMessage';
 import AdminPanel from './components/AdminPanel';
+import AccountSettings from './components/AccountSettings';
 import { User } from './types';
 import { supabase } from './lib/supabase';
 import { checkIsAdmin } from './utils/adminApi';
@@ -141,6 +142,18 @@ function App() {
                 <p className="text-gray-600">You don't have admin privileges.</p>
               </div>
             </div>
+          ) : (
+            <LandingPage onGetStarted={handleGetStarted} />
+          )
+        } 
+      />
+      
+      {/* Account settings route */}
+      <Route 
+        path="/account" 
+        element={
+          user ? (
+            <AccountSettings user={user} onSignOut={handleSignOut} />
           ) : (
             <LandingPage onGetStarted={handleGetStarted} />
           )

@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { BookOpen, LogOut, Menu, X, Shield } from 'lucide-react';
+import { BookOpen, Menu, X, Shield, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import CreditDisplay from './CreditDisplay';
 import { checkIsAdmin } from '../utils/adminApi';
 
 interface NavigationProps {
   userEmail?: string;
-  onSignOut: () => void;
+  onSignOut?: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
+const Navigation: React.FC<NavigationProps> = ({ userEmail }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -19,12 +18,6 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
       checkIsAdmin().then(setIsAdmin);
     }
   }, [userEmail]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    onSignOut();
-    setIsMobileMenuOpen(false);
-  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -58,18 +51,19 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               </Link>
             )}
             
+            <Link
+              to="/account"
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="text-sm font-poppins">Account</span>
+            </Link>
+            
             {userEmail && (
               <span className="text-sm text-gray-600 font-poppins max-w-48 truncate">
                 {userEmail}
               </span>
             )}
-            <button
-              onClick={handleSignOut}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="text-sm font-poppins">Sign Out</span>
-            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,6 +104,18 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
                 </div>
               )}
               
+              {/* Account Settings Link - Mobile */}
+              <div className="pb-4 border-b border-gray-200">
+                <Link
+                  to="/account"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span className="text-sm font-poppins">Account Settings</span>
+                </Link>
+              </div>
+              
               {/* User Email - Mobile */}
               {userEmail && (
                 <div className="pb-4 border-b border-gray-200">
@@ -119,15 +125,6 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
                   </p>
                 </div>
               )}
-              
-              {/* Sign Out Button - Mobile */}
-              <button
-                onClick={handleSignOut}
-                className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="text-sm font-poppins">Sign Out</span>
-              </button>
             </div>
           </div>
         )}
