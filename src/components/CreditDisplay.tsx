@@ -82,7 +82,7 @@ const CreditDisplay: React.FC = () => {
             <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing</h3>
               <div className="text-2xl font-bold text-orange-600">
-                ₹1 = 10 Credits | $0.10 = 10 Credits
+                ₹70 = 130 Credits | $1 = 130 Credits
               </div>
               <p className="text-sm text-gray-600 mt-1">
                 Each chapter generation costs 6 credits

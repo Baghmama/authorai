@@ -9,42 +9,42 @@ export const CURRENCY_CONFIG = {
   USD: {
     symbol: '$',
     code: 'USD',
-    creditsPerDollar: 100, // 10 credits per $0.10
-    minAmount: 0.10, // Minimum $0.10
+    creditsPerDollar: 130, // 130 credits per $1
+    minAmount: 1, // Minimum $1
   },
   INR: {
     symbol: '₹',
     code: 'INR',
-    creditsPerRupee: 10, // 10 credits per ₹1
-    minAmount: 1, // Minimum ₹1
+    creditsPerRupee: 1.857, // ~130 credits per ₹70
+    minAmount: 70, // Minimum ₹70
   },
 };
 
 export const CREDIT_PACKAGES = [
   {
-    id: 'starter',
-    name: 'Starter',
-    credits: 10,
-    price: { usd: 0.10, inr: 1 },
-  },
-  {
     id: 'basic',
     name: 'Basic',
-    credits: 30,
-    price: { usd: 0.30, inr: 3 },
+    credits: 130,
+    price: { usd: 1, inr: 70 },
   },
   {
     id: 'popular',
     name: 'Popular',
-    credits: 60,
-    price: { usd: 0.60, inr: 6 },
+    credits: 260,
+    price: { usd: 2, inr: 140 },
     popular: true,
   },
   {
     id: 'pro',
     name: 'Pro',
-    credits: 100,
-    price: { usd: 1.00, inr: 10 },
+    credits: 440,
+    price: { usd: 3, inr: 210 },
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    credits: 860,
+    price: { usd: 6, inr: 420 },
   },
 ];
 
