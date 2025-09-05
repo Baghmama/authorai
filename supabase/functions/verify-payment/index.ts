@@ -21,6 +21,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    console.log('Payment verification request received');
+    
     // Initialize Supabase client with service role for admin operations
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -30,6 +32,7 @@ Deno.serve(async (req: Request) => {
     // Get user from auth header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('Missing authorization header');
       throw new Error('Missing authorization header');
     }
 
@@ -44,38 +47,73 @@ Deno.serve(async (req: Request) => {
     );
 
     if (authError || !user) {
+      console.error('Authentication error:', authError);
       throw new Error('Invalid authentication');
     }
 
+    console.log('User authenticated:', user.email);
+
     // Parse request body
+    let requestBody;
+    try {
+      requestBody = await req.json();
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      throw new Error('Invalid request body');
+    }
+
     const { 
       razorpay_payment_id, 
       razorpay_order_id, 
       razorpay_signature, 
       credits 
-    }: VerifyRequest = await req.json();
+    }: VerifyRequest = requestBody;
+
+    console.log('Payment data received:', {
+      payment_id: razorpay_payment_id,
+      order_id: razorpay_order_id,
+      credits: credits
+    });
 
     // Validate input
     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !credits) {
+      console.error('Missing required fields:', {
+        payment_id: !!razorpay_payment_id,
+        order_id: !!razorpay_order_id,
+        signature: !!razorpay_signature,
+        credits: !!credits
+      });
       throw new Error('Missing required fields');
     }
 
-    // Verify Razorpay signature
+    // Get Razorpay secret key
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
     
     if (!razorpayKeySecret) {
+      console.error('Razorpay secret key not configured');
       throw new Error('Razorpay secret key not configured');
     }
-    
+
+    // Verify Razorpay signature according to documentation
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = createHmac('sha256', razorpayKeySecret)
       .update(body)
       .digest('hex');
 
+    console.log('Signature verification:', {
+      body: body,
+      expected: expectedSignature,
+      received: razorpay_signature,
+      match: expectedSignature === razorpay_signature
+    });
+
     // Verify signature for security
     if (expectedSignature !== razorpay_signature) {
+      console.error('Invalid payment signature');
       throw new Error('Invalid payment signature');
     }
+
+    console.log('Payment signature verified successfully');
 
     // Add credits to user account using the database function
     const { data: creditResult, error: creditError } = await supabaseClient.rpc('add_credits', {
@@ -89,6 +127,8 @@ Deno.serve(async (req: Request) => {
       console.error('Error adding credits:', creditError);
       throw new Error('Failed to add credits to account');
     }
+
+    console.log('Credits added successfully:', creditResult);
 
     // Log successful payment
     console.log(`Payment verified for user ${user.email}: ${credits} credits added`);

@@ -28,6 +28,12 @@ export const CREDIT_PACKAGES = [
     price: { usd: 0.10, inr: 1 },
   },
   {
+    id: 'basic',
+    name: 'Basic',
+    credits: 30,
+    price: { usd: 0.30, inr: 3 },
+  },
+  {
     id: 'popular',
     name: 'Popular',
     credits: 60,
@@ -39,12 +45,6 @@ export const CREDIT_PACKAGES = [
     name: 'Pro',
     credits: 100,
     price: { usd: 1.00, inr: 10 },
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    credits: 500,
-    price: { usd: 5.00, inr: 50 },
   },
 ];
 

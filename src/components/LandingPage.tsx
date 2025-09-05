@@ -228,24 +228,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <Star className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Credit-Based System</h3>
-              <div className="text-4xl font-bold text-orange-600 mb-2">$1 = 90 Credits</div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">₹1 = 10 Credits</div>
               <p className="text-gray-600 mb-6">Each chapter costs only 6 credits to generate</p>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div className="bg-white rounded-lg p-4 border border-orange-200">
                   <div className="text-lg font-semibold text-gray-900">1 Chapter</div>
                   <div className="text-orange-600 font-bold">6 Credits</div>
-                  <div className="text-sm text-gray-500">~$0.07</div>
+                  <div className="text-sm text-gray-500">~₹0.60</div>
                 </div>
                 <div className="bg-white rounded-lg p-4 border border-orange-200">
                   <div className="text-lg font-semibold text-gray-900">5 Chapters</div>
                   <div className="text-orange-600 font-bold">30 Credits</div>
-                  <div className="text-sm text-gray-500">~$0.33</div>
+                  <div className="text-sm text-gray-500">~₹3</div>
                 </div>
                 <div className="bg-white rounded-lg p-4 border border-orange-200">
                   <div className="text-lg font-semibold text-gray-900">10 Chapters</div>
                   <div className="text-orange-600 font-bold">60 Credits</div>
-                  <div className="text-sm text-gray-500">~$0.67</div>
+                  <div className="text-sm text-gray-500">~₹6</div>
                 </div>
               </div>
 
