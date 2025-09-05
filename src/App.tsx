@@ -74,6 +74,7 @@ function App() {
       alert('Supabase is not configured. Please set up your environment variables.');
       return;
     }
+    console.log('Get Started clicked - showing auth modal');
     setShowAuth(true);
   };
 

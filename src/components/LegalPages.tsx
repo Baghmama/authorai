@@ -278,6 +278,7 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
           <button
             onClick={onClose}
             className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200"
+            type="button"
           >
             Start Writing Your Book
           </button>
