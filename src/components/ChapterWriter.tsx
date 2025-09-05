@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { ChapterOutline, BookIdea } from '../types';
 import { writeChapter } from '../utils/geminiApi';
 import { deductCreditsForChapterGeneration, getUserCredits } from '../utils/creditManager';
@@ -189,6 +190,9 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                 </div>
               </div>
               <p className="text-gray-600 mt-2 text-sm">{chapter.outline}</p>
+              <div className="text-gray-600 mt-2 text-sm prose prose-sm max-w-none">
+                <ReactMarkdown>{chapter.outline}</ReactMarkdown>
+              </div>
             </div>
 
             {chapter.content && (
@@ -223,10 +227,8 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     placeholder="Edit your chapter content here..."
                   />
                 ) : (
-                  <div className="prose max-w-none">
-                    <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {chapter.content}
-                    </div>
+                  <div className="prose prose-lg max-w-none">
+                    <ReactMarkdown>{chapter.content}</ReactMarkdown>
                   </div>
                 )}
               </div>

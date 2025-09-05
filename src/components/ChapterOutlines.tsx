@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { ChapterOutline } from '../types';
 import { Edit3, Plus, Trash2, FileText } from 'lucide-react';
 
@@ -115,7 +116,9 @@ const ChapterOutlines: React.FC<ChapterOutlinesProps> = ({
                     )}
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{chapter.outline}</p>
+                <div className="text-gray-700 leading-relaxed prose prose-sm max-w-none">
+                  <ReactMarkdown>{chapter.outline}</ReactMarkdown>
+                </div>
               </div>
             )}
           </div>
