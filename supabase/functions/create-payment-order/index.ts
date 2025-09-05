@@ -81,10 +81,13 @@ Deno.serve(async (req: Request) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create Razorpay order');
+      const errorText = await response.text();
+      console.error('Razorpay API error:', response.status, errorText);
+      throw new Error(`Razorpay API error: ${response.status} - ${errorText}`);
     }
 
     const order = await response.json();
+    console.log('Razorpay order created successfully:', order.id);
 
     return new Response(
       JSON.stringify(order),

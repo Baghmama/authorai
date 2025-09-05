@@ -45,21 +45,7 @@ async function createRazorpayOrder(amount: number, currency: string, receipt: st
   try {
     console.log('Creating Razorpay order:', { amount, currency, receipt });
     
-    // For now, let's create a mock order that works with Razorpay
-    // In production, this would call your backend
-    const mockOrder = {
-      id: `order_${Date.now()}`,
-      amount: amount * 100, // Convert to smallest currency unit
-      currency: currency,
-      receipt: receipt,
-      status: 'created'
-    };
-    
-    console.log('Mock order created:', mockOrder);
-    return mockOrder;
-    
-    // Uncomment this when your Supabase functions are ready:
-    /*
+    // Create real Razorpay order through Supabase edge function
     const { data, error } = await supabase.functions.invoke('create-payment-order', {
       body: {
         amount: amount * 100,
@@ -68,12 +54,16 @@ async function createRazorpayOrder(amount: number, currency: string, receipt: st
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase function error:', error);
+      throw new Error(`Failed to create payment order: ${error.message}`);
+    }
+    
+    console.log('Real Razorpay order created:', data);
     return data;
-    */
   } catch (error) {
     console.error('Error creating order:', error);
-    throw new Error('Failed to create payment order');
+    throw error;
   }
 }
 
@@ -82,13 +72,7 @@ async function verifyPayment(paymentData: RazorpayResponse, orderData: any) {
   try {
     console.log('Verifying payment:', paymentData);
     
-    // For testing, we'll just simulate success
-    // In production, this would verify the signature
-    console.log('Payment verification simulated as successful');
-    return { success: true };
-    
-    // Uncomment this when your Supabase functions are ready:
-    /*
+    // Verify payment through Supabase edge function
     const { data, error } = await supabase.functions.invoke('verify-payment', {
       body: {
         razorpay_payment_id: paymentData.razorpay_payment_id,
@@ -98,12 +82,16 @@ async function verifyPayment(paymentData: RazorpayResponse, orderData: any) {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Payment verification error:', error);
+      throw new Error(`Payment verification failed: ${error.message}`);
+    }
+    
+    console.log('Payment verified successfully:', data);
     return data;
-    */
   } catch (error) {
     console.error('Error verifying payment:', error);
-    throw new Error('Failed to verify payment');
+    throw error;
   }
 }
 
