@@ -29,9 +29,11 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail }) => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-lg">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
+            <img 
+              src="/android-chrome-192x192.png" 
+              alt="Author AI Logo" 
+              className="h-8 w-8 rounded-lg"
+            />
             <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900">
               Author AI
             </h1>

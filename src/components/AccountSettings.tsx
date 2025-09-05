@@ -154,9 +154,11 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ user, onSignOut }) =>
             </button>
             
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-lg">
-                <User className="h-5 w-5 text-white" />
-              </div>
+              <img 
+                src="/android-chrome-192x192.png" 
+                alt="Author AI Logo" 
+                className="h-6 w-6 rounded-lg"
+              />
               <h1 className="font-poppins text-xl font-bold text-gray-900">
                 Account Settings
               </h1>
