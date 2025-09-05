@@ -41,17 +41,28 @@ const PaymentVerificationModal: React.FC<PaymentVerificationModalProps> = ({
         throw new Error('Not authenticated');
       }
 
-      const response = await supabase.functions.invoke('verify-payment', {
-        body: paymentData,
+      console.log('Calling verify-payment function with data:', paymentData);
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment`, {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(paymentData),
       });
 
-      if (response.error) {
-        throw response.error;
+      console.log('Verify-payment response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Verify-payment error response:', errorText);
+        throw new Error(`Verification failed: ${response.status} - ${errorText}`);
       }
 
+      const result = await response.json();
+      console.log('Verify-payment success result:', result);
+      
       setStatus('success');
       setTimeout(() => {
         onSuccess();
@@ -62,6 +73,7 @@ const PaymentVerificationModal: React.FC<PaymentVerificationModalProps> = ({
       
       if (retryCount < 2) {
         // Retry up to 2 times
+        console.log(`Retrying payment verification (attempt ${retryCount + 1}/2)`);
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
           verifyPayment();
