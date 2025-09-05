@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Coins, ShoppingCart, AlertCircle, X, MessageCircle, CreditCard } from 'lucide-react';
+import { Coins, ShoppingCart, AlertCircle, X, MessageCircle, CreditCard, Shield } from 'lucide-react';
 import { getUserCredits, getCreditTransactions, UserCredits, CreditTransaction } from '../utils/creditManager';
 import PaymentModal from './PaymentModal';
 
