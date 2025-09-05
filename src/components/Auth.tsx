@@ -51,28 +51,28 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen gradient-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="bg-gradient-to-r from-orange-500 to-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="h-8 w-8 text-white" />
           </div>
-          <h2 className="font-poppins text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="font-poppins text-3xl font-bold text-white mb-2">
             Author AI
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-white/80 mb-8">
             Sign in to your account or create one with Google
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="glass-card rounded-xl p-8">
           {/* Google Signup Button */}
           <div className="mb-6">
             <button
               type="button"
               onClick={handleGoogleSignup}
               disabled={loading}
-              className="w-full bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+              className="w-full glass-button text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -87,12 +87,12 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-white/20"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or sign in with email</span>
+              <span className="px-4 glass text-white/80">Or sign in with email</span>
             </div>
-            <p className="text-sm text-gray-600 mt-4 text-center">
+            <p className="text-sm text-white/70 mt-4 text-center">
               New users can create an account using Google signup above.             Existing users can sign in with their email and password.
 
             </p>
@@ -100,13 +100,13 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
 
           <form onSubmit={handleEmailLogin} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-600 text-sm">{error}</p>
+              <div className="glass border border-red-400/50 rounded-lg p-4">
+                <p className="text-red-300 text-sm">{error}</p>
               </div>
             )}
 
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
                 <Mail className="h-4 w-4" />
                 <span>Email Address</span>
               </label>
@@ -115,13 +115,13 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-3 glass-input rounded-lg text-white placeholder-white/60"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+              <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
                 <Lock className="h-4 w-4" />
                 <span>Password</span>
               </label>
@@ -131,14 +131,14 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12"
+                  className="w-full px-4 py-3 glass-input rounded-lg text-white placeholder-white/60 pr-12"
                   placeholder="Enter your password"
                   minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -148,7 +148,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className="w-full glass-button text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>

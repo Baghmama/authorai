@@ -22,7 +22,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 relative">
+    <nav className="glass border-b border-white/20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,7 +30,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
             <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-lg">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
-            <h1 className="font-poppins text-xl sm:text-2xl font-bold text-gray-900">
+            <h1 className="font-poppins text-xl sm:text-2xl font-bold text-white">
               Author AI
             </h1>
           </div>
@@ -40,13 +40,13 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
             <CreditDisplay />
             
             {userEmail && (
-              <span className="text-sm text-gray-600 font-poppins max-w-48 truncate">
+              <span className="text-sm text-white/80 font-poppins max-w-48 truncate">
                 {userEmail}
               </span>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span className="text-sm font-poppins">Sign Out</span>
@@ -57,7 +57,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -70,18 +70,18 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50">
+          <div className="md:hidden absolute top-16 left-0 right-0 glass border-b border-white/20 shadow-lg z-50">
             <div className="px-4 py-4 space-y-4">
               {/* Credits Display - Mobile */}
-              <div className="pb-4 border-b border-gray-200">
+              <div className="pb-4 border-b border-white/20">
                 <CreditDisplay />
               </div>
               
               {/* User Email - Mobile */}
               {userEmail && (
-                <div className="pb-4 border-b border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Signed in as:</p>
-                  <p className="text-sm font-medium text-gray-900 break-all">
+                <div className="pb-4 border-b border-white/20">
+                  <p className="text-sm text-white/60 mb-1">Signed in as:</p>
+                  <p className="text-sm font-medium text-white break-all">
                     {userEmail}
                   </p>
                 </div>
@@ -90,7 +90,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               {/* Sign Out Button - Mobile */}
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                className="w-full flex items-center justify-center space-x-2 glass-button text-white px-4 py-3 rounded-lg transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="text-sm font-poppins">Sign Out</span>
