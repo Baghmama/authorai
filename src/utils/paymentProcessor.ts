@@ -1,10 +1,12 @@
 import { PaymentPackage } from '../types';
 import { RAZORPAY_CONFIG } from './razorpayConfig';
+import { supabase } from '../lib/supabase';
 
 interface PaymentRequest {
   package: PaymentPackage;
   currency: 'USD' | 'INR';
   onPaymentSuccess: (paymentData: any) => void;
+  onPaymentComplete?: (paymentData: any) => void;
 }
 
 interface RazorpayResponse {
@@ -40,32 +42,50 @@ function isValidRazorpayKey(key: string): boolean {
   return key.startsWith('rzp_live_') || key.startsWith('rzp_test_');
 }
 
-// Create order on backend
-async function createRazorpayOrder(amount: number, currency: string, receipt: string) {
+// Create order through Supabase edge function
+async function createRazorpayOrder(amount: number, currency: string, receipt: string, credits: number) {
   try {
-    console.log('Creating Razorpay order:', { amount, currency, receipt });
+    console.log('Creating Razorpay order:', { amount, currency, receipt, credits });
     
-    // For now, create a mock order that Razorpay will accept
-    // In production, you would call your backend to create a real order
-    const mockOrder = {
-      id: `order_${Date.now()}`,
-      amount: amount * 100, // Convert to smallest currency unit
-      currency: currency,
-      receipt: receipt,
-      status: 'created'
-    };
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error('User not authenticated');
+    }
+
+    const response = await supabase.functions.invoke('create-payment-order', {
+      body: {
+        amount: amount * 100, // Convert to smallest currency unit (paise/cents)
+        currency: currency,
+        receipt: receipt,
+        credits: credits
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (response.error) {
+      throw response.error;
+    }
     
-    console.log('Mock order created:', mockOrder);
-    return mockOrder;
+    console.log('Razorpay order created:', response.data);
+    return response.data;
   } catch (error) {
     console.error('Error creating order:', error);
     throw error;
   }
 }
 
-export async function processPayment({ package: pkg, currency, onPaymentSuccess }: PaymentRequest): Promise<boolean> {
+export async function processPayment({ package: pkg, currency, onPaymentSuccess, onPaymentComplete }: PaymentRequest): Promise<boolean> {
   try {
     console.log('Starting payment process:', { package: pkg, currency });
+    
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    console.log('User authenticated:', user.email);
     
     // Validate Razorpay key
     const razorpayKey = RAZORPAY_CONFIG.keyId;
@@ -92,8 +112,7 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess 
     console.log('Payment details:', { amount, currency: actualCurrency, receipt });
 
     // Create Razorpay order
-    const orderData = await createRazorpayOrder(amount, actualCurrency, receipt);
-    orderData.credits = pkg.credits;
+    const orderData = await createRazorpayOrder(amount, actualCurrency, receipt, pkg.credits);
     
     console.log('Order created:', orderData);
 
@@ -115,13 +134,20 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess 
         try {
           console.log('Payment successful, response:', response);
           
-          // Call the success callback with payment data for verification
-          onPaymentSuccess({
+          const paymentData = {
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
             credits: pkg.credits
-          });
+          };
+          
+          // Call the payment complete callback to show verification modal
+          if (onPaymentComplete) {
+            onPaymentComplete(paymentData);
+          } else {
+            // Fallback to old behavior
+            onPaymentSuccess(paymentData);
+          }
           
           return true;
         } catch (error) {

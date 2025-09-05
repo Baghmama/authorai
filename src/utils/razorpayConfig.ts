@@ -9,47 +9,50 @@ export const CURRENCY_CONFIG = {
   USD: {
     symbol: '$',
     code: 'USD',
-    creditsPerDollar: 90,
-    minAmount: 1, // Minimum $1
+    creditsPerDollar: 100, // 10 credits per $0.10
+    minAmount: 0.10, // Minimum $0.10
   },
   INR: {
     symbol: '₹',
     code: 'INR',
-    creditsPerRupee: 90 / 88, // 90 credits for 88 INR
-    minAmount: 88, // Minimum ₹88
+    creditsPerRupee: 10, // 10 credits per ₹1
+    minAmount: 1, // Minimum ₹1
   },
 };
 
 export const CREDIT_PACKAGES = [
   {
     id: 'starter',
-    name: 'Starter Pack',
-    credits: 90,
-    price: { usd: 1, inr: 100 },
+    name: 'Starter',
+    credits: 10,
+    price: { usd: 0.10, inr: 1 },
   },
   {
     id: 'popular',
-    name: 'Popular Pack',
-    credits: 450,
-    price: { usd: 5, inr: 500 },
+    name: 'Popular',
+    credits: 60,
+    price: { usd: 0.60, inr: 6 },
     popular: true,
   },
   {
     id: 'pro',
-    name: 'Pro Pack',
-    credits: 900,
-    price: { usd: 10, inr: 1000 },
+    name: 'Pro',
+    credits: 100,
+    price: { usd: 1.00, inr: 10 },
   },
   {
     id: 'enterprise',
-    name: 'Enterprise Pack',
-    credits: 2700,
-    price: { usd: 30, inr: 3000 },
+    name: 'Enterprise',
+    credits: 500,
+    price: { usd: 5.00, inr: 50 },
   },
 ];
 
 export function formatCurrency(amount: number, currency: 'USD' | 'INR'): string {
   const config = CURRENCY_CONFIG[currency];
+  if (currency === 'USD') {
+    return `${config.symbol}${amount.toFixed(2)}`;
+  }
   return `${config.symbol}${amount}`;
 }
 
