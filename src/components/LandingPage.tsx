@@ -96,3 +96,5 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
     </div>
   )
 }
+
+export default LandingPage;
