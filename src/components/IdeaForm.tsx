@@ -31,13 +31,13 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
         <div className="bg-gradient-to-r from-orange-500 to-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
           <Lightbulb className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-white mb-2">Share Your Idea</h2>
-        <p className="text-white/80">Tell us about the book you want to create</p>
+        <h2 className="text-3xl font-bold text-glass mb-2">Share Your Idea</h2>
+        <p className="text-glass-muted">Tell us about the book you want to create</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
+          <label className="flex items-center space-x-2 text-sm font-medium text-glass mb-2">
             <Lightbulb className="h-4 w-4" />
             <span>Book Idea</span>
           </label>
@@ -45,7 +45,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
             value={formData.idea}
             onChange={(e) => setFormData({ ...formData, idea: e.target.value })}
             placeholder="Describe your book idea in detail..."
-            className="w-full px-4 py-3 glass-input rounded-lg resize-none text-white placeholder-white/60"
+            className="w-full px-4 py-3 glass-input rounded-lg resize-none text-glass placeholder-glass-subtle"
             rows={4}
             required
           />
@@ -53,14 +53,14 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-glass mb-2">
               <Globe className="h-4 w-4" />
               <span>Language</span>
             </label>
             <select
               value={formData.language}
               onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-              className="w-full px-4 py-3 glass-input rounded-lg text-white"
+              className="w-full px-4 py-3 glass-input rounded-lg text-glass"
             >
               <option value="English">English</option>
               <option value="Spanish">Spanish</option>
@@ -77,7 +77,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
           </div>
 
           <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-glass mb-2">
               <Layers className="h-4 w-4" />
               <span>Chapters</span>
             </label>
@@ -104,14 +104,14 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
           </div>
 
           <div>
-            <label className="flex items-center space-x-2 text-sm font-medium text-white mb-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-glass mb-2">
               <BookOpen className="h-4 w-4" />
               <span>Book Type</span>
             </label>
             <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value as BookIdea['type'] })}
-              className="w-full px-4 py-3 glass-input rounded-lg text-white"
+              className="w-full px-4 py-3 glass-input rounded-lg text-glass"
             >
               <option value="Fiction">Fiction</option>
               <option value="Non-Fiction">Non-Fiction</option>
@@ -123,11 +123,11 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
         <button
           type="submit"
           disabled={isLoading || !formData.idea.trim()}
-          className="w-full glass-button text-white font-semibold py-3 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          className="w-full glass-button text-glass font-semibold py-3 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
         >
           {isLoading ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-glass"></div>
               <span>Generating Chapter Outlines... ({creditsNeeded} credits)</span>
             </>
           ) : (

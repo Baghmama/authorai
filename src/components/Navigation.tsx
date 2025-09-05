@@ -40,13 +40,13 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
             <CreditDisplay />
             
             {userEmail && (
-              <span className="text-sm text-white/80 font-poppins max-w-48 truncate">
+              <span className="text-sm text-glass-muted font-poppins max-w-48 truncate">
                 {userEmail}
               </span>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-glass-muted hover:text-glass transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span className="text-sm font-poppins">Sign Out</span>
@@ -57,7 +57,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-glass-muted hover:text-glass hover:bg-white/10 transition-colors"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -80,8 +80,8 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               {/* User Email - Mobile */}
               {userEmail && (
                 <div className="pb-4 border-b border-white/20">
-                  <p className="text-sm text-white/60 mb-1">Signed in as:</p>
-                  <p className="text-sm font-medium text-white break-all">
+                  <p className="text-sm text-glass-subtle mb-1">Signed in as:</p>
+                  <p className="text-sm font-medium text-glass break-all">
                     {userEmail}
                   </p>
                 </div>
@@ -90,7 +90,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onSignOut }) => {
               {/* Sign Out Button - Mobile */}
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center space-x-2 glass-button text-white px-4 py-3 rounded-lg transition-colors"
+                className="w-full flex items-center justify-center space-x-2 glass-button text-glass px-4 py-3 rounded-lg transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="text-sm font-poppins">Sign Out</span>
