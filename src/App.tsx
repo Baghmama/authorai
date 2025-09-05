@@ -18,7 +18,6 @@ const isSupabaseConfigured = () => {
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,14 +57,12 @@ function App() {
 
   const handleAuthSuccess = () => {
     // User state will be updated by the auth state change listener
-    setShowAuth(false);
     navigate('/app');
   };
 
   const handleSignOut = () => {
     supabase.auth.signOut();
     setUser(null);
-    setShowAuth(false);
     navigate('/');
   };
 
@@ -74,8 +71,8 @@ function App() {
       alert('Supabase is not configured. Please set up your environment variables.');
       return;
     }
-    console.log('Get Started clicked - showing auth modal');
-    setShowAuth(true);
+    console.log('Get Started clicked - navigating to auth page');
+    navigate('/auth');
   };
 
   if (loading) {
@@ -96,12 +93,17 @@ function App() {
       <Route 
         path="/" 
         element={
-          !user ? (
-            <>
-              <LandingPage onGetStarted={handleGetStarted} />
-              {showAuth && <Auth onAuthSuccess={handleAuthSuccess} />}
-            </>
-          ) : (
+          !user ? <LandingPage onGetStarted={handleGetStarted} /> : (
+            <AppContent user={user} onSignOut={handleSignOut} />
+          )
+        } 
+      />
+      
+      {/* Dedicated authentication page */}
+      <Route 
+        path="/auth" 
+        element={
+          !user ? <Auth onAuthSuccess={handleAuthSuccess} /> : (
             <AppContent user={user} onSignOut={handleSignOut} />
           )
         } 
@@ -111,14 +113,7 @@ function App() {
       <Route 
         path="/app/*" 
         element={
-          user ? (
-            <AppContent user={user} onSignOut={handleSignOut} />
-          ) : (
-            <>
-              <LandingPage onGetStarted={handleGetStarted} />
-              {showAuth && <Auth onAuthSuccess={handleAuthSuccess} />}
-            </>
-          )
+          user ? <AppContent user={user} onSignOut={handleSignOut} /> : <LandingPage onGetStarted={handleGetStarted} />
         } 
       />
       
