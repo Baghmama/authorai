@@ -37,7 +37,7 @@ function loadRazorpayScript(): Promise<boolean> {
 
 // Validate Razorpay key format
 function isValidRazorpayKey(key: string): boolean {
-  return key.startsWith('rzp_test_') || key.startsWith('rzp_live_');
+  return key.startsWith('rzp_live_') || key.startsWith('rzp_test_');
 }
 
 // Create order on backend (simplified for testing)
@@ -123,8 +123,8 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     console.log('Razorpay key:', razorpayKey);
     
     if (!isValidRazorpayKey(razorpayKey)) {
-      console.error('Invalid Razorpay key format:', razorpayKey);
-      throw new Error('Invalid Razorpay configuration. Please contact support.');
+      console.error('Missing or invalid Razorpay key:', razorpayKey);
+      throw new Error('Payment system not configured. Please contact support.');
     }
 
     // Load Razorpay script
@@ -136,12 +136,11 @@ export async function processPayment({ package: pkg, currency }: PaymentRequest)
     console.log('Razorpay script loaded successfully');
 
     // Force INR for test keys
-    const actualCurrency = 'INR';
-    const amount = pkg.price.inr;
+    const actualCurrency = currency === 'USD' ? 'USD' : 'INR';
+    const amount = currency === 'USD' ? pkg.price.usd : pkg.price.inr;
     const receipt = `credits_${pkg.id}_${Date.now()}`;
     
     console.log('Payment details:', { amount, currency: actualCurrency, receipt });
-    console.log('Note: Using INR because Razorpay test keys only support INR currency');
 
     // Create Razorpay order
     const orderData = await createRazorpayOrder(amount, actualCurrency, receipt);

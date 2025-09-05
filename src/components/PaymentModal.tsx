@@ -65,18 +65,50 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Currency Selection */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
             <div className="flex items-start space-x-3">
-              <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <Shield className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Currency Notice</h4>
-                <p className="text-sm text-blue-700">
-                  Razorpay test keys only support INR (Indian Rupees). All payments will be processed in INR.
+                <h4 className="font-medium text-green-900 mb-1">Payment Ready</h4>
+                <p className="text-sm text-green-700">
+                  Secure payments powered by Razorpay. Supports multiple currencies and payment methods.
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Currency Selection */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Select Currency</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setSelectedCurrency('USD')}
+                className={`p-3 rounded-lg border-2 transition-all ${
+                  selectedCurrency === 'USD'
+                    ? 'border-orange-500 bg-orange-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="text-center">
+                  <div className="font-semibold">USD ($)</div>
+                  <div className="text-sm text-gray-600">US Dollar</div>
+                </div>
+              </button>
+              <button
+                onClick={() => setSelectedCurrency('INR')}
+                className={`p-3 rounded-lg border-2 transition-all ${
+                  selectedCurrency === 'INR'
+                    ? 'border-orange-500 bg-orange-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="text-center">
+                  <div className="font-semibold">INR (₹)</div>
+                  <div className="text-sm text-gray-600">Indian Rupee</div>
+                </div>
+              </button>
+            </div>
+          </div>
           {/* Package Selection */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Choose Package</h3>
@@ -103,13 +135,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                   <div className="text-center">
                     <h4 className="font-semibold text-gray-900 mb-2">{pkg.name}</h4>
                     <div className="text-2xl font-bold text-orange-600 mb-1">
-                      ₹{pkg.price.inr}
+                      {formatCurrency(
+                        selectedCurrency === 'USD' ? pkg.price.usd : pkg.price.inr,
+                        selectedCurrency
+                      )}
                     </div>
                     <div className="text-sm text-gray-600 mb-3">
-                      <p>
-                        Razorpay integration is coming soon! For now, message me on X (Twitter) 
-                        to purchase credits and I'll update your balance manually after payment.
-                      </p>
+                      <p>{pkg.credits} Credits</p>
                     </div>
                   </div>
                   
@@ -124,13 +156,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
           </div>
 
           {/* Payment Security Notice */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
             <div className="flex items-start space-x-3">
-              <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <Shield className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Demo Mode</h4>
-                <p className="text-sm text-blue-700">
-                  This is a demo version using test Razorpay keys. If payment fails, it may be due to invalid test keys. For real payments, contact support.
+                <h4 className="font-medium text-green-900 mb-1">Secure Payment</h4>
+                <p className="text-sm text-green-700">
+                  Your payment information is secure and encrypted. We use Razorpay's industry-standard security measures.
                 </p>
               </div>
             </div>
@@ -139,11 +171,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              disabled={true}
-              className="flex-1 bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg cursor-not-allowed flex items-center justify-center space-x-2"
+              onClick={handlePayment}
+              disabled={!selectedPackage || isProcessing}
+              className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              <CreditCard className="h-5 w-5" />
-              <span>Razorpay - Coming Soon</span>
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard className="h-5 w-5" />
+                  <span>Pay with Razorpay</span>
+                </>
+              )}
             </button>
             
             <button

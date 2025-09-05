@@ -61,7 +61,12 @@ Deno.serve(async (req: Request) => {
     }
 
     // Verify Razorpay signature
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || 'test_secret_key_11111111111111';
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    
+    if (!razorpayKeySecret) {
+      throw new Error('Razorpay secret key not configured');
+    }
+    
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = createHmac('sha256', razorpayKeySecret)
       .update(body)

@@ -90,14 +90,13 @@ const CreditDisplay: React.FC = () => {
             </div>
 
             {/* Manual Process Notice */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">Payment Options</h4>
+                  <h4 className="font-medium text-gray-900 mb-1">Secure Payments</h4>
                   <p className="text-sm text-gray-600">
-                    Razorpay integration is coming soon! For now, message me on X (Twitter) 
-                    to purchase credits and I'll update your balance manually after payment.
+                    Purchase credits securely using Razorpay. Supports cards, UPI, net banking, and wallets.
                   </p>
                 </div>
               </div>
@@ -106,23 +105,23 @@ const CreditDisplay: React.FC = () => {
             {/* Contact Button */}
             <div className="space-y-3">
               <button
-                onClick={openTwitter}
+                onClick={() => setShowPaymentModal(true)}
                 className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 flex items-center justify-center space-x-2"
               >
-                <MessageCircle className="h-5 w-5" />
-                <span>Message on X (Twitter)</span>
+                <CreditCard className="h-5 w-5" />
+                <span>Purchase Credits</span>
               </button>
             </div>
 
-            {/* Instructions */}
-            <div className="text-sm text-gray-600 space-y-2">
-              <p className="font-medium text-gray-900">How it works:</p>
-              <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>Click the button above to message me on X</li>
-                <li>Let me know how many credits you want to purchase</li>
-                <li>I'll provide payment instructions</li>
-                <li>After payment, I'll manually add credits to your account</li>
-              </ol>
+            {/* Payment Methods */}
+            <div className="text-sm text-gray-600">
+              <p className="font-medium text-gray-900 mb-2">Accepted Payment Methods:</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>• Credit/Debit Cards</div>
+                <div>• UPI</div>
+                <div>• Net Banking</div>
+                <div>• Digital Wallets</div>
+              </div>
             </div>
           </div>
         </div>
