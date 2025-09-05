@@ -70,6 +70,10 @@ function App() {
   };
 
   const handleGetStarted = () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase is not configured. Please set up your environment variables.');
+      return;
+    }
     setShowAuth(true);
   };
 
