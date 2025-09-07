@@ -1,6 +1,7 @@
 {
   "name": "Author AI - AI Book Writing Assistant",
   "short_name": "Author AI",
+  "id": "/",
   "description": "Transform your ideas into complete books using AI. Generate professional-quality content in minutes.",
   "start_url": "/",
   "display": "standalone",
@@ -19,7 +20,7 @@
     },
     {
       "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
