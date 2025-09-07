@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://splendid-malabi-1bb3c0.netlify.app/sitemap.xml
+Sitemap: https://authorai.tech/sitemap.xml
 
 # Crawl delay
 Crawl-delay: 1
