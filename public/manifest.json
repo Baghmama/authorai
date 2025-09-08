@@ -4,7 +4,7 @@
   "id": "/",
   "description": "Transform your ideas into complete books using AI. Generate professional-quality content in minutes.",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#f97316",
   "orientation": "portrait-primary",
