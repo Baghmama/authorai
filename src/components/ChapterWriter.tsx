@@ -122,7 +122,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const allChaptersWritten = outlines.every(chapter => chapter.isWritten);
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Write Chapters</h2>
         <p className="text-gray-600">Generate content for each chapter using AI</p>
@@ -136,12 +136,12 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       <div className="space-y-6">
         {outlines.map((chapter) => (
           <div key={chapter.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900">{chapter.title}</h3>
-                <div className="flex items-center space-x-3">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 flex-1 mr-2">{chapter.title}</h3>
+                <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                   {chapter.isWritten ? (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                       <div className="flex items-center space-x-2 text-green-600">
                         <CheckCircle className="h-5 w-5" />
                         <span className="text-sm font-medium">Complete</span>
@@ -151,7 +151,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                       <button
                         onClick={() => handleStartEdit(chapter)}
                         disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
-                        className="flex items-center space-x-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        className="flex items-center justify-center space-x-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
                       >
                         <Edit3 className="h-3 w-3" />
                         <span>Edit</span>
@@ -161,10 +161,11 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                       <button
                         onClick={() => setShowRegenerateConfirm(chapter.id)}
                         disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
-                        className="flex items-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        className="flex items-center justify-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
                       >
                         <RefreshCw className="h-3 w-3" />
-                        <span>Regenerate (6 credits)</span>
+                        <span className="hidden sm:inline">Regenerate (6 credits)</span>
+                        <span className="sm:hidden">Regen</span>
                       </button>
                     </div>
                   ) : writingChapterId === chapter.id ? (
@@ -181,10 +182,11 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     <button
                       onClick={() => handleWriteChapter(chapter)}
                       disabled={writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     >
                       <PenTool className="h-4 w-4" />
-                      <span>Write Chapter</span>
+                      <span className="hidden sm:inline">Write Chapter</span>
+                      <span className="sm:hidden">Write</span>
                     </button>
                   )}
                 </div>
@@ -196,11 +198,11 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
             </div>
 
             {chapter.content && (
-              <div className="p-6 bg-gray-50">
+              <div className="p-4 sm:p-6 bg-gray-50">
                 <div className="flex justify-between items-center mb-3">
                   <h4 className="text-lg font-medium text-gray-900">Generated Content:</h4>
                   {editingChapterId === chapter.id && (
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                       <button
                         onClick={handleSaveEdit}
                         className="flex items-center space-x-1 bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 transition-colors text-sm"
@@ -223,7 +225,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   <textarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full h-96 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none font-mono text-sm"
+                    className="w-full h-64 sm:h-96 p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none font-mono text-sm"
                     placeholder="Edit your chapter content here..."
                   />
                 ) : (
@@ -238,7 +240,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
         {allChaptersWritten && (
           <div className="text-center pt-8">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 sm:p-6 mb-6">
               <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
               <h3 className="text-lg font-semibold text-green-900 mb-2">All Chapters Complete!</h3>
               <p className="text-green-700">Your book is ready to be compiled and downloaded.</p>
@@ -246,7 +248,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
             
             <button
               onClick={onCompleteWriting}
-              className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 mx-auto"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 mx-auto"
             >
               <Book className="h-5 w-5" />
               <span>Compile Book</span>
@@ -258,7 +260,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       {/* Regenerate Confirmation Modal */}
       {showRegenerateConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-6 mx-4">
             <div className="text-center mb-6">
               <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <RefreshCw className="h-8 w-8 text-orange-600" />
@@ -275,16 +277,16 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
               </p>
             </div>
             
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={() => handleRegenerateConfirm(showRegenerateConfirm)}
-                className="flex-1 bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors"
+                className="w-full sm:flex-1 bg-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors"
               >
                 Yes, Regenerate (6 credits)
               </button>
               <button
                 onClick={() => setShowRegenerateConfirm(null)}
-                className="flex-1 bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                className="w-full sm:flex-1 bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors"
               >
                 Cancel
               </button>

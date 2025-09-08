@@ -35,7 +35,7 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-8">
         <div className="bg-gradient-to-r from-green-500 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
           <Check className="h-8 w-8 text-white" />
@@ -44,8 +44,8 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
         <p className="text-gray-600">Your book has been successfully generated and is ready for download</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Book Details</h3>
             <div className="space-y-2 text-sm">
@@ -81,14 +81,14 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
         <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Download Your Book</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
           <button
             onClick={handleDownloadPDF}
             disabled={downloadingPDF}
-            className="flex flex-col items-center space-y-4 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-xl p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="flex flex-col items-center space-y-4 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-xl p-4 sm:p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <div className="bg-red-500 p-3 rounded-full">
               <FileText className="h-8 w-8 text-white" />
@@ -110,7 +110,7 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
           <button
             onClick={handleDownloadWord}
             disabled={downloadingWord}
-            className="flex flex-col items-center space-y-4 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="flex flex-col items-center space-y-4 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl p-4 sm:p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <div className="bg-blue-500 p-3 rounded-full">
               <FileDown className="h-8 w-8 text-white" />
@@ -134,7 +134,7 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
         <div className="text-center">
           <button
             onClick={onNewProject}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg transition-colors font-medium"
+            className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg transition-colors font-medium"
           >
             Create New Book
           </button>

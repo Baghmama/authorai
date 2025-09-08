@@ -92,7 +92,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
     <div className="min-h-screen bg-gray-50">
       <Navigation userEmail={user.email} />
       
-      <main className="py-8 px-4 sm:px-6 lg:px-8">
+      <main className="py-4 sm:py-8 px-2 sm:px-4 lg:px-8">
         <ProgressIndicator currentStep={currentStep} />
         
         {currentStep === 'idea' && (
