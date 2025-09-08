@@ -138,60 +138,85 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
           <div key={chapter.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 flex-1 mr-2">{chapter.title}</h3>
-                <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                  {chapter.isWritten ? (
-                    <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                      <div className="flex items-center space-x-2 text-green-600">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="text-sm font-medium">Complete</span>
-                      </div>
-                      
-                      {/* Edit Button */}
+                <div className="w-full">
+                  <div className="flex justify-between items-start mb-3 sm:mb-0 sm:items-center">
+                    <h3 className="text-base sm:text-xl font-semibold text-gray-900 flex-1 mr-2 leading-tight">{chapter.title}</h3>
+                    <div className="flex-shrink-0">
+                      {chapter.isWritten ? (
+                        <div className="flex items-center space-x-2 text-green-600 mb-2 sm:mb-0">
+                          <CheckCircle className="h-5 w-5" />
+                          <span className="text-sm font-medium">Complete</span>
+                        </div>
+                      ) : writingChapterId === chapter.id ? (
+                        <div className="flex items-center space-x-2 text-orange-600">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
+                          <span className="text-sm font-medium">Writing...</span>
+                        </div>
+                      ) : regeneratingChapterId === chapter.id ? (
+                        <div className="flex items-center space-x-2 text-orange-600">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
+                          <span className="text-sm font-medium">Regenerating...</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleWriteChapter(chapter)}
+                          disabled={writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null}
+                          className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-3 py-1.5 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                        >
+                          Write
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Action buttons for completed chapters - mobile optimized */}
+                  {chapter.isWritten && (
+                    <div className="flex flex-wrap gap-2 sm:hidden">
                       <button
                         onClick={() => handleStartEdit(chapter)}
                         disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
-                        className="flex items-center justify-center space-x-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+                        className="flex items-center justify-center space-x-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       >
                         <Edit3 className="h-3 w-3" />
                         <span>Edit</span>
                       </button>
                       
-                      {/* Regenerate Button */}
                       <button
                         onClick={() => setShowRegenerateConfirm(chapter.id)}
                         disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
-                        className="flex items-center justify-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+                        className="flex items-center justify-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       >
                         <RefreshCw className="h-3 w-3" />
-                        <span className="hidden sm:inline">Regenerate (6 credits)</span>
-                        <span className="sm:hidden">Regen</span>
+                        <span>Regen</span>
                       </button>
                     </div>
-                  ) : writingChapterId === chapter.id ? (
-                    <div className="flex items-center space-x-2 text-orange-600">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
-                      <span className="text-sm font-medium">Writing...</span>
+                  )}
+                  
+                  {/* Desktop action buttons */}
+                  {chapter.isWritten && (
+                    <div className="hidden sm:flex items-center space-x-2 mt-2">
+                      <button
+                        onClick={() => handleStartEdit(chapter)}
+                        disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
+                        className="flex items-center justify-center space-x-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        <span>Edit</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => setShowRegenerateConfirm(chapter.id)}
+                        disabled={editingChapterId !== null || writingChapterId !== null || regeneratingChapterId !== null}
+                        className="flex items-center justify-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        <span>Regenerate (6 credits)</span>
+                      </button>
                     </div>
-                  ) : regeneratingChapterId === chapter.id ? (
-                    <div className="flex items-center space-x-2 text-orange-600">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
-                      <span className="text-sm font-medium">Regenerating...</span>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleWriteChapter(chapter)}
-                      disabled={writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null}
-                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      <PenTool className="h-4 w-4" />
-                      <span className="hidden sm:inline">Write Chapter</span>
-                      <span className="sm:hidden">Write</span>
-                    </button>
                   )}
                 </div>
               </div>
-              <p className="text-gray-600 mt-2 text-sm">{chapter.outline}</p>
+              <p className="text-gray-600 mt-3 text-sm">{chapter.outline}</p>
               <div className="text-gray-600 mt-2 text-sm prose prose-sm max-w-none">
                 <ReactMarkdown>{chapter.outline}</ReactMarkdown>
               </div>
