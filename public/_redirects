@@ -1,0 +1,6 @@
+# Netlify redirects file
+/*    /index.html   200
+
+# Serve assetlinks.json with correct content type
+/.well-known/assetlinks.json    /.well-known/assetlinks.json    200
+  Content-Type: application/json
