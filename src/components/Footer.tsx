@@ -94,15 +94,7 @@ const Footer: React.FC = () => {
                   sv@goodaiclub.com
                 </a>
               </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4 text-gray-400" />
-                <a
-                  href="tel:+919144433606"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  +91 9144433606
-                </a>
-              </div>
+
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                 <span className="text-gray-300 text-sm">
