@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { ChapterOutline, BookIdea } from '../types';
 import { writeChapter } from '../utils/geminiApi';
 import { deductCreditsForChapterGeneration, getUserCredits } from '../utils/creditManager';
-import { PenTool, CheckCircle, Clock, Book, RefreshCw, Edit3, Save, X } from 'lucide-react';
+import { PenTool, CheckCircle, Clock, Book, RefreshCw, Edit3, Save, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ChapterWriterProps {
   outlines: ChapterOutline[];
@@ -23,9 +23,32 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const [editingChapterId, setEditingChapterId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>('');
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState<string | null>(null);
+  const [expandedOutlines, setExpandedOutlines] = useState<Record<string, boolean>>({});
+
+  // Initialize expanded outlines when outlines change
+  React.useEffect(() => {
+    const initialExpanded: Record<string, boolean> = {};
+    outlines.forEach(chapter => {
+      initialExpanded[chapter.id] = true; // All outlines expanded by default
+    });
+    setExpandedOutlines(initialExpanded);
+  }, [outlines]);
+
+  const toggleOutlineVisibility = (chapterId: string) => {
+    setExpandedOutlines(prev => ({
+      ...prev,
+      [chapterId]: !prev[chapterId]
+    }));
+  };
 
   const handleWriteChapter = async (chapter: ChapterOutline) => {
     setWritingChapterId(chapter.id);
+    
+    // Collapse the outline when starting to write
+    setExpandedOutlines(prev => ({
+      ...prev,
+      [chapter.id]: false
+    }));
     
     try {
       const content = await writeChapter(
@@ -63,6 +86,12 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
     setRegeneratingChapterId(chapterId);
     setShowRegenerateConfirm(null);
+
+    // Collapse the outline when regenerating
+    setExpandedOutlines(prev => ({
+      ...prev,
+      [chapterId]: false
+    }));
 
     try {
       // Deduct credits first
@@ -140,7 +169,19 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
               <div className="flex justify-between items-center">
                 <div className="w-full">
                   <div className="flex justify-between items-start mb-3 sm:mb-0 sm:items-center">
-                    <h3 className="text-base sm:text-xl font-semibold text-gray-900 flex-1 mr-2 leading-tight">{chapter.title}</h3>
+                    <div className="flex items-center flex-1 mr-2">
+                      <button
+                        onClick={() => toggleOutlineVisibility(chapter.id)}
+                        className="mr-2 p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {expandedOutlines[chapter.id] ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </button>
+                      <h3 className="text-base sm:text-xl font-semibold text-gray-900 leading-tight">{chapter.title}</h3>
+                    </div>
                     <div className="flex-shrink-0">
                       {chapter.isWritten ? (
                         <div className="flex items-center space-x-2 text-green-600 mb-2 sm:mb-0">
@@ -216,10 +257,15 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   )}
                 </div>
               </div>
-              <p className="text-gray-600 mt-3 text-sm">{chapter.outline}</p>
-              <div className="text-gray-600 mt-2 text-sm prose prose-sm max-w-none">
-                <ReactMarkdown>{chapter.outline}</ReactMarkdown>
-              </div>
+              
+              {/* Collapsible outline section */}
+              {expandedOutlines[chapter.id] && (
+                <div className="mt-3">
+                  <div className="text-gray-600 text-sm prose prose-sm max-w-none">
+                    <ReactMarkdown>{chapter.outline}</ReactMarkdown>
+                  </div>
+                </div>
+              )}
             </div>
 
             {chapter.content && (
