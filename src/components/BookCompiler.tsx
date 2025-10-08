@@ -132,6 +132,22 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
         </div>
 
         <div className="text-center">
+          {/* App Download Notification */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start space-x-3">
+              <div className="bg-blue-500 p-2 rounded-full flex-shrink-0">
+                <BookOpen className="h-5 w-5 text-white" />
+              </div>
+              <div className="text-left">
+                <h4 className="font-medium text-blue-900 mb-1">Using Author AI App?</h4>
+                <p className="text-sm text-blue-700">
+                  If you're using the Author AI mobile app, please check your device notifications 
+                  for download completion. Files will be saved to your device's Downloads folder.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <button
             onClick={onNewProject}
             className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg transition-colors font-medium"
