@@ -55,38 +55,11 @@ export async function checkIsSuperAdmin(): Promise<boolean> {
 // Get all users with their credits and admin status
 export async function getAllUsers(): Promise<AdminUser[]> {
   try {
-    const { data, error } = await supabase
-      .from('auth.users')
-      .select(`
-        id,
-        email,
-        created_at,
-        last_sign_in_at,
-        user_credits!inner(credits),
-        admins(role),
-        user_bans(expires_at, is_permanent, reason)
-      `);
-
-    if (error) {
-      // Fallback query if the above doesn't work
-      const { data: usersData, error: usersError } = await supabase
-        .rpc('get_all_users_admin');
-      
-      if (usersError) throw usersError;
-      return usersData || [];
-    }
-
-    return data?.map((user: any) => ({
-      id: user.id,
-      email: user.email || 'No email',
-      credits: user.user_credits?.credits || 0,
-      admin_role: user.admins?.role || null,
-      ban_expires_at: user.user_bans?.expires_at || null,
-      is_banned_permanently: user.user_bans?.is_permanent || false,
-      ban_reason: user.user_bans?.reason || null,
-      created_at: user.created_at,
-      last_sign_in_at: user.last_sign_in_at
-    })) || [];
+    const { data: usersData, error: usersError } = await supabase
+      .rpc('get_all_users_admin');
+    
+    if (usersError) throw usersError;
+    return usersData || [];
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;
@@ -162,15 +135,23 @@ export async function addAdmin(userId: string, role: string = 'admin'): Promise<
 // Get admin logs
 export async function getAdminLogs(limit: number = 50): Promise<AdminLog[]> {
   try {
+    // First, get all users to create a mapping of user IDs to emails
+    const users = await getAllUsers();
+    const userEmailMap = new Map<string, string>();
+    users.forEach(user => {
+      userEmailMap.set(user.id, user.email);
+    });
+
+    // Then fetch admin logs with just the IDs
     const { data, error } = await supabase
       .from('admin_logs')
       .select(`
         id,
+        admin_id,
+        target_user_id,
         action,
         details,
-        created_at,
-        admin:admin_id(email),
-        target_user:target_user_id(email)
+        created_at
       `)
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -179,9 +160,9 @@ export async function getAdminLogs(limit: number = 50): Promise<AdminLog[]> {
 
     return data?.map((log: any) => ({
       id: log.id,
-      admin_email: log.admin?.email || 'Unknown',
+      admin_email: userEmailMap.get(log.admin_id) || 'Unknown',
       action: log.action,
-      target_user_email: log.target_user?.email || null,
+      target_user_email: log.target_user_id ? userEmailMap.get(log.target_user_id) || null : null,
       details: log.details,
       created_at: log.created_at
     })) || [];
