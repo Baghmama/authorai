@@ -30,7 +30,7 @@
       "name": "Start Writing",
       "short_name": "Write",
       "description": "Start creating a new book",
-      "url": "https://authorai.tech/auth",
+      "url": "/auth",
       "icons": [
         {
           "src": "/android-chrome-192x192.png",
