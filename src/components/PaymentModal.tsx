@@ -83,6 +83,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                   <p className="text-sm text-orange-700">
                     <strong>₹70 = 130 credits</strong> or <strong>$1 = 130 credits</strong>. Each chapter costs only 6 credits!
                   </p>
+ <p className="text-sm text-purple-700">
+                    <strong>₹70 = 130 credits</strong> or <strong>$1 = 130 credits</strong>. Each chapter costs only 6 credits!
+                  </p>
+                  
                 </div>
               </div>
             </div>
