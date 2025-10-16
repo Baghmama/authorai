@@ -95,6 +95,37 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
       </section>
 
+      {/* Play Store Download Section */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+            Download Our Android App
+          </h3>
+          <p className="text-lg text-gray-600 mb-6">
+            Get the full Author AI experience on your mobile device
+          </p>
+          <a
+            href="https://play.google.com/store/apps/details?id=tech.authorai.twa&pcampaignid=web_share"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-3 bg-black text-white px-8 py-4 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg"
+          >
+            <svg
+              className="h-8 w-8"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
+            </svg>
+            <div className="text-left">
+              <div className="text-xs uppercase tracking-wide">Get it on</div>
+              <div className="text-xl font-semibold leading-tight">Google Play</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
