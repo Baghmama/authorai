@@ -120,6 +120,7 @@ const CreditDisplay: React.FC = () => {
                 <div>• Credit/Debit Cards</div>
                 <div>• UPI</div>
                 <div>• Net Banking</div>
+                <div>• PayPal</div>
                 <div>• Digital Wallets</div>
               </div>
             </div>
