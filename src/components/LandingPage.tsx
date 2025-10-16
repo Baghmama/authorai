@@ -284,7 +284,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
               <h4 className="text-2xl font-bold text-gray-900 mb-4">Credit-Based System</h4>
               <div className="text-4xl font-bold text-orange-600 mb-2">₹70 = 130 Credits</div>
-              <p className="text-gray-600 mb-6">Each chapter costs only 6 credits to generate</p>
+              <p className="text-gray-600 mb-4">Each chapter costs only 6 credits to generate</p>
+              <p className="text-sm text-gray-500 mb-6">Prices include all taxes - we handle the tax compliance for you! 🎉</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div className="bg-white rounded-lg p-4 border border-orange-200">
