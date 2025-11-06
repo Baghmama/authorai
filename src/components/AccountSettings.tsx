@@ -140,26 +140,26 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ user, onSignOut }) =>
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-card">
+      <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-orange-600 transition-all duration-200 px-3 py-2 rounded-lg hover:bg-orange-50"
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
-              <span className="font-medium">Back to App</span>
+              <span>Back to App</span>
             </button>
-
-            <div className="flex items-center space-x-3 group">
-              <img
-                src="/android-chrome-192x192.png"
-                alt="Author AI Logo"
-                className="h-6 w-6 rounded-lg transition-transform duration-300 group-hover:scale-110"
+            
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/android-chrome-192x192.png" 
+                alt="Author AI Logo" 
+                className="h-6 w-6 rounded-lg"
               />
-              <h1 className="font-poppins text-xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+              <h1 className="font-poppins text-xl font-bold text-gray-900">
                 Account Settings
               </h1>
             </div>
@@ -169,8 +169,8 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ user, onSignOut }) =>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="border-b border-gray-200 mb-8 animate-fade-in">
-          <nav className="-mb-px flex space-x-8 overflow-x-auto">
+        <div className="border-b border-gray-200 mb-8">
+          <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab('profile')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -215,8 +215,8 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ user, onSignOut }) =>
 
         {/* Profile Tab */}
         {activeTab === 'profile' && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-premium border border-white/20 p-6">
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Profile Information</h2>
               
               <div className="space-y-4">

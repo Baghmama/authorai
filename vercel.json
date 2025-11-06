@@ -3,30 +3,9 @@
   "outputDirectory": "dist",
   "routes": [
     {
-      "src": "/sw.js",
-      "headers": {
-        "Cache-Control": "public, max-age=0, must-revalidate"
-      },
-      "continue": true
-    },
-    {
-      "src": "/index.html",
-      "headers": {
-        "Cache-Control": "public, max-age=3600, s-maxage=3600"
-      },
-      "continue": true
-    },
-    {
       "src": "/assets/.*",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
-    },
-    {
-      "src": "/manifest.json",
-      "headers": {
-        "Cache-Control": "public, max-age=3600, s-maxage=3600"
       },
       "continue": true
     },

@@ -202,7 +202,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         <button
                           onClick={() => handleWriteChapter(chapter)}
                           disabled={writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null}
-                          className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-3 py-1.5 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-card hover:shadow-glow hover:scale-105 disabled:hover:scale-100"
+                          className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-3 py-1.5 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                         >
                           Write
                         </button>
