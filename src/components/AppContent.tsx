@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navigation from './Navigation';
 import Footer from './Footer';
+import SaleBanner from './SaleBanner';
 import ProgressIndicator from './ProgressIndicator';
 import IdeaForm from './IdeaForm';
 import ChapterOutlines from './ChapterOutlines';
@@ -91,7 +92,8 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation userEmail={user.email} />
-      
+      <SaleBanner />
+
       <main className="py-4 sm:py-8 px-2 sm:px-4 lg:px-8">
         <ProgressIndicator currentStep={currentStep} />
         
