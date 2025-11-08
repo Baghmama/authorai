@@ -6,6 +6,7 @@ interface ProgressIndicatorProps {
   currentStep: AppStep;
 }
 
+
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep }) => {
   const steps = [
     { id: 'idea', label: 'Idea', description: 'Share your concept' },
