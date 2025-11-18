@@ -30,7 +30,7 @@ const SaleBanner: React.FC = () => {
             <div className="flex items-center space-x-3 flex-1">
               <Sparkles className="h-5 w-5 animate-pulse text-yellow-300" />
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-                <span className="font-bold text-lg">November Sale is Live!</span>
+                <span className="font-bold text-lg">Black Friday Sale is Live!</span>
                 <span className="text-sm text-purple-100">Credits Packs Starting from Just $1</span>
               </div>
             </div>
