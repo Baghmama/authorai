@@ -171,3 +171,29 @@ export function calculateCreditsNeeded(chapters: number): number {
   const creditsPerChapter = 6;
   return chapters * creditsPerChapter;
 }
+
+/**
+ * Check if user has enough credits and deduct if available
+ */
+export async function checkAndDeductCredits(userId: string, amount: number): Promise<boolean> {
+  try {
+    // Call the database function to deduct credits
+    const { data, error } = await supabase.rpc('deduct_credits', {
+      p_user_id: userId,
+      p_amount: amount,
+      p_transaction_type: 'director_mode',
+      p_description: `Director Mode AI generation`
+    });
+
+    if (error) {
+      console.error('Error deducting credits:', error);
+      return false;
+    }
+
+    const result = data as CreditResult;
+    return result.success;
+  } catch (error) {
+    console.error('Error in checkAndDeductCredits:', error);
+    return false;
+  }
+}
