@@ -7,6 +7,7 @@ import IdeaForm from './IdeaForm';
 import ChapterOutlines from './ChapterOutlines';
 import ChapterWriter from './ChapterWriter';
 import BookCompiler from './BookCompiler';
+import DirectorMode from './DirectorMode';
 import { BookIdea, ChapterOutline, AppStep, User } from '../types';
 import { generateChapterOutlines } from '../utils/geminiApi';
 import { deductCreditsForChapterGeneration } from '../utils/creditManager';
@@ -21,6 +22,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   const [bookIdea, setBookIdea] = useState<BookIdea | null>(null);
   const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [creditRefreshKey, setCreditRefreshKey] = useState(0);
 
   const parseChapterOutlines = (text: string): ChapterOutline[] => {
     const chapters: ChapterOutline[] = [];
@@ -89,9 +91,31 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
     setOutlines([]);
   };
 
+  const handleStartDirectorMode = () => {
+    setCurrentStep('director');
+  };
+
+  const handleExitDirectorMode = () => {
+    setCurrentStep('idea');
+  };
+
+  const handleCreditUpdate = () => {
+    setCreditRefreshKey((prev) => prev + 1);
+  };
+
+  if (currentStep === 'director') {
+    return (
+      <DirectorMode
+        userId={user.id}
+        onExit={handleExitDirectorMode}
+        onCreditUpdate={handleCreditUpdate}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation userEmail={user.email} />
+      <Navigation userEmail={user.email} onStartDirectorMode={handleStartDirectorMode} />
       <SaleBanner />
 
       <main className="py-4 sm:py-8 px-2 sm:px-4 lg:px-8">

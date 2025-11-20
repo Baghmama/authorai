@@ -19,7 +19,7 @@ export interface BookProject {
   isComplete: boolean;
 }
 
-export type AppStep = 'idea' | 'outlines' | 'writing' | 'book';
+export type AppStep = 'idea' | 'outlines' | 'writing' | 'book' | 'director';
 
 export interface User {
   id: string;
@@ -42,4 +42,30 @@ export interface PaymentOrder {
   amount: number;
   currency: string;
   receipt: string;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export interface DirectorChapter {
+  id: string;
+  project_id: string;
+  chapter_number: number;
+  title: string;
+  content: string;
+  conversation_history: ChatMessage[];
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface DirectorProject {
+  id: string;
+  user_id: string;
+  title: string;
+  chapters: DirectorChapter[];
+  created_at: Date;
+  updated_at: Date;
 }
