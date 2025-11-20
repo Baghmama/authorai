@@ -7,7 +7,8 @@ import IdeaForm from './IdeaForm';
 import ChapterOutlines from './ChapterOutlines';
 import ChapterWriter from './ChapterWriter';
 import BookCompiler from './BookCompiler';
-import DirectorMode from './DirectorMode';
+import { DirectorDashboard } from './DirectorDashboard';
+import { DirectorProjectDetail } from './DirectorProjectDetail';
 import { BookIdea, ChapterOutline, AppStep, User } from '../types';
 import { generateChapterOutlines } from '../utils/geminiApi';
 import { deductCreditsForChapterGeneration } from '../utils/creditManager';
@@ -23,6 +24,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   const [outlines, setOutlines] = useState<ChapterOutline[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [creditRefreshKey, setCreditRefreshKey] = useState(0);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const parseChapterOutlines = (text: string): ChapterOutline[] => {
     const chapters: ChapterOutline[] = [];
@@ -97,6 +99,15 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
 
   const handleExitDirectorMode = () => {
     setCurrentStep('idea');
+    setSelectedProjectId(null);
+  };
+
+  const handleSelectProject = (projectId: string) => {
+    setSelectedProjectId(projectId);
+  };
+
+  const handleBackToProjects = () => {
+    setSelectedProjectId(null);
   };
 
   const handleCreditUpdate = () => {
@@ -104,11 +115,17 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   };
 
   if (currentStep === 'director') {
+    if (selectedProjectId) {
+      return (
+        <DirectorProjectDetail
+          projectId={selectedProjectId}
+          onBack={handleBackToProjects}
+        />
+      );
+    }
     return (
-      <DirectorMode
-        userId={user.id}
-        onExit={handleExitDirectorMode}
-        onCreditUpdate={handleCreditUpdate}
+      <DirectorDashboard
+        onSelectProject={handleSelectProject}
       />
     );
   }
