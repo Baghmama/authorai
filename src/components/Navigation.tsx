@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Menu, X, Shield, Settings, Wand2 } from 'lucide-react';
+import { BookOpen, Menu, X, Shield, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CreditDisplay from './CreditDisplay';
 import { checkIsAdmin } from '../utils/adminApi';
@@ -7,10 +7,9 @@ import { checkIsAdmin } from '../utils/adminApi';
 interface NavigationProps {
   userEmail?: string;
   onSignOut?: () => void;
-  onStartDirectorMode?: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ userEmail, onStartDirectorMode }) => {
+const Navigation: React.FC<NavigationProps> = ({ userEmail }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -43,17 +42,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onStartDirectorMode 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <CreditDisplay />
-
-            {onStartDirectorMode && (
-              <button
-                onClick={onStartDirectorMode}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-sm"
-              >
-                <Wand2 className="h-4 w-4" />
-                <span className="text-sm font-poppins">Director Mode</span>
-              </button>
-            )}
-
+            
             {isAdmin && (
               <Link
                 to="/admin"
@@ -63,7 +52,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onStartDirectorMode 
                 <span className="text-sm font-poppins">Admin</span>
               </Link>
             )}
-
+            
             <Link
               to="/account"
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
@@ -71,7 +60,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onStartDirectorMode 
               <Settings className="h-4 w-4" />
               <span className="text-sm font-poppins">Account</span>
             </Link>
-
+            
             {userEmail && (
               <span className="text-sm text-gray-600 font-poppins max-w-48 truncate">
                 {userEmail}
@@ -102,23 +91,7 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail, onStartDirectorMode 
               <div className="pb-4 border-b border-gray-200">
                 <CreditDisplay />
               </div>
-
-              {/* Director Mode - Mobile */}
-              {onStartDirectorMode && (
-                <div className="pb-4 border-b border-gray-200">
-                  <button
-                    onClick={() => {
-                      onStartDirectorMode();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-sm"
-                  >
-                    <Wand2 className="h-4 w-4" />
-                    <span className="text-sm font-poppins">Director Mode</span>
-                  </button>
-                </div>
-              )}
-
+              
               {/* Admin Link - Mobile */}
               {isAdmin && (
                 <div className="pb-4 border-b border-gray-200">

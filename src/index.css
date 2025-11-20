@@ -1,17 +1,6 @@
-/* Quill Editor Styles */
-.ql-container {
-  font-size: 16px;
-  height: calc(100% - 42px);
-}
-
-.ql-editor {
-  min-height: 200px;
-  padding: 16px;
-}
-
-.ql-editor:focus {
-  outline: none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Custom slider styles */
 .slider::-webkit-slider-thumb {
