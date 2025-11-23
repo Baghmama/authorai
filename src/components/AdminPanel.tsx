@@ -74,6 +74,12 @@ const AdminPanel: React.FC = () => {
     checkSuperAdminStatus();
   }, []);
 
+  useEffect(() => {
+    if (users.length > 0) {
+      loadCreditTasks();
+    }
+  }, [users]);
+
   const checkSuperAdminStatus = async () => {
     const superAdmin = await checkIsSuperAdmin();
     setIsSuperAdmin(superAdmin);
@@ -88,10 +94,8 @@ const AdminPanel: React.FC = () => {
       ]);
       setUsers(usersData);
       setLogs(logsData);
-      await loadCreditTasks();
     } catch (error) {
-      console.error('Error loading admin data:', error);
-      alert('Failed to load admin data. Please try again.');
+      console.error('Error loading admin data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -99,20 +103,20 @@ const AdminPanel: React.FC = () => {
 
   const loadCreditTasks = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: tasks, error } = await supabase
         .from('credit_tasks')
-        .select(`
-          *,
-          user_email:user_id(email)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const tasksWithEmail = data.map((task: any) => ({
-        ...task,
-        user_email: task.user_email?.email || 'Unknown'
-      }));
+      const tasksWithEmail = (tasks || []).map((task: any) => {
+        const user = users.find(u => u.id === task.user_id);
+        return {
+          ...task,
+          user_email: user?.email || 'Unknown'
+        };
+      });
 
       setCreditTasks(tasksWithEmail);
     } catch (error) {
