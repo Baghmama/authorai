@@ -24,6 +24,16 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-900 text-white">
+
+              <button
+                onClick={handleOpenModal}
+                className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
+              >
+                <Gift className="h-5 w-5" />
+                200 + 200 Free Credits
+              </button>
+
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -132,13 +142,7 @@ const Footer: React.FC = () => {
               © {new Date().getFullYear()} Author AI. All rights reserved.
             </p>
             {userId && (
-              <button
-                onClick={handleOpenModal}
-                className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
-              >
-                <Gift className="h-5 w-5" />
-                200 + 200 Free Credits
-              </button>
+
             )}
           </div>
         </div>
