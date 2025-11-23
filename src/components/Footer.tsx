@@ -137,7 +137,7 @@ const Footer: React.FC = () => {
                 className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
               >
                 <Gift className="h-5 w-5" />
-                200 = 200 Free Credits
+                200 + 200 Free Credits
               </button>
             )}
           </div>
