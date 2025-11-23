@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Gift } from 'lucide-react';
+import FreeCreditsModal from './FreeCreditsModal';
+import { supabase } from '../lib/supabase';
 
 const Footer: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    };
+    getUser();
+  }, []);
+
+  const handleOpenModal = () => {
+    if (userId) {
+      setShowModal(true);
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -107,12 +126,31 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} Author AI. All rights reserved.
-          </p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-gray-400 text-sm">
+              © {new Date().getFullYear()} Author AI. All rights reserved.
+            </p>
+            {userId && (
+              <button
+                onClick={handleOpenModal}
+                className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
+              >
+                <Gift className="h-5 w-5" />
+                200 = 200 Free Credits
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {userId && (
+        <FreeCreditsModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          userId={userId}
+        />
+      )}
     </footer>
   );
 };

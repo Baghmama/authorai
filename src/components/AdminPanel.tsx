@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Shield, 
-  CreditCard, 
-  Ban, 
-  UserCheck, 
-  Search, 
-  Edit3, 
-  Save, 
-  X, 
+import {
+  Users,
+  Shield,
+  CreditCard,
+  Ban,
+  UserCheck,
+  Search,
+  Edit3,
+  Save,
+  X,
   Calendar,
   AlertTriangle,
   CheckCircle,
   Clock,
   UserPlus,
-  Activity
+  Activity,
+  Gift,
+  Image,
+  ExternalLink
 } from 'lucide-react';
 import { 
   AdminUser, 
@@ -27,10 +30,26 @@ import {
   getAdminLogs,
   checkIsSuperAdmin
 } from '../utils/adminApi';
+import { supabase } from '../lib/supabase';
+
+interface CreditTask {
+  id: string;
+  user_id: string;
+  task_type: string;
+  status: string;
+  screenshot_url: string | null;
+  submission_data: any;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  credits_awarded: number;
+  created_at: string;
+  user_email?: string;
+}
 
 const AdminPanel: React.FC = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [logs, setLogs] = useState<AdminLog[]>([]);
+  const [creditTasks, setCreditTasks] = useState<CreditTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingCredits, setEditingCredits] = useState<string | null>(null);
@@ -38,7 +57,8 @@ const AdminPanel: React.FC = () => {
   const [showBanModal, setShowBanModal] = useState<string | null>(null);
   const [showAddAdminModal, setShowAddAdminModal] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<'users' | 'logs'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'logs' | 'tasks'>('users');
+  const [viewingScreenshot, setViewingScreenshot] = useState<string | null>(null);
 
   // Ban modal state
   const [banReason, setBanReason] = useState('');
@@ -68,11 +88,94 @@ const AdminPanel: React.FC = () => {
       ]);
       setUsers(usersData);
       setLogs(logsData);
+      await loadCreditTasks();
     } catch (error) {
       console.error('Error loading admin data:', error);
       alert('Failed to load admin data. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCreditTasks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('credit_tasks')
+        .select(`
+          *,
+          user_email:user_id(email)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const tasksWithEmail = data.map((task: any) => ({
+        ...task,
+        user_email: task.user_email?.email || 'Unknown'
+      }));
+
+      setCreditTasks(tasksWithEmail);
+    } catch (error) {
+      console.error('Error loading credit tasks:', error);
+    }
+  };
+
+  const handleApproveTask = async (taskId: string, userId: string, screenshotUrl: string | null) => {
+    try {
+      const { error } = await supabase
+        .from('credit_tasks')
+        .update({
+          status: 'approved',
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      if (screenshotUrl) {
+        await supabase.storage
+          .from('review-screenshots')
+          .remove([screenshotUrl]);
+      }
+
+      alert('Task approved! Credits awarded automatically.');
+      await loadCreditTasks();
+    } catch (error: any) {
+      console.error('Error approving task:', error);
+      alert('Failed to approve task: ' + error.message);
+    }
+  };
+
+  const handleRejectTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from('credit_tasks')
+        .update({
+          status: 'rejected',
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      alert('Task rejected.');
+      await loadCreditTasks();
+    } catch (error: any) {
+      console.error('Error rejecting task:', error);
+      alert('Failed to reject task: ' + error.message);
+    }
+  };
+
+  const viewScreenshot = async (screenshotUrl: string) => {
+    try {
+      const { data } = supabase.storage
+        .from('review-screenshots')
+        .getPublicUrl(screenshotUrl);
+
+      setViewingScreenshot(data.publicUrl);
+    } catch (error) {
+      console.error('Error loading screenshot:', error);
+      alert('Failed to load screenshot');
     }
   };
 
@@ -210,6 +313,19 @@ const AdminPanel: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Users className="h-5 w-5" />
                 <span>Users ({users.length})</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('tasks')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'tasks'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Gift className="h-5 w-5" />
+                <span>Credit Tasks ({creditTasks.filter(t => t.status === 'submitted').length})</span>
               </div>
             </button>
             <button
@@ -376,6 +492,127 @@ const AdminPanel: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Credit Tasks Tab */}
+        {activeTab === 'tasks' && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      User
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Task Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Submitted
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {creditTasks.map((task) => (
+                    <tr key={task.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{task.user_email}</div>
+                        <div className="text-xs text-gray-500">{task.user_id.substring(0, 8)}...</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          {task.task_type === 'twitter_share' ? (
+                            <>
+                              <ExternalLink className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm">Twitter Share</span>
+                            </>
+                          ) : (
+                            <>
+                              <Image className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">Play Store Review</span>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          task.status === 'approved'
+                            ? 'bg-green-100 text-green-800'
+                            : task.status === 'submitted'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : task.status === 'rejected'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                        </span>
+                        {task.status === 'approved' && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            +{task.credits_awarded} credits
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(task.created_at)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center gap-2">
+                          {task.status === 'submitted' && (
+                            <>
+                              {task.screenshot_url && (
+                                <button
+                                  onClick={() => viewScreenshot(task.screenshot_url!)}
+                                  className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                                >
+                                  <Image className="h-4 w-4" />
+                                  View
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleApproveTask(task.id, task.user_id, task.screenshot_url)}
+                                className="text-green-600 hover:text-green-900 flex items-center gap-1"
+                              >
+                                <CheckCircle className="h-4 w-4" />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleRejectTask(task.id)}
+                                className="text-red-600 hover:text-red-900 flex items-center gap-1"
+                              >
+                                <X className="h-4 w-4" />
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          {task.status === 'approved' && (
+                            <span className="text-gray-400 text-xs">
+                              Reviewed {task.reviewed_at && formatDate(task.reviewed_at)}
+                            </span>
+                          )}
+                          {task.status === 'rejected' && (
+                            <span className="text-gray-400 text-xs">Rejected</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {creditTasks.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                        No credit tasks found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
@@ -578,6 +815,30 @@ const AdminPanel: React.FC = () => {
               >
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Screenshot Viewer Modal */}
+      {viewingScreenshot && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Review Screenshot</h3>
+              <button
+                onClick={() => setViewingScreenshot(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-4 overflow-auto max-h-[calc(90vh-80px)]">
+              <img
+                src={viewingScreenshot}
+                alt="Review screenshot"
+                className="w-full h-auto rounded-lg"
+              />
             </div>
           </div>
         </div>
