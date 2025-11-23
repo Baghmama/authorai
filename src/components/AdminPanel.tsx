@@ -172,11 +172,13 @@ const AdminPanel: React.FC = () => {
 
   const viewScreenshot = async (screenshotUrl: string) => {
     try {
-      const { data } = supabase.storage
+      const { data, error } = await supabase.storage
         .from('review-screenshots')
-        .getPublicUrl(screenshotUrl);
+        .createSignedUrl(screenshotUrl, 60);
 
-      setViewingScreenshot(data.publicUrl);
+      if (error) throw error;
+
+      setViewingScreenshot(data.signedUrl);
     } catch (error) {
       console.error('Error loading screenshot:', error);
       alert('Failed to load screenshot');
