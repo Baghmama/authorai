@@ -2,7 +2,10 @@
 const GEMINI_API_KEYS = [
   import.meta.env.VITE_GEMINI_API_KEY,
   'AIzaSyDRXcQZUCV1-B2_L11seSLjSs4T6DyjDQw',
-  'AIzaSyBixinCaQ1Y5qpHqmEuuCn5o5RkXgxbRJA'
+  'AIzaSyBixinCaQ1Y5qpHqmEuuCn5o5RkXgxbRJA',
+  'AIzaSyDzAGh8wdDUiEGtuQfxPKw2DLWdmvU3-JE',
+  'AIzaSyDMoVHNs7PI75XnT_qG_xTUDJy07XgrSOI',
+  'AIzaSyCLr5xzHn6AaVBDZUApyd1bRR-np3JLaLg'
 ].filter(key => key && key.trim() !== ''); // Remove empty keys
 
 let currentKeyIndex = 0;
