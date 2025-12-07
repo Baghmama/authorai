@@ -9,7 +9,7 @@ import ChapterWriter from './ChapterWriter';
 import BookCompiler from './BookCompiler';
 import { BookIdea, ChapterOutline, AppStep, User } from '../types';
 import { generateChapterOutlines } from '../utils/geminiApi';
-import { deductCreditsForChapterGeneration } from '../utils/creditManager';
+import { deductCreditsForChapterGeneration, getUserCredits, calculateCreditsNeeded } from '../utils/creditManager';
 import { supabase } from '../lib/supabase';
 
 interface AppContentProps {
@@ -49,28 +49,17 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
 
     try {
       // Check if user has enough credits BEFORE generating
-      const user = await supabase.auth.getUser();
-      if (!user.data.user) {
-        alert('Please sign in to continue');
-        setIsGenerating(false);
-        return;
-      }
+      const userCredits = await getUserCredits();
 
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('credits')
-        .eq('id', user.data.user.id)
-        .single();
-
-      if (userError || !userData) {
+      if (!userCredits) {
         alert('Failed to check credits. Please try again.');
         setIsGenerating(false);
         return;
       }
 
-      const creditsNeeded = idea.chapters * 10;
-      if (userData.credits < creditsNeeded) {
-        alert(`Insufficient credits. You need ${creditsNeeded} credits but only have ${userData.credits}.`);
+      const creditsNeeded = calculateCreditsNeeded(idea.chapters);
+      if (userCredits.credits < creditsNeeded) {
+        alert(`Insufficient credits. You need ${creditsNeeded} credits but only have ${userCredits.credits}.`);
         setIsGenerating(false);
         return;
       }
