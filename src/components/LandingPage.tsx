@@ -12,6 +12,7 @@ import {
   Shield,
 } from 'lucide-react';
 import Footer from './Footer';
+import ServiceSuspensionBanner from './ServiceSuspensionBanner';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -20,6 +21,7 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   return (
     <div className="min-h-screen bg-white">
+      <ServiceSuspensionBanner />
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b border-gray-200" aria-label="Main">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
