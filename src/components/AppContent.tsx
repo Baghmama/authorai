@@ -10,6 +10,7 @@ import BookCompiler from './BookCompiler';
 import { BookIdea, ChapterOutline, AppStep, User } from '../types';
 import { generateChapterOutlines } from '../utils/geminiApi';
 import { deductCreditsForChapterGeneration } from '../utils/creditManager';
+import { supabase } from '../lib/supabase';
 
 interface AppContentProps {
   user: User;
@@ -45,31 +46,57 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   const handleIdeaSubmit = async (idea: BookIdea) => {
     setIsGenerating(true);
     setBookIdea(idea);
-    
+
     try {
-      // Check and deduct credits first
-      const creditResult = await deductCreditsForChapterGeneration(idea.chapters);
-      
-      if (!creditResult.success) {
-        alert(creditResult.error || 'Failed to deduct credits');
+      // Check if user has enough credits BEFORE generating
+      const user = await supabase.auth.getUser();
+      if (!user.data.user) {
+        alert('Please sign in to continue');
         setIsGenerating(false);
         return;
       }
-      
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('credits')
+        .eq('id', user.data.user.id)
+        .single();
+
+      if (userError || !userData) {
+        alert('Failed to check credits. Please try again.');
+        setIsGenerating(false);
+        return;
+      }
+
+      const creditsNeeded = idea.chapters * 10;
+      if (userData.credits < creditsNeeded) {
+        alert(`Insufficient credits. You need ${creditsNeeded} credits but only have ${userData.credits}.`);
+        setIsGenerating(false);
+        return;
+      }
+
+      // Generate outlines FIRST
       const outlinesText = await generateChapterOutlines(
         idea.idea,
         idea.language,
         idea.chapters,
         idea.type
       );
-      
+
       const parsedOutlines = parseChapterOutlines(outlinesText);
+
+      // Only deduct credits AFTER successful generation
+      const creditResult = await deductCreditsForChapterGeneration(idea.chapters);
+
+      if (!creditResult.success) {
+        alert('Chapter outlines generated but failed to deduct credits. Please contact support.');
+      }
+
       setOutlines(parsedOutlines);
       setCurrentStep('outlines');
     } catch (error) {
-      // If outline generation fails after credits were deducted,
-      // we should ideally refund the credits, but for now just show error
-      alert('Failed to generate chapter outlines. Please contact support if credits were deducted.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert('Failed to generate chapter outlines: ' + errorMessage);
     } finally {
       setIsGenerating(false);
     }

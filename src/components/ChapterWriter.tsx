@@ -94,31 +94,31 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
     }));
 
     try {
-      // Deduct credits first
-      const creditResult = await deductCreditsForChapterGeneration(1); // 1 chapter = 6 credits
-      
-      if (!creditResult.success) {
-        alert(creditResult.error || 'Failed to deduct credits');
-        return;
-      }
-
-      // Regenerate the chapter
+      // Regenerate the chapter FIRST
       const content = await writeChapter(
         chapter.title,
         chapter.outline,
         bookIdea.language,
         bookIdea.type
       );
-      
+
+      // Only deduct credits AFTER successful generation
+      const creditResult = await deductCreditsForChapterGeneration(1); // 1 chapter = 6 credits
+
+      if (!creditResult.success) {
+        alert('Chapter regenerated but failed to deduct credits. Please contact support.');
+      }
+
       const updatedOutlines = outlines.map(c =>
         c.id === chapterId
           ? { ...c, content, isWritten: true }
           : c
       );
-      
+
       onUpdateOutlines(updatedOutlines);
     } catch (error) {
-      alert('Failed to regenerate chapter. Please contact support if credits were deducted.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert('Failed to regenerate chapter: ' + errorMessage);
     } finally {
       setRegeneratingChapterId(null);
     }
