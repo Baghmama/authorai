@@ -18,31 +18,16 @@ const GEMINI_API_KEYS = [
 const GROQ_API_KEYS = [
   Deno.env.get('GROQ_API_KEY_1'),
   Deno.env.get('GROQ_API_KEY_2'),
-  Deno.env.get('GROQ_API_KEY_3'),
-  Deno.env.get('GROQ_API_KEY_4')
-].filter(key => key && key.trim() !== '');
-
-const HUGGINGFACE_API_KEYS = [
-  Deno.env.get('HUGGINGFACE_API_KEY_1'),
-  Deno.env.get('HUGGINGFACE_API_KEY_2'),
-  Deno.env.get('HUGGINGFACE_API_KEY_3')
+  Deno.env.get('GROQ_API_KEY_3')
 ].filter(key => key && key.trim() !== '');
 
 let groqKeyIndex = 0;
-let hfKeyIndex = 0;
 let geminiKeyIndex = 0;
 
 function getNextGroqKey(): string {
   if (GROQ_API_KEYS.length === 0) throw new Error('No Groq keys available');
   const key = GROQ_API_KEYS[groqKeyIndex];
   groqKeyIndex = (groqKeyIndex + 1) % GROQ_API_KEYS.length;
-  return key;
-}
-
-function getNextHFKey(): string {
-  if (HUGGINGFACE_API_KEYS.length === 0) throw new Error('No HuggingFace keys available');
-  const key = HUGGINGFACE_API_KEYS[hfKeyIndex];
-  hfKeyIndex = (hfKeyIndex + 1) % HUGGINGFACE_API_KEYS.length;
   return key;
 }
 
@@ -90,45 +75,6 @@ async function tryGroq(prompt: string, retryCount = 0): Promise<string> {
   return data.choices[0].message.content;
 }
 
-async function tryHuggingFace(prompt: string, retryCount = 0): Promise<string> {
-  if (HUGGINGFACE_API_KEYS.length === 0) throw new Error('No HuggingFace API keys available');
-  if (retryCount >= HUGGINGFACE_API_KEYS.length) throw new Error('All HuggingFace keys exhausted');
-
-  const apiKey = getNextHFKey();
-  const maskedKey = apiKey.substring(0, 6) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log(`Trying HuggingFace with key: ${maskedKey} (attempt ${retryCount + 1}/${HUGGINGFACE_API_KEYS.length})`);
-
-  const response = await fetch('https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      inputs: prompt,
-      parameters: {
-        max_new_tokens: 4000,
-        temperature: 0.7,
-        return_full_text: false
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    console.error(`HuggingFace key ${maskedKey} failed: ${response.status}`);
-    if (response.status === 429 || response.status === 503) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return tryHuggingFace(prompt, retryCount + 1);
-    }
-    throw new Error(`HuggingFace failed: ${response.status} ${error}`);
-  }
-
-  const data = await response.json();
-  console.log(`HuggingFace API success with key ${maskedKey}!`);
-  return data[0].generated_text;
-}
-
 async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
   if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini API keys available');
   if (retryCount >= GEMINI_API_KEYS.length) throw new Error('All Gemini keys exhausted');
@@ -165,7 +111,6 @@ async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
 async function generateContent(prompt: string): Promise<string> {
   const providers = [
     { name: 'Groq', fn: () => tryGroq(prompt) },
-    { name: 'HuggingFace', fn: () => tryHuggingFace(prompt) },
     { name: 'Gemini', fn: () => tryGemini(prompt) }
   ];
 
