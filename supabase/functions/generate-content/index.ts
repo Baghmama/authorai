@@ -41,7 +41,7 @@ async function makeGeminiRequest(prompt: string, retryCount = 0): Promise<string
   const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
   console.log(`Attempting with API key: ${maskedKey}`);
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(url, {
