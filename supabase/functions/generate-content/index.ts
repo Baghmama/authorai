@@ -15,29 +15,56 @@ const GEMINI_API_KEYS = [
   Deno.env.get('GEMINI_API_KEY_6')
 ].filter(key => key && key.trim() !== '');
 
-const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY') || '';
-const HUGGINGFACE_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY') || '';
+const GROQ_API_KEYS = [
+  Deno.env.get('GROQ_API_KEY_1'),
+  Deno.env.get('GROQ_API_KEY_2'),
+  Deno.env.get('GROQ_API_KEY_3'),
+  Deno.env.get('GROQ_API_KEY_4')
+].filter(key => key && key.trim() !== '');
 
-let currentKeyIndex = 0;
+const HUGGINGFACE_API_KEYS = [
+  Deno.env.get('HUGGINGFACE_API_KEY_1'),
+  Deno.env.get('HUGGINGFACE_API_KEY_2'),
+  Deno.env.get('HUGGINGFACE_API_KEY_3')
+].filter(key => key && key.trim() !== '');
 
-function getNextApiKey(): string {
-  if (GEMINI_API_KEYS.length === 0) {
-    throw new Error('No valid Gemini API keys available');
-  }
+let groqKeyIndex = 0;
+let hfKeyIndex = 0;
+let geminiKeyIndex = 0;
 
-  const key = GEMINI_API_KEYS[currentKeyIndex];
-  currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+function getNextGroqKey(): string {
+  if (GROQ_API_KEYS.length === 0) throw new Error('No Groq keys available');
+  const key = GROQ_API_KEYS[groqKeyIndex];
+  groqKeyIndex = (groqKeyIndex + 1) % GROQ_API_KEYS.length;
   return key;
 }
 
-async function tryGroq(prompt: string): Promise<string> {
-  if (!GROQ_API_KEY) throw new Error('Groq API key not available');
+function getNextHFKey(): string {
+  if (HUGGINGFACE_API_KEYS.length === 0) throw new Error('No HuggingFace keys available');
+  const key = HUGGINGFACE_API_KEYS[hfKeyIndex];
+  hfKeyIndex = (hfKeyIndex + 1) % HUGGINGFACE_API_KEYS.length;
+  return key;
+}
 
-  console.log('Trying Groq API...');
+function getNextGeminiKey(): string {
+  if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini keys available');
+  const key = GEMINI_API_KEYS[geminiKeyIndex];
+  geminiKeyIndex = (geminiKeyIndex + 1) % GEMINI_API_KEYS.length;
+  return key;
+}
+
+async function tryGroq(prompt: string, retryCount = 0): Promise<string> {
+  if (GROQ_API_KEYS.length === 0) throw new Error('No Groq API keys available');
+  if (retryCount >= GROQ_API_KEYS.length) throw new Error('All Groq keys exhausted');
+
+  const apiKey = getNextGroqKey();
+  const maskedKey = apiKey.substring(0, 6) + '...' + apiKey.substring(apiKey.length - 4);
+  console.log(`Trying Groq with key: ${maskedKey} (attempt ${retryCount + 1}/${GROQ_API_KEYS.length})`);
+
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${GROQ_API_KEY}`,
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -50,22 +77,31 @@ async function tryGroq(prompt: string): Promise<string> {
 
   if (!response.ok) {
     const error = await response.text();
+    console.error(`Groq key ${maskedKey} failed: ${response.status}`);
+    if (response.status === 429 || response.status === 403) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return tryGroq(prompt, retryCount + 1);
+    }
     throw new Error(`Groq failed: ${response.status} ${error}`);
   }
 
   const data = await response.json();
-  console.log('Groq API success!');
+  console.log(`Groq API success with key ${maskedKey}!`);
   return data.choices[0].message.content;
 }
 
-async function tryHuggingFace(prompt: string): Promise<string> {
-  if (!HUGGINGFACE_API_KEY) throw new Error('HuggingFace API key not available');
+async function tryHuggingFace(prompt: string, retryCount = 0): Promise<string> {
+  if (HUGGINGFACE_API_KEYS.length === 0) throw new Error('No HuggingFace API keys available');
+  if (retryCount >= HUGGINGFACE_API_KEYS.length) throw new Error('All HuggingFace keys exhausted');
 
-  console.log('Trying HuggingFace API...');
+  const apiKey = getNextHFKey();
+  const maskedKey = apiKey.substring(0, 6) + '...' + apiKey.substring(apiKey.length - 4);
+  console.log(`Trying HuggingFace with key: ${maskedKey} (attempt ${retryCount + 1}/${HUGGINGFACE_API_KEYS.length})`);
+
   const response = await fetch('https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -80,24 +116,26 @@ async function tryHuggingFace(prompt: string): Promise<string> {
 
   if (!response.ok) {
     const error = await response.text();
+    console.error(`HuggingFace key ${maskedKey} failed: ${response.status}`);
+    if (response.status === 429 || response.status === 503) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return tryHuggingFace(prompt, retryCount + 1);
+    }
     throw new Error(`HuggingFace failed: ${response.status} ${error}`);
   }
 
   const data = await response.json();
-  console.log('HuggingFace API success!');
+  console.log(`HuggingFace API success with key ${maskedKey}!`);
   return data[0].generated_text;
 }
 
 async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
-  const maxRetries = GEMINI_API_KEYS.length;
+  if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini API keys available');
+  if (retryCount >= GEMINI_API_KEYS.length) throw new Error('All Gemini keys exhausted');
 
-  if (retryCount >= maxRetries) {
-    throw new Error('All Gemini API keys exhausted');
-  }
-
-  const apiKey = getNextApiKey();
+  const apiKey = getNextGeminiKey();
   const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log(`Trying Gemini with key: ${maskedKey}`);
+  console.log(`Trying Gemini with key: ${maskedKey} (attempt ${retryCount + 1}/${GEMINI_API_KEYS.length})`);
 
   const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -111,8 +149,8 @@ async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    if (response.status === 429 || response.status === 403) {
-      console.warn(`Gemini key ${maskedKey} exhausted, trying next...`);
+    console.error(`Gemini key ${maskedKey} failed: ${response.status}`);
+    if (response.status === 429 || response.status === 403 || response.status === 404) {
       await new Promise(resolve => setTimeout(resolve, 500));
       return tryGemini(prompt, retryCount + 1);
     }
@@ -120,7 +158,7 @@ async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
   }
 
   const data = await response.json();
-  console.log('Gemini API success!');
+  console.log(`Gemini API success with key ${maskedKey}!`);
   return data.candidates[0].content.parts[0].text;
 }
 
