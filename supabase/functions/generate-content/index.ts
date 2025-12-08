@@ -29,14 +29,20 @@ function getNextApiKey(): string {
 
 async function makeGeminiRequest(prompt: string, retryCount = 0): Promise<string> {
   const maxRetries = GEMINI_API_KEYS.length;
-  
+
+  console.log(`Total API keys available: ${GEMINI_API_KEYS.length}`);
+  console.log(`Current retry attempt: ${retryCount + 1}/${maxRetries}`);
+
   if (retryCount >= maxRetries) {
-    throw new Error('All API keys have been exhausted. Please try again later.');
+    throw new Error(`All ${maxRetries} API keys have been exhausted. Please check your API keys in Supabase Dashboard.`);
   }
-  
+
   const apiKey = getNextApiKey();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-  
+  const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
+  console.log(`Attempting with API key: ${maskedKey}`);
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -52,25 +58,36 @@ async function makeGeminiRequest(prompt: string, retryCount = 0): Promise<string
       })
     });
 
+    console.log(`Response status: ${response.status}`);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error: ${response.status} - ${errorText}`);
+
       if (response.status === 429 || response.status === 403) {
-        console.warn(`API key rate limited or quota exceeded. Trying next key...`);
+        console.warn(`Key ${maskedKey} rate limited or quota exceeded. Trying next key...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         return makeGeminiRequest(prompt, retryCount + 1);
       }
-      const errorText = await response.text();
+
       throw new Error(`API request failed: ${response.status} ${errorText}`);
     }
 
     const data = await response.json();
-    
+
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Invalid response format:', JSON.stringify(data));
       throw new Error('Invalid response format from Gemini API');
     }
-    
+
+    console.log(`Successfully generated content with key ${maskedKey}`);
     return data.candidates[0].content.parts[0].text;
   } catch (error) {
+    console.error(`Error with key ${maskedKey}:`, error);
+
     if (retryCount < maxRetries - 1) {
-      console.warn(`Error with API key:`, error);
+      console.warn(`Retrying with next key...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
       return makeGeminiRequest(prompt, retryCount + 1);
     }
     throw error;
