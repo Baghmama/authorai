@@ -15,83 +15,134 @@ const GEMINI_API_KEYS = [
   Deno.env.get('GEMINI_API_KEY_6')
 ].filter(key => key && key.trim() !== '');
 
+const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY') || '';
+const HUGGINGFACE_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY') || '';
+
 let currentKeyIndex = 0;
 
 function getNextApiKey(): string {
   if (GEMINI_API_KEYS.length === 0) {
     throw new Error('No valid Gemini API keys available');
   }
-  
+
   const key = GEMINI_API_KEYS[currentKeyIndex];
   currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
   return key;
 }
 
-async function makeGeminiRequest(prompt: string, retryCount = 0): Promise<string> {
+async function tryGroq(prompt: string): Promise<string> {
+  if (!GROQ_API_KEY) throw new Error('Groq API key not available');
+
+  console.log('Trying Groq API...');
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${GROQ_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 8000,
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Groq failed: ${response.status} ${error}`);
+  }
+
+  const data = await response.json();
+  console.log('Groq API success!');
+  return data.choices[0].message.content;
+}
+
+async function tryHuggingFace(prompt: string): Promise<string> {
+  if (!HUGGINGFACE_API_KEY) throw new Error('HuggingFace API key not available');
+
+  console.log('Trying HuggingFace API...');
+  const response = await fetch('https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      inputs: prompt,
+      parameters: {
+        max_new_tokens: 4000,
+        temperature: 0.7,
+        return_full_text: false
+      }
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`HuggingFace failed: ${response.status} ${error}`);
+  }
+
+  const data = await response.json();
+  console.log('HuggingFace API success!');
+  return data[0].generated_text;
+}
+
+async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
   const maxRetries = GEMINI_API_KEYS.length;
 
-  console.log(`Total API keys available: ${GEMINI_API_KEYS.length}`);
-  console.log(`Current retry attempt: ${retryCount + 1}/${maxRetries}`);
-
   if (retryCount >= maxRetries) {
-    throw new Error(`All ${maxRetries} API keys have been exhausted. Please check your API keys in Supabase Dashboard.`);
+    throw new Error('All Gemini API keys exhausted');
   }
 
   const apiKey = getNextApiKey();
   const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log(`Attempting with API key: ${maskedKey}`);
+  console.log(`Trying Gemini with key: ${maskedKey}`);
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }]
-      })
-    });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }]
+    })
+  });
 
-    console.log(`Response status: ${response.status}`);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`API Error: ${response.status} - ${errorText}`);
-
-      if (response.status === 429 || response.status === 403) {
-        console.warn(`Key ${maskedKey} rate limited or quota exceeded. Trying next key...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return makeGeminiRequest(prompt, retryCount + 1);
-      }
-
-      throw new Error(`API request failed: ${response.status} ${errorText}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    if (response.status === 429 || response.status === 403) {
+      console.warn(`Gemini key ${maskedKey} exhausted, trying next...`);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return tryGemini(prompt, retryCount + 1);
     }
-
-    const data = await response.json();
-
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      console.error('Invalid response format:', JSON.stringify(data));
-      throw new Error('Invalid response format from Gemini API');
-    }
-
-    console.log(`Successfully generated content with key ${maskedKey}`);
-    return data.candidates[0].content.parts[0].text;
-  } catch (error) {
-    console.error(`Error with key ${maskedKey}:`, error);
-
-    if (retryCount < maxRetries - 1) {
-      console.warn(`Retrying with next key...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return makeGeminiRequest(prompt, retryCount + 1);
-    }
-    throw error;
+    throw new Error(`Gemini failed: ${response.status} ${errorText}`);
   }
+
+  const data = await response.json();
+  console.log('Gemini API success!');
+  return data.candidates[0].content.parts[0].text;
+}
+
+async function generateContent(prompt: string): Promise<string> {
+  const providers = [
+    { name: 'Groq', fn: () => tryGroq(prompt) },
+    { name: 'HuggingFace', fn: () => tryHuggingFace(prompt) },
+    { name: 'Gemini', fn: () => tryGemini(prompt) }
+  ];
+
+  for (const provider of providers) {
+    try {
+      console.log(`\n=== Attempting ${provider.name} ===`);
+      const result = await provider.fn();
+      return result;
+    } catch (error) {
+      console.error(`${provider.name} failed:`, error instanceof Error ? error.message : error);
+      console.log(`Falling back to next provider...\n`);
+    }
+  }
+
+  throw new Error('All AI providers exhausted. Please try again later.');
 }
 
 Deno.serve(async (req: Request) => {
@@ -131,7 +182,7 @@ Deno.serve(async (req: Request) => {
       throw new Error('Invalid request type');
     }
 
-    const result = await makeGeminiRequest(prompt);
+    const result = await generateContent(prompt);
 
     return new Response(
       JSON.stringify({ success: true, content: result }),
