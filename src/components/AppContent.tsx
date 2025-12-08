@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import SaleBanner from './SaleBanner';
-import ServiceSuspensionBanner from './ServiceSuspensionBanner';
 import ProgressIndicator from './ProgressIndicator';
 import IdeaForm from './IdeaForm';
 import ChapterOutlines from './ChapterOutlines';
@@ -108,7 +107,6 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ServiceSuspensionBanner />
       <Navigation userEmail={user.email} />
       <SaleBanner />
 
