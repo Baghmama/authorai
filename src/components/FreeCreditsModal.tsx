@@ -294,7 +294,7 @@ const FreeCreditsModal: React.FC<FreeCreditsModalProps> = ({ isOpen, onClose, us
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-6 rounded-t-2xl flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Get 550 Free Credits!</h2>
+          <h2 className="text-2xl font-bold">Get 450 Free Credits!</h2>
           <button
             onClick={onClose}
             className="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors"
@@ -306,7 +306,7 @@ const FreeCreditsModal: React.FC<FreeCreditsModalProps> = ({ isOpen, onClose, us
         <div className="p-6 space-y-6">
           <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-4">
             <p className="text-center text-gray-700 font-medium">
-              Complete these simple tasks and earn up to <span className="text-orange-600 font-bold">550 credits</span>!
+              Complete these simple tasks and earn up to <span className="text-orange-600 font-bold">450 credits</span>!
             </p>
           </div>
 
@@ -317,7 +317,7 @@ const FreeCreditsModal: React.FC<FreeCreditsModalProps> = ({ isOpen, onClose, us
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Task 1: Share on X (Twitter)
                   </h3>
-                  <p className="text-gray-600 text-sm">Post about Author AI and earn 200 credits</p>
+                  <p className="text-gray-600 text-sm">Post about Author AI and earn 100 credits</p>
                 </div>
                 {twitterTask && (
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
