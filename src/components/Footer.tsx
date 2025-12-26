@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
               className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center gap-3"
             >
               <Gift className="h-6 w-6" />
-              Get 400 Free Credits - Complete 2 Simple Tasks!
+              Get 450 Free Credits - Complete 3 Simple Tasks!
             </button>
           </div>
         )}
