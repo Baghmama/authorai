@@ -1,6 +1,21 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "authorai.tech"
+        }
+      ],
+      "destination": "https://authorai.site/$1",
+      "permanent": true
+    }
+  ],
+
   "routes": [
     {
       "src": "/assets/.*",
