@@ -13,6 +13,17 @@
       ],
       "destination": "https://authorai.site/$1",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.authorai.tech"
+        }
+      ],
+      "destination": "https://authorai.site/$1",
+      "permanent": true
     }
   ],
 
