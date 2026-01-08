@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://authorai.tech/sitemap.xml
+Sitemap: https://authorai.site/sitemap.xml
 
 # Crawl delay
 Crawl-delay: 1
