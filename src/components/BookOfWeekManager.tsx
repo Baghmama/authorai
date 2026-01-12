@@ -306,10 +306,13 @@ const BookOfWeekManager: React.FC = () => {
                   value={formData.book_drive_url}
                   onChange={(e) => setFormData({ ...formData, book_drive_url: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="https://drive.google.com/file/d/FILE_ID/preview"
+                  placeholder="https://drive.google.com/file/d/FILE_ID/view"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Use format: https://drive.google.com/file/d/FILE_ID/preview
+                  Paste any Google Drive share link (the URL will be automatically converted for embedding)
+                </p>
+                <p className="text-xs text-orange-600 mt-1">
+                  ⚠️ Important: Make sure the file is set to "Anyone with the link can view" in Google Drive sharing settings
                 </p>
               </div>
 
@@ -323,10 +326,10 @@ const BookOfWeekManager: React.FC = () => {
                   value={formData.google_form_url}
                   onChange={(e) => setFormData({ ...formData, google_form_url: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="https://docs.google.com/forms/d/e/FORM_ID/viewform?embedded=true"
+                  placeholder="https://docs.google.com/forms/d/e/FORM_ID/viewform"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Use embedded form URL
+                  Paste your Google Form URL (embedded parameter will be added automatically)
                 </p>
               </div>
 

@@ -10,6 +10,23 @@ interface GoogleFormModalProps {
 const GoogleFormModal: React.FC<GoogleFormModalProps> = ({ isOpen, onClose, formUrl }) => {
   if (!isOpen) return null;
 
+  const convertToEmbedUrl = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+
+      if (!urlObj.searchParams.has('embedded')) {
+        urlObj.searchParams.set('embedded', 'true');
+      }
+
+      return urlObj.toString();
+    } catch (error) {
+      console.error('Error converting Form URL:', error);
+      return url;
+    }
+  };
+
+  const embedUrl = convertToEmbedUrl(formUrl);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -30,7 +47,7 @@ const GoogleFormModal: React.FC<GoogleFormModalProps> = ({ isOpen, onClose, form
 
         <div className="flex-1 overflow-hidden">
           <iframe
-            src={formUrl}
+            src={embedUrl}
             className="w-full h-full"
             frameBorder="0"
             marginHeight={0}

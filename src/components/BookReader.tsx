@@ -26,7 +26,43 @@ const BookReader: React.FC<BookReaderProps> = ({
     setIsFullscreen(!isFullscreen);
   };
 
-  const embedUrl = driveUrl.includes('/preview') ? driveUrl : `${driveUrl}/preview`;
+  const convertToEmbedUrl = (url: string): string => {
+    try {
+      let fileId = '';
+
+      if (url.includes('/file/d/')) {
+        const match = url.match(/\/file\/d\/([^/?]+)/);
+        if (match) {
+          fileId = match[1];
+        }
+      } else if (url.includes('/open?id=')) {
+        const match = url.match(/\/open\?id=([^&]+)/);
+        if (match) {
+          fileId = match[1];
+        }
+      } else if (url.includes('id=')) {
+        const match = url.match(/[?&]id=([^&]+)/);
+        if (match) {
+          fileId = match[1];
+        }
+      }
+
+      if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+
+      if (url.includes('/preview')) {
+        return url;
+      }
+
+      return url;
+    } catch (error) {
+      console.error('Error converting Drive URL:', error);
+      return url;
+    }
+  };
+
+  const embedUrl = convertToEmbedUrl(driveUrl);
 
   return (
     <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'relative'} flex flex-col`}>
