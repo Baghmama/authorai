@@ -9,6 +9,7 @@ import AppContent from './components/AppContent';
 import ConfigurationMessage from './components/ConfigurationMessage';
 import AdminPanel from './components/AdminPanel';
 import AccountSettings from './components/AccountSettings';
+import BookOfTheWeek from './components/BookOfTheWeek';
 import { User } from './types';
 import { supabase } from './lib/supabase';
 import { checkIsAdmin } from './utils/adminApi';
@@ -149,17 +150,28 @@ function App() {
       />
       
       {/* Account settings route */}
-      <Route 
-        path="/account" 
+      <Route
+        path="/account"
         element={
           user ? (
             <AccountSettings user={user} onSignOut={handleSignOut} />
           ) : (
             <LandingPage onGetStarted={handleGetStarted} />
           )
-        } 
+        }
       />
-      
+
+      {/* Book of the Week route - accessible to everyone */}
+      <Route
+        path="/book-of-week"
+        element={
+          <BookOfTheWeek
+            userEmail={user?.email}
+            onSignOut={handleSignOut}
+          />
+        }
+      />
+
       {/* Legal pages with proper URLs */}
       <Route path="/contact" element={<LegalPages currentPage="contact" />} />
       <Route path="/refund" element={<LegalPages currentPage="refund" />} />

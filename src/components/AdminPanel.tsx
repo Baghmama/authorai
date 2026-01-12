@@ -17,20 +17,22 @@ import {
   Activity,
   Gift,
   Image,
-  ExternalLink
+  ExternalLink,
+  Trophy
 } from 'lucide-react';
-import { 
-  AdminUser, 
+import {
+  AdminUser,
   AdminLog,
-  getAllUsers, 
-  updateUserCredits, 
-  banUser, 
-  unbanUser, 
-  addAdmin, 
+  getAllUsers,
+  updateUserCredits,
+  banUser,
+  unbanUser,
+  addAdmin,
   getAdminLogs,
   checkIsSuperAdmin
 } from '../utils/adminApi';
 import { supabase } from '../lib/supabase';
+import BookOfWeekManager from './BookOfWeekManager';
 
 interface CreditTask {
   id: string;
@@ -57,7 +59,7 @@ const AdminPanel: React.FC = () => {
   const [showBanModal, setShowBanModal] = useState<string | null>(null);
   const [showAddAdminModal, setShowAddAdminModal] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<'users' | 'logs' | 'tasks' | 'settings'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'logs' | 'tasks' | 'settings' | 'bookofweek'>('users');
   const [viewingScreenshot, setViewingScreenshot] = useState<string | null>(null);
 
   // Ban modal state
@@ -455,6 +457,19 @@ const AdminPanel: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <CreditCard className="h-5 w-5" />
                 <span>Task Settings</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('bookofweek')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'bookofweek'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Trophy className="h-5 w-5" />
+                <span>Book of Week</span>
               </div>
             </button>
           </nav>
@@ -884,6 +899,11 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Book of Week Tab */}
+        {activeTab === 'bookofweek' && (
+          <BookOfWeekManager />
         )}
       </div>
 
