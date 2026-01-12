@@ -128,34 +128,38 @@ const BookOfTheWeek: React.FC<BookOfTheWeekProps> = ({ userEmail, onSignOut }) =
                 {/* Submit Entry Card */}
                 <button
                   onClick={handleOpenForm}
-                  className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-left border-2 border-transparent hover:border-amber-500"
+                  className="group relative overflow-hidden bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 text-left border border-amber-200 hover:border-amber-400"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500 to-amber-600 opacity-10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-                  <div className="relative">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-md mb-4 group-hover:scale-110 transition-transform duration-200">
-                      <FileText className="h-7 w-7 text-white" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-500 to-amber-600 opacity-10 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500"></div>
+                  <div className="relative flex items-start space-x-4">
+                    <div className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg shadow-sm group-hover:scale-105 transition-transform duration-200">
+                      <FileText className="h-5 w-5 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Submit Your Entry</h3>
-                    <p className="text-slate-600 leading-relaxed">
-                      Share your creative work with our community and compete for next week's feature spot.
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">Submit Your Entry</h3>
+                      <p className="text-slate-600 text-sm leading-relaxed">
+                        Share your creative work with our community and compete for next week's feature spot.
+                      </p>
+                    </div>
                   </div>
                 </button>
 
                 {/* Past Winners Card */}
                 <button
                   onClick={handleViewPastResults}
-                  className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-left border-2 border-slate-200 hover:border-slate-300"
+                  className="group relative overflow-hidden bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 text-left border border-slate-200 hover:border-slate-300"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-300 to-slate-400 opacity-10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-                  <div className="relative">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-slate-100 rounded-xl shadow-md mb-4 group-hover:bg-slate-200 transition-colors duration-200">
-                      <ExternalLink className="h-7 w-7 text-slate-700" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-slate-300 to-slate-400 opacity-10 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500"></div>
+                  <div className="relative flex items-start space-x-4">
+                    <div className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 bg-slate-100 rounded-lg shadow-sm group-hover:bg-slate-200 transition-colors duration-200">
+                      <ExternalLink className="h-5 w-5 text-slate-700" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Past Winners</h3>
-                    <p className="text-slate-600 leading-relaxed">
-                      Browse through our archive of exceptional works from previous challenges.
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">Past Winners</h3>
+                      <p className="text-slate-600 text-sm leading-relaxed">
+                        Browse through our archive of exceptional works from previous challenges.
+                      </p>
+                    </div>
                   </div>
                 </button>
               </div>
