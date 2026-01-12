@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, FileText, ExternalLink, Calendar, Award } from 'lucide-react';
+import { Trophy, FileText, ExternalLink, Calendar, Award, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 import Footer from './Footer';
@@ -206,9 +206,32 @@ const BookOfTheWeek: React.FC<BookOfTheWeekProps> = ({ userEmail, onSignOut }) =
                     </div>
                     <h2 className="text-3xl font-bold text-slate-900">Featured Winner</h2>
                   </div>
-                  <p className="text-slate-600 text-lg">
+                  <p className="text-slate-600 text-lg mb-6">
                     Congratulations to last week's winner. Immerse yourself in their exceptional work below.
                   </p>
+
+                  <div className="flex items-center space-x-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-5 border border-slate-200">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-slate-600 mb-1">Written by</p>
+                      <p className="text-xl font-bold text-slate-900">{activeBook.author_name}</p>
+                    </div>
+                    {activeBook.author_social_link && (
+                      <a
+                        href={activeBook.author_social_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-shrink-0 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2 group"
+                      >
+                        <ExternalLink className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                        <span>Connect</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
 
                 <BookReader

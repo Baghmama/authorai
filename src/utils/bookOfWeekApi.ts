@@ -9,6 +9,8 @@ export interface BookOfTheWeek {
   google_form_url: string;
   is_active: boolean;
   past_results_url: string | null;
+  author_name: string;
+  author_social_link: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -21,6 +23,8 @@ export interface CreateBookOfWeekData {
   google_form_url: string;
   is_active: boolean;
   past_results_url?: string;
+  author_name: string;
+  author_social_link?: string;
 }
 
 export async function getActiveBookOfWeek(): Promise<BookOfTheWeek | null> {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Plus, Edit3, Trash2, Check, X, Calendar, ExternalLink } from 'lucide-react';
+import { Trophy, Plus, Edit3, Trash2, Check, X, Calendar, ExternalLink, User, Link2 } from 'lucide-react';
 import {
   BookOfTheWeek,
   getAllBooksOfWeek,
@@ -22,7 +22,9 @@ const BookOfWeekManager: React.FC = () => {
     book_drive_url: '',
     google_form_url: '',
     is_active: false,
-    past_results_url: ''
+    past_results_url: '',
+    author_name: '',
+    author_social_link: ''
   });
 
   useEffect(() => {
@@ -44,7 +46,9 @@ const BookOfWeekManager: React.FC = () => {
       book_drive_url: '',
       google_form_url: '',
       is_active: false,
-      past_results_url: ''
+      past_results_url: '',
+      author_name: '',
+      author_social_link: ''
     });
     setEditingBook(null);
     setShowAddModal(true);
@@ -58,7 +62,9 @@ const BookOfWeekManager: React.FC = () => {
       book_drive_url: book.book_drive_url,
       google_form_url: book.google_form_url,
       is_active: book.is_active,
-      past_results_url: book.past_results_url || ''
+      past_results_url: book.past_results_url || '',
+      author_name: book.author_name,
+      author_social_link: book.author_social_link || ''
     });
     setEditingBook(book);
     setShowAddModal(true);
@@ -74,7 +80,8 @@ const BookOfWeekManager: React.FC = () => {
 
     const bookData = {
       ...formData,
-      past_results_url: formData.past_results_url || undefined
+      past_results_url: formData.past_results_url || undefined,
+      author_social_link: formData.author_social_link || undefined
     };
 
     if (editingBook) {
@@ -176,6 +183,24 @@ const BookOfWeekManager: React.FC = () => {
                     </div>
                     <div className="text-sm text-gray-600 space-y-1">
                       <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>by {book.author_name}</span>
+                        {book.author_social_link && (
+                          <>
+                            <span>•</span>
+                            <a
+                              href={book.author_social_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-orange-500 hover:underline flex items-center space-x-1"
+                            >
+                              <Link2 className="h-3 w-3" />
+                              <span>Social</span>
+                            </a>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4" />
                         <span>
                           {formatDate(book.week_start_date)} - {formatDate(book.week_end_date)}
@@ -267,6 +292,36 @@ const BookOfWeekManager: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Enter book title"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Author Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.author_name}
+                  onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  placeholder="Enter author's name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Author Social Link (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={formData.author_social_link}
+                  onChange={(e) => setFormData({ ...formData, author_social_link: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  placeholder="https://twitter.com/username or Instagram/LinkedIn"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Optional: Add author's Twitter, Instagram, or LinkedIn profile
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
