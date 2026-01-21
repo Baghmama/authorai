@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Menu, X, Shield, Settings, Trophy } from 'lucide-react';
+import { BookOpen, Menu, X, Shield, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CreditDisplay from './CreditDisplay';
 import { checkIsAdmin } from '../utils/adminApi';
@@ -42,14 +42,6 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <CreditDisplay />
-
-            <Link
-              to="/book-of-week"
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Trophy className="h-4 w-4" />
-              <span className="text-sm font-poppins">Book of Week</span>
-            </Link>
 
             {isAdmin && (
               <Link
@@ -98,18 +90,6 @@ const Navigation: React.FC<NavigationProps> = ({ userEmail }) => {
               {/* Credits Display - Mobile */}
               <div className="pb-4 border-b border-gray-200">
                 <CreditDisplay />
-              </div>
-
-              {/* Book of the Week Link - Mobile */}
-              <div className="pb-4 border-b border-gray-200">
-                <Link
-                  to="/book-of-week"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-3 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-colors"
-                >
-                  <Trophy className="h-4 w-4" />
-                  <span className="text-sm font-poppins">Book of the Week</span>
-                </Link>
               </div>
 
               {/* Admin Link - Mobile */}
