@@ -185,6 +185,10 @@ const AdminPanel: React.FC = () => {
     }
 
     try {
+      // Get current admin user ID
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Unable to get current user');
+
       const { data: tasks, error: countError } = await supabase
         .from('credit_tasks')
         .select('id')
@@ -206,6 +210,7 @@ const AdminPanel: React.FC = () => {
       const { error: logError } = await supabase
         .from('credit_task_resets')
         .insert({
+          reset_by: user.id,
           reason: resetReason,
           old_tweet_url: tweetUrl,
           submissions_cleared: submissionsCount
