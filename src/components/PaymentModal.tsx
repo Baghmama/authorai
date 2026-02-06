@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, CreditCard, Shield, Star, Check } from 'lucide-react';
 import { PaymentPackage } from '../types';
 import { CREDIT_PACKAGES, formatCurrency } from '../utils/razorpayConfig';
@@ -52,7 +53,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
     onClose();
   };
 
-  return (
+  return createPortal(
     <>
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] overflow-y-auto"
@@ -186,7 +187,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
         onSuccess={handleVerificationSuccess}
         paymentData={paymentData}
       />
-    </>
+    </>,
+    document.body
   );
 };
 
