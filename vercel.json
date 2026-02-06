@@ -8,7 +8,7 @@
       "has": [
         {
           "type": "host",
-          "value": "authorai.tech"
+          "value": "authorai.site"
         }
       ],
       "destination": "https://authorai.site/$1",
@@ -19,7 +19,7 @@
       "has": [
         {
           "type": "host",
-          "value": "www.authorai.tech"
+          "value": "www.authorai.site"
         }
       ],
       "destination": "https://authorai.site/$1",
