@@ -28,12 +28,14 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-8 sm:px-8 sm:py-10 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-500/30">
-            <Lightbulb className="h-7 w-7 text-white" />
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-5 sm:px-8 sm:py-6 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30">
+            <Lightbulb className="h-5 w-5 text-white" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Share Your Idea</h2>
-          <p className="text-slate-400 text-sm sm:text-base">Tell us about the book you want to create</p>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Share Your Idea</h2>
+            <p className="text-slate-400 text-sm">Tell us about the book you want to create</p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6">
