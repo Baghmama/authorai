@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ChapterOutline } from '../types';
-import { Edit3, Plus, Trash2, FileText } from 'lucide-react';
+import { Edit3, Plus, Trash2, FileText, Check, X } from 'lucide-react';
 
 interface ChapterOutlinesProps {
   outlines: ChapterOutline[];
@@ -12,7 +12,7 @@ interface ChapterOutlinesProps {
 const ChapterOutlines: React.FC<ChapterOutlinesProps> = ({
   outlines,
   onUpdateOutlines,
-  onStartWriting
+  onStartWriting,
 }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -26,10 +26,10 @@ const ChapterOutlines: React.FC<ChapterOutlinesProps> = ({
 
   const saveEdit = () => {
     if (editingId) {
-      const updatedOutlines = outlines.map(chapter =>
+      const updatedOutlines = outlines.map((chapter) =>
         chapter.id === editingId
           ? { ...chapter, title: editTitle, outline: editOutline }
-          : chapter
+          : chapter,
       );
       onUpdateOutlines(updatedOutlines);
       setEditingId(null);
@@ -47,76 +47,88 @@ const ChapterOutlines: React.FC<ChapterOutlinesProps> = ({
       id: `chapter-${Date.now()}`,
       title: `Chapter ${outlines.length + 1}: New Chapter`,
       outline: 'Add your chapter outline here...',
-      isWritten: false
+      isWritten: false,
     };
     onUpdateOutlines([...outlines, newChapter]);
   };
 
   const removeChapter = (id: string) => {
-    const updatedOutlines = outlines.filter(chapter => chapter.id !== id);
+    const updatedOutlines = outlines.filter((chapter) => chapter.id !== id);
     onUpdateOutlines(updatedOutlines);
   };
 
   return (
     <div className="max-w-4xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Chapter Outlines</h2>
-        <p className="text-gray-600">Review and edit your chapter outlines before writing</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Chapter Outlines</h2>
+        <p className="text-slate-500">Review and edit your chapter outlines before writing</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {outlines.map((chapter, index) => (
-          <div key={chapter.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200">
+          <div
+            key={chapter.id}
+            className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+          >
             {editingId === chapter.id ? (
-              <div className="space-y-4">
+              <div className="p-5 sm:p-6 space-y-4">
                 <input
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full text-lg sm:text-xl font-semibold px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full text-lg font-semibold px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all"
                 />
                 <textarea
                   value={editOutline}
                   onChange={(e) => setEditOutline(e.target.value)}
                   rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none transition-all text-sm"
                 />
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={saveEdit}
-                    className="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                    className="flex items-center gap-1.5 bg-emerald-500 text-white px-4 py-2 rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium"
                   >
+                    <Check className="h-4 w-4" />
                     Save
                   </button>
                   <button
                     onClick={cancelEdit}
-                    className="w-full sm:w-auto bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                    className="flex items-center gap-1.5 bg-slate-100 text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-200 transition-colors text-sm font-medium"
                   >
+                    <X className="h-4 w-4" />
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 flex-1 mr-2">{chapter.title}</h3>
-                  <div className="flex space-x-2">
+              <div className="p-5 sm:p-6">
+                <div className="flex justify-between items-start gap-3 mb-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-orange-100 text-orange-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                      {index + 1}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-900 leading-snug">
+                      {chapter.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     <button
                       onClick={() => startEdit(chapter)}
-                      className="p-2 text-gray-500 hover:text-orange-500 transition-colors"
+                      className="p-2 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
                     >
                       <Edit3 className="h-4 w-4" />
                     </button>
                     {outlines.length > 1 && (
                       <button
                         onClick={() => removeChapter(chapter.id)}
-                        className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     )}
                   </div>
                 </div>
-                <div className="text-gray-700 leading-relaxed prose prose-sm max-w-none">
+                <div className="text-slate-600 leading-relaxed prose prose-sm max-w-none pl-10">
                   <ReactMarkdown>{chapter.outline}</ReactMarkdown>
                 </div>
               </div>
@@ -124,20 +136,20 @@ const ChapterOutlines: React.FC<ChapterOutlinesProps> = ({
           </div>
         ))}
 
-        <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
           <button
             onClick={addChapter}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex items-center justify-center gap-2 bg-slate-100 text-slate-700 px-6 py-3 rounded-xl hover:bg-slate-200 transition-colors font-medium text-sm"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4" />
             <span>Add Chapter</span>
           </button>
 
           <button
             onClick={onStartWriting}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-8 py-3 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-3 rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 font-semibold shadow-lg shadow-orange-500/20 text-sm"
           >
-            <FileText className="h-5 w-5" />
+            <FileText className="h-4 w-4" />
             <span>Start Writing Chapters</span>
           </button>
         </div>

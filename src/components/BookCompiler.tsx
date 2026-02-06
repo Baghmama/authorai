@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BookProject } from '../types';
 import { generatePDF, generateWord } from '../utils/bookGenerator';
-import { Download, FileText, BookOpen, Check, FileDown } from 'lucide-react';
+import { Download, FileText, BookOpen, Check, FileDown, Sparkles } from 'lucide-react';
 
 interface BookCompilerProps {
   project: BookProject;
@@ -34,126 +34,170 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
     }
   };
 
+  const totalWords = project.outlines.reduce(
+    (acc, chapter) => acc + (chapter.content?.split(' ').length || 0),
+    0,
+  );
+
   return (
     <div className="max-w-4xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-8">
-        <div className="bg-gradient-to-r from-green-500 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="h-8 w-8 text-white" />
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/25">
+          <Sparkles className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Book Complete!</h2>
-        <p className="text-gray-600">Your book has been successfully generated and is ready for download</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Book Complete!</h2>
+        <p className="text-slate-500">Your book has been generated and is ready for download</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8 mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Book Details</h3>
-            <div className="space-y-2 text-sm">
-              <p><strong>Idea:</strong> {project.idea.idea}</p>
-              <p><strong>Type:</strong> {project.idea.type}</p>
-              <p><strong>Language:</strong> {project.idea.language}</p>
-              <p><strong>Chapters:</strong> {project.outlines.length}</p>
+      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+          <div className="p-5 sm:p-6">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
+              Book Details
+            </h3>
+            <div className="space-y-2.5 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Idea</span>
+                <span className="text-slate-900 font-medium text-right max-w-[60%] truncate">
+                  {project.idea.idea}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Type</span>
+                <span className="text-slate-900 font-medium">{project.idea.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Language</span>
+                <span className="text-slate-900 font-medium">{project.idea.language}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Chapters</span>
+                <span className="text-slate-900 font-medium">{project.outlines.length}</span>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Statistics</h3>
-            <div className="space-y-2 text-sm">
-              <p><strong>Total Words:</strong> {project.outlines.reduce((acc, chapter) => 
-                acc + (chapter.content?.split(' ').length || 0), 0).toLocaleString()}</p>
-              <p><strong>Chapters Written:</strong> {project.outlines.filter(c => c.isWritten).length}</p>
-              <p><strong>Status:</strong> <span className="text-green-600 font-medium">Complete</span></p>
+          <div className="p-5 sm:p-6">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
+              Statistics
+            </h3>
+            <div className="space-y-2.5 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Total Words</span>
+                <span className="text-slate-900 font-medium tabular-nums">
+                  {totalWords.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Chapters Written</span>
+                <span className="text-slate-900 font-medium">
+                  {project.outlines.filter((c) => c.isWritten).length}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Status</span>
+                <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                  <Check className="h-3.5 w-3.5" />
+                  Complete
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Chapter Preview</h3>
-          <div className="space-y-3">
+        <div className="border-t border-slate-100 p-5 sm:p-6">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            Chapters
+          </h3>
+          <div className="space-y-2">
             {project.outlines.map((chapter, index) => (
-              <div key={chapter.id} className="flex items-center space-x-3 text-sm">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="font-medium">Chapter {index + 1}:</span>
-                <span className="text-gray-600">{chapter.title}</span>
+              <div
+                key={chapter.id}
+                className="flex items-center gap-3 text-sm py-1.5"
+              >
+                <span className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  {index + 1}
+                </span>
+                <span className="text-slate-700 truncate">{chapter.title}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Download Your Book</h3>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          <button
-            onClick={handleDownloadPDF}
-            disabled={downloadingPDF}
-            className="flex flex-col items-center space-y-4 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-xl p-4 sm:p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
-          >
-            <div className="bg-red-500 p-3 rounded-full">
-              <FileText className="h-8 w-8 text-white" />
-            </div>
-            <div className="text-center">
-              <h4 className="font-semibold text-gray-900">Download PDF</h4>
-              <p className="text-sm text-gray-600">Portable Document Format • Universal compatibility</p>
-            </div>
-            {downloadingPDF ? (
-              <div className="flex items-center space-x-2 text-red-600">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
-                <span className="text-sm">Generating PDF...</span>
-              </div>
-            ) : (
-              <Download className="h-5 w-5 text-red-600" />
-            )}
-          </button>
+      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+        <div className="p-5 sm:p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-5 text-center">
+            Download Your Book
+          </h3>
 
-          <button
-            onClick={handleDownloadWord}
-            disabled={downloadingWord}
-            className="flex flex-col items-center space-y-4 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl p-4 sm:p-6 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
-          >
-            <div className="bg-blue-500 p-3 rounded-full">
-              <FileDown className="h-8 w-8 text-white" />
-            </div>
-            <div className="text-center">
-              <h4 className="font-semibold text-gray-900">Download Word</h4>
-              <p className="text-sm text-gray-600">Microsoft Word Document • Editable format</p>
-            </div>
-            {downloadingWord ? (
-              <div className="flex items-center space-x-2 text-blue-600">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <span className="text-sm">Generating Word...</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloadingPDF}
+              className="group flex flex-col items-center gap-3 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-2xl p-5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="bg-red-500 p-3 rounded-xl group-hover:scale-105 transition-transform">
+                <FileText className="h-6 w-6 text-white" />
               </div>
-            ) : (
-              <Download className="h-5 w-5 text-blue-600" />
-            )}
-          </button>
-
-        </div>
-
-        <div className="text-center">
-          {/* App Download Notification */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <div className="flex items-start space-x-3">
-              <div className="bg-blue-500 p-2 rounded-full flex-shrink-0">
-                <BookOpen className="h-5 w-5 text-white" />
+              <div className="text-center">
+                <h4 className="font-semibold text-slate-900 text-sm">Download PDF</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Universal format</p>
               </div>
-              <div className="text-left">
-                <h4 className="font-medium text-blue-900 mb-1">Using Author AI App?</h4>
-                <p className="text-sm text-blue-700">
-                  If you're using the Author AI mobile app, please check your device notifications 
-                  for download completion. Files will be saved to your device's Downloads folder.
+              {downloadingPDF ? (
+                <div className="flex items-center gap-1.5 text-red-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-red-600 border-t-transparent" />
+                  <span className="text-xs">Generating...</span>
+                </div>
+              ) : (
+                <Download className="h-4 w-4 text-red-500 group-hover:translate-y-0.5 transition-transform" />
+              )}
+            </button>
+
+            <button
+              onClick={handleDownloadWord}
+              disabled={downloadingWord}
+              className="group flex flex-col items-center gap-3 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 rounded-2xl p-5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="bg-blue-500 p-3 rounded-xl group-hover:scale-105 transition-transform">
+                <FileDown className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-center">
+                <h4 className="font-semibold text-slate-900 text-sm">Download Word</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Editable format</p>
+              </div>
+              {downloadingWord ? (
+                <div className="flex items-center gap-1.5 text-blue-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent" />
+                  <span className="text-xs">Generating...</span>
+                </div>
+              ) : (
+                <Download className="h-4 w-4 text-blue-500 group-hover:translate-y-0.5 transition-transform" />
+              )}
+            </button>
+          </div>
+
+          <div className="bg-sky-50 border border-sky-200/60 rounded-xl p-4 mb-5">
+            <div className="flex items-start gap-3">
+              <BookOpen className="h-4 w-4 text-sky-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-sky-900 text-sm mb-0.5">Using the mobile app?</h4>
+                <p className="text-xs text-sky-700">
+                  Check your device notifications for download completion. Files will be saved to
+                  your Downloads folder.
                 </p>
               </div>
             </div>
           </div>
 
-          <button
-            onClick={onNewProject}
-            className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg transition-colors font-medium"
-          >
-            Create New Book
-          </button>
+          <div className="text-center">
+            <button
+              onClick={onNewProject}
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-8 py-3 rounded-xl transition-colors font-medium text-sm"
+            >
+              Create New Book
+            </button>
+          </div>
         </div>
       </div>
     </div>

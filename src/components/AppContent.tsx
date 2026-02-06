@@ -27,12 +27,12 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   const parseChapterOutlines = (text: string): ChapterOutline[] => {
     const chapters: ChapterOutline[] = [];
     const sections = text.split(/Chapter \d+:/);
-    
+
     sections.slice(1).forEach((section, index) => {
       const lines = section.trim().split('\n');
       const title = lines[0]?.trim() || `Chapter ${index + 1}`;
       const outline = lines.slice(1).join('\n').trim();
-      
+
       chapters.push({
         id: `chapter-${index + 1}`,
         title: `Chapter ${index + 1}: ${title}`,
@@ -40,7 +40,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
         isWritten: false
       });
     });
-    
+
     return chapters;
   };
 
@@ -49,7 +49,6 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
     setBookIdea(idea);
 
     try {
-      // Check if user has enough credits BEFORE generating
       const userCredits = await getUserCredits();
 
       if (!userCredits) {
@@ -65,7 +64,6 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
         return;
       }
 
-      // Generate outlines FIRST
       const outlinesText = await generateChapterOutlines(
         idea.idea,
         idea.language,
@@ -75,7 +73,6 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
 
       const parsedOutlines = parseChapterOutlines(outlinesText);
 
-      // Only deduct credits AFTER successful generation
       const creditResult = await deductCreditsForChapterGeneration(idea.chapters);
 
       if (!creditResult.success) {
@@ -107,18 +104,18 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50/50">
       <ServiceSuspensionBanner />
       <Navigation userEmail={user.email} />
       <SaleBanner />
 
-      <main className="py-4 sm:py-8 px-2 sm:px-4 lg:px-8">
+      <main className="py-6 sm:py-10 px-3 sm:px-4 lg:px-8 max-w-7xl mx-auto">
         <ProgressIndicator currentStep={currentStep} />
-        
+
         {currentStep === 'idea' && (
           <IdeaForm onSubmit={handleIdeaSubmit} isLoading={isGenerating} />
         )}
-        
+
         {currentStep === 'outlines' && bookIdea && (
           <ChapterOutlines
             outlines={outlines}
@@ -126,7 +123,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
             onStartWriting={handleStartWriting}
           />
         )}
-        
+
         {currentStep === 'writing' && bookIdea && (
           <ChapterWriter
             outlines={outlines}
@@ -135,7 +132,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
             onCompleteWriting={handleCompleteWriting}
           />
         )}
-        
+
         {currentStep === 'book' && bookIdea && (
           <BookCompiler
             project={{
@@ -147,7 +144,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
           />
         )}
       </main>
-      
+
       <Footer />
     </div>
   );

@@ -1,61 +1,69 @@
 import React from 'react';
 import { AppStep } from '../types';
-import { Check } from 'lucide-react';
+import { Check, Lightbulb, List, PenTool, BookOpen } from 'lucide-react';
 
 interface ProgressIndicatorProps {
   currentStep: AppStep;
 }
 
-
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep }) => {
   const steps = [
-    { id: 'idea', label: 'Idea', description: 'Share your concept' },
-    { id: 'outlines', label: 'Outlines', description: 'Review chapters' },
-    { id: 'writing', label: 'Writing', description: 'Generate content' },
-    { id: 'book', label: 'Book', description: 'Download result' }
+    { id: 'idea', label: 'Idea', icon: Lightbulb },
+    { id: 'outlines', label: 'Outlines', icon: List },
+    { id: 'writing', label: 'Writing', icon: PenTool },
+    { id: 'book', label: 'Book', icon: BookOpen },
   ];
 
-  const stepIndex = steps.findIndex(step => step.id === currentStep);
+  const stepIndex = steps.findIndex((step) => step.id === currentStep);
 
   return (
-    <div className="max-w-4xl mx-auto mb-8">
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center">
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                  index <= stepIndex
-                    ? 'bg-gradient-to-r from-orange-500 to-yellow-500 border-orange-500 text-white'
-                    : 'bg-white border-gray-300 text-gray-500'
-                }`}
-              >
-                {index < stepIndex ? (
-                  <Check className="h-5 w-5" />
-                ) : (
-                  <span className="text-sm font-semibold">{index + 1}</span>
-                )}
-              </div>
-              <div className="mt-2 text-center">
-                <div className={`text-sm font-medium ${
-                  index <= stepIndex ? 'text-gray-900' : 'text-gray-500'
-                }`}>
-                  {step.label}
+    <div className="max-w-2xl mx-auto mb-8 px-2">
+      <div className="flex items-center">
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          const isCompleted = index < stepIndex;
+          const isCurrent = index === stepIndex;
+
+          return (
+            <React.Fragment key={step.id}>
+              <div className="flex flex-col items-center relative">
+                <div
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    isCompleted
+                      ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25'
+                      : isCurrent
+                        ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 ring-4 ring-orange-100'
+                        : 'bg-slate-100 text-slate-400 border border-slate-200'
+                  }`}
+                >
+                  {isCompleted ? (
+                    <Check className="h-4 w-4 sm:h-5 sm:w-5" />
+                  ) : (
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                  )}
                 </div>
-                <div className="text-xs text-gray-500">{step.description}</div>
+                <span
+                  className={`mt-2 text-xs sm:text-sm font-medium transition-colors ${
+                    isCompleted || isCurrent ? 'text-slate-900' : 'text-slate-400'
+                  }`}
+                >
+                  {step.label}
+                </span>
               </div>
-            </div>
-            {index < steps.length - 1 && (
-              <div
-                className={`flex-1 h-0.5 mx-4 ${
-                  index < stepIndex
-                    ? 'bg-gradient-to-r from-orange-500 to-yellow-500'
-                    : 'bg-gray-300'
-                }`}
-              />
-            )}
-          </div>
-        ))}
+              {index < steps.length - 1 && (
+                <div className="flex-1 mx-1.5 sm:mx-3 mb-5">
+                  <div className="h-0.5 rounded-full overflow-hidden bg-slate-200">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-500 ${
+                        isCompleted ? 'w-full' : 'w-0'
+                      }`}
+                    />
+                  </div>
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
     </div>
   );

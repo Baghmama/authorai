@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Coins, ShoppingCart, AlertCircle, X, MessageCircle, CreditCard, Shield } from 'lucide-react';
-import { getUserCredits, getCreditTransactions, UserCredits, CreditTransaction } from '../utils/creditManager';
+import { Coins, ShoppingCart, AlertCircle, X, CreditCard, Shield } from 'lucide-react';
+import { getUserCredits, UserCredits } from '../utils/creditManager';
 import PaymentModal from './PaymentModal';
 
 const CreditDisplay: React.FC = () => {
@@ -25,146 +25,111 @@ const CreditDisplay: React.FC = () => {
     }
   };
 
-  const openPurchaseModal = () => {
-    setShowPurchaseModal(true);
-  };
-
-  const closePurchaseModal = () => {
-    setShowPurchaseModal(false);
-  };
-
-  const openTwitter = () => {
-    window.open('https://x.com/shuvodip99', '_blank');
-  };
-
   const handlePaymentSuccess = () => {
-    loadCredits(); // Refresh credits after successful payment
+    loadCredits();
     setShowPaymentModal(false);
     setShowPurchaseModal(false);
   };
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="animate-pulse flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-          <div className="w-20 h-4 bg-gray-200 rounded"></div>
+      <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200/60">
+        <div className="animate-pulse flex items-center gap-2">
+          <div className="w-7 h-7 bg-slate-200 rounded-full" />
+          <div className="w-10 h-4 bg-slate-200 rounded" />
         </div>
       </div>
     );
   }
 
-  const renderPurchaseModal = () => {
-    if (!showPurchaseModal) return null;
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-          {/* Modal Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-full">
-                <ShoppingCart className="h-6 w-6 text-white" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Purchase Credits</h2>
-            </div>
-            <button
-              onClick={closePurchaseModal}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
+  return (
+    <>
+      <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-1.5 border border-slate-200/60">
+          <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-1 rounded-lg">
+            <Coins className="h-3.5 w-3.5 text-white" />
           </div>
+          <span className="text-sm font-bold text-slate-900 tabular-nums">
+            {credits?.credits ?? 0}
+          </span>
+          {credits && credits.credits < 6 && (
+            <AlertCircle className="h-3.5 w-3.5 text-red-500" />
+          )}
+        </div>
 
-          {/* Modal Content */}
-          <div className="p-6 space-y-6">
-            {/* Pricing */}
-            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing</h3>
-              <div className="text-2xl font-bold text-orange-600">
-                ₹70 = 130 Credits | $1 = 130 Credits
+        <button
+          onClick={() => setShowPurchaseModal(true)}
+          className="flex items-center gap-1 text-slate-600 hover:text-orange-600 transition-colors px-2 py-1.5 rounded-lg hover:bg-orange-50 text-xs font-medium"
+        >
+          <ShoppingCart className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Buy</span>
+        </button>
+      </div>
+
+      {showPurchaseModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-2 rounded-xl">
+                  <ShoppingCart className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-lg font-bold text-slate-900">Purchase Credits</h2>
               </div>
-              <p className="text-sm text-gray-600 mt-1">
-                Each chapter generation costs 6 credits
-              </p>
+              <button
+                onClick={() => setShowPurchaseModal(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
-            {/* Manual Process Notice */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="flex items-start space-x-3">
-                <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-1">Secure Payments</h4>
-                  <p className="text-sm text-gray-600">
-                    Purchase credits securely using Razorpay. Supports cards, UPI, net banking, and wallets.
-                  </p>
+            <div className="p-5 space-y-4">
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+                <h3 className="text-sm font-semibold text-slate-900 mb-1">Pricing</h3>
+                <div className="text-xl font-bold text-orange-600">
+                  &#8377;70 = 130 Credits | $1 = 130 Credits
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Each chapter generation costs 6 credits
+                </p>
+              </div>
+
+              <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                <div className="flex items-start gap-3">
+                  <Shield className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium text-slate-900 text-sm mb-0.5">Secure Payments</h4>
+                    <p className="text-xs text-slate-600">
+                      Purchase credits securely using Razorpay. Supports cards, UPI, net banking, and wallets.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contact Button */}
-            <div className="space-y-3">
               <button
                 onClick={() => setShowPaymentModal(true)}
-                className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 flex items-center justify-center space-x-2"
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
               >
                 <CreditCard className="h-5 w-5" />
                 <span>Purchase Credits</span>
               </button>
-            </div>
 
-            {/* Payment Methods */}
-            <div className="text-sm text-gray-600">
-              <p className="font-medium text-gray-900 mb-2">Accepted Payment Methods:</p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div>• Credit/Debit Cards</div>
-                <div>• UPI</div>
-                <div>• Net Banking</div>
-                <div>• PayPal</div>
-                <div>• Digital Wallets</div>
+              <div className="text-xs text-slate-500">
+                <p className="font-medium text-slate-700 mb-1.5">Accepted Payment Methods:</p>
+                <div className="grid grid-cols-2 gap-1 text-slate-500">
+                  <span>Credit/Debit Cards</span>
+                  <span>UPI</span>
+                  <span>Net Banking</span>
+                  <span>PayPal</span>
+                  <span>Digital Wallets</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  };
+      )}
 
-  return (
-    <>
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-sm border border-gray-200">
-          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-1.5 rounded-full">
-            <Coins className="h-4 w-4 text-white" />
-          </div>
-          <div>
-            <p className="text-xs text-gray-500 leading-none">Credits</p>
-            <p className="text-lg font-bold text-gray-900 leading-none">
-              {credits?.credits ?? 0}
-            </p>
-          </div>
-        </div>
-        
-        <button
-          onClick={openPurchaseModal}
-          className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100"
-        >
-          <ShoppingCart className="h-4 w-4" />
-          <span className="text-xs font-medium">Buy</span>
-        </button>
-
-        {credits && credits.credits < 6 && (
-          <div className="flex items-center space-x-1 text-red-600">
-            <AlertCircle className="h-4 w-4" />
-            <span className="text-xs font-medium">Low Credits</span>
-          </div>
-        )}
-      </div>
-
-      {/* Purchase Credits Modal */}
-      {renderPurchaseModal()}
-
-      {/* Razorpay Payment Modal */}
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
