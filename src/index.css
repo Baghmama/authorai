@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Custom slider styles */
 .slider::-webkit-slider-thumb {
   appearance: none;
@@ -22,4 +26,88 @@
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: 2px solid white;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px) rotate(2deg); }
+  50% { transform: translateY(-12px) rotate(-1deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 24px rgba(249, 115, 22, 0.25); }
+  50% { box-shadow: 0 0 48px rgba(249, 115, 22, 0.45); }
+}
+
+@keyframes line-reveal {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 7s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #f97316, #eab308, #f97316);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-mesh {
+  background:
+    radial-gradient(ellipse 50% 60% at 70% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 20% 80%, rgba(234, 179, 8, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(15, 23, 42, 0) 0%, transparent 100%);
+}
+
+.feature-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+}
+
+.step-connector {
+  background: linear-gradient(90deg, #f97316, #eab308);
+  mask-image: linear-gradient(90deg, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, black 60%, transparent 100%);
 }
