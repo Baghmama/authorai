@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CreditCard, Shield, Zap, Star, Check } from 'lucide-react';
+import { X, CreditCard, Shield, Star, Check } from 'lucide-react';
 import { PaymentPackage } from '../types';
 import { CREDIT_PACKAGES, formatCurrency } from '../utils/razorpayConfig';
 import { processPayment } from '../utils/paymentProcessor';
@@ -54,170 +54,152 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 rounded-full">
-                <CreditCard className="h-6 w-6 text-white" />
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[60] p-3 sm:p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] flex flex-col">
+          <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-2 rounded-xl">
+                <CreditCard className="h-5 w-5 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Purchase Credits</h2>
+              <h2 className="text-lg font-bold text-slate-900">Purchase Credits</h2>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Content */}
-          <div className="p-6 space-y-6">
-            {/* New Pricing Notice */}
-            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-              <div className="flex items-start space-x-3">
-                <Star className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+          <div className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1">
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-3 border border-orange-100">
+              <div className="flex items-start gap-2.5">
+                <Star className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-medium text-orange-900 mb-1">New Affordable Pricing!</h4>
-                  <p className="text-sm text-orange-700">
-                    <strong>₹70 = 130 credits</strong> or <strong>$1 = 130 credits</strong>. Each chapter costs only 6 credits!
+                  <h4 className="font-medium text-orange-900 text-sm mb-0.5">Affordable Pricing</h4>
+                  <p className="text-xs text-orange-700">
+                    <strong>&#8377;70 = 130 credits</strong> or <strong>$1 = 130 credits</strong>. Each chapter costs only 6 credits.
                   </p>
- <p className="text-sm text-purple-700">
-                    <strong>Limited Time Offer!</strong> 
-                  </p>
-                  
                 </div>
               </div>
             </div>
 
-            {/* Currency Selection */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Select Currency</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <h3 className="text-sm font-semibold text-slate-700 mb-2">Currency</h3>
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedCurrency('USD')}
-                  className={`p-3 rounded-lg border-2 transition-all ${
+                  className={`p-2.5 rounded-xl border-2 transition-all text-sm ${
                     selectedCurrency === 'USD'
-                      ? 'border-orange-500 bg-orange-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-orange-400 bg-orange-50 text-orange-900'
+                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
                   }`}
                 >
-                  <div className="text-center">
-                    <div className="font-semibold">USD ($)</div>
-                    <div className="text-sm text-gray-600">US Dollar</div>
-                  </div>
+                  <div className="font-semibold">USD ($)</div>
+                  <div className="text-xs text-slate-500">US Dollar</div>
                 </button>
                 <button
                   onClick={() => setSelectedCurrency('INR')}
-                  className={`p-3 rounded-lg border-2 transition-all ${
+                  className={`p-2.5 rounded-xl border-2 transition-all text-sm ${
                     selectedCurrency === 'INR'
-                      ? 'border-orange-500 bg-orange-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-orange-400 bg-orange-50 text-orange-900'
+                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
                   }`}
                 >
-                  <div className="text-center">
-                    <div className="font-semibold">INR (₹)</div>
-                    <div className="text-sm text-gray-600">Indian Rupee</div>
-                  </div>
+                  <div className="font-semibold">INR (&#8377;)</div>
+                  <div className="text-xs text-slate-500">Indian Rupee</div>
                 </button>
               </div>
             </div>
-            
-            {/* Package Selection */}
+
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Choose Package</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <h3 className="text-sm font-semibold text-slate-700 mb-2">Choose Package</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {CREDIT_PACKAGES.map((pkg) => (
-                  <div
+                  <button
                     key={pkg.id}
                     onClick={() => handlePackageSelect(pkg)}
-                    className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                    className={`relative p-4 rounded-xl border-2 text-left transition-all ${
                       selectedPackage?.id === pkg.id
-                        ? 'border-orange-500 bg-orange-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-orange-400 bg-orange-50'
+                        : 'border-slate-200 hover:border-slate-300'
                     } ${pkg.popular ? 'ring-2 ring-orange-200' : ''}`}
                   >
                     {pkg.popular && (
-                      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                        <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center space-x-1">
-                          <Star className="h-3 w-3" />
+                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                        <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                          <Star className="h-2.5 w-2.5" />
                           <span>POPULAR</span>
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="text-center">
-                      <h4 className="font-semibold text-gray-900 mb-2">{pkg.name}</h4>
-                      <div className="text-2xl font-bold text-orange-600 mb-1">
+                      <h4 className="font-semibold text-slate-900 text-sm mb-1">{pkg.name}</h4>
+                      <div className="text-xl font-bold text-orange-600 mb-0.5">
                         {formatCurrency(
                           selectedCurrency === 'USD' ? pkg.price.usd : pkg.price.inr,
                           selectedCurrency
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 mb-3">
-                        <p>{pkg.credits} Credits</p>
-                        <p className="text-xs text-gray-500">
-                          ({Math.floor(pkg.credits / 6)} chapters)
-                        </p>
-                      </div>
+                      <p className="text-xs text-slate-600">{pkg.credits} Credits</p>
+                      <p className="text-[10px] text-slate-400">
+                        ({Math.floor(pkg.credits / 6)} chapters)
+                      </p>
                     </div>
-                    
+
                     {selectedPackage?.id === pkg.id && (
                       <div className="absolute top-2 right-2">
-                        <Check className="h-5 w-5 text-orange-500" />
+                        <Check className="h-4 w-4 text-orange-500" />
                       </div>
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
 
-            {/* Payment Security Notice */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="flex items-start space-x-3">
-                <Shield className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+            <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
+              <div className="flex items-start gap-2.5">
+                <Shield className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-medium text-green-900 mb-1">Secure Payment</h4>
-                  <p className="text-sm text-green-700">
-                    Your payment information is secure and encrypted. We use Razorpay's industry-standard security measures.
+                  <h4 className="font-medium text-emerald-900 text-sm mb-0.5">Secure Payment</h4>
+                  <p className="text-xs text-emerald-700">
+                    Encrypted and secure via Razorpay's industry-standard security.
                   </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handlePayment}
-                disabled={!selectedPackage || isProcessing}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="h-5 w-5" />
-                    <span>Pay with Razorpay</span>
-                  </>
-                )}
-              </button>
-              
-              <button
-                onClick={onClose}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
+          <div className="p-4 sm:p-5 border-t border-slate-100 flex-shrink-0 flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={handlePayment}
+              disabled={!selectedPackage || isProcessing}
+              className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard className="h-4 w-4" />
+                  <span>Pay with Razorpay</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={onClose}
+              className="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-medium text-sm"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Payment Verification Modal */}
       <PaymentVerificationModal
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
