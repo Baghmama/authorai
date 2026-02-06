@@ -145,7 +145,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
         )}
       </main>
 
-      <Footer />
+      <Footer collapsible />
     </div>
   );
 };
