@@ -104,12 +104,12 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col">
       <ServiceSuspensionBanner />
       <Navigation userEmail={user.email} />
       <SaleBanner />
 
-      <main className="py-6 sm:py-10 px-3 sm:px-4 lg:px-8 max-w-7xl mx-auto">
+      <main className="flex-1 py-6 sm:py-10 px-3 sm:px-4 lg:px-8 max-w-7xl mx-auto w-full">
         <ProgressIndicator currentStep={currentStep} />
 
         {currentStep === 'idea' && (
