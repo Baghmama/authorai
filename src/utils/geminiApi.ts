@@ -26,14 +26,15 @@ async function callEdgeFunction(payload: Record<string, unknown>): Promise<strin
 
   return data.content;
 }
-export async function generateChapterOutlines(idea: string, language: string, chapters: number, type: string): Promise<string> {
+export async function generateChapterOutlines(idea: string, language: string, chapters: number, type: string, writingStyle?: string): Promise<string> {
   try {
     return await callEdgeFunction({
       type: 'outlines',
       idea,
       language,
       chapters,
-      bookType: type
+      bookType: type,
+      writingStyle: writingStyle || 'formal'
     });
   } catch (error) {
     console.error('Error generating chapter outlines:', error);
@@ -41,14 +42,15 @@ export async function generateChapterOutlines(idea: string, language: string, ch
   }
 }
 
-export async function writeChapter(title: string, outline: string, language: string, type: string): Promise<string> {
+export async function writeChapter(title: string, outline: string, language: string, type: string, writingStyle?: string): Promise<string> {
   try {
     return await callEdgeFunction({
       type: 'chapter',
       title,
       outline,
       language,
-      bookType: type
+      bookType: type,
+      writingStyle: writingStyle || 'formal'
     });
   } catch (error) {
     console.error('Error writing chapter:', error);

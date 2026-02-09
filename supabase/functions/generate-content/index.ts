@@ -137,30 +137,47 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { type, idea, language, chapters, title, outline, bookType } = await req.json();
+    const { type, idea, language, chapters, title, outline, bookType, writingStyle } = await req.json();
+
+    const styleGuides: Record<string, string> = {
+      formal: 'Use a polished, professional tone with precise vocabulary and structured sentences. Maintain an authoritative yet accessible voice.',
+      conversational: 'Write in a warm, friendly, and approachable tone as if speaking directly to the reader. Use natural language, contractions, and a relaxed flow.',
+      literary: 'Employ rich, artistic prose with vivid imagery, metaphors, and carefully crafted sentences. Focus on beauty of language and emotional depth.',
+      humorous: 'Infuse the writing with wit, clever observations, and entertaining moments. Use comedic timing, playful language, and lighthearted tone throughout.',
+      academic: 'Write in a scholarly, research-oriented tone with well-reasoned arguments, precise terminology, and structured analysis. Maintain intellectual rigor.',
+      descriptive: 'Create immersive, sensory-rich writing with vivid details that paint pictures in the reader\'s mind. Focus on atmosphere, setting, and tangible experience.',
+    };
+
+    const styleInstruction = styleGuides[writingStyle] || styleGuides['formal'];
 
     let prompt = '';
-    
+
     if (type === 'outlines') {
-      prompt = `Create ${chapters} chapter outlines for a ${bookType} book about: "${idea}". 
+      prompt = `Create ${chapters} chapter outlines for a ${bookType} book about: "${idea}".
   The response should be in ${language} language.
-  
+
+  Writing Style: ${writingStyle || 'formal'}
+  ${styleInstruction}
+
   Format the response as follows:
   Chapter 1: [Title]
   [Detailed outline for chapter 1]
-  
+
   Chapter 2: [Title]
   [Detailed outline for chapter 2]
-  
-  Continue this pattern for all ${chapters} chapters. Each outline should be detailed and provide clear direction for writing the chapter.`;
+
+  Continue this pattern for all ${chapters} chapters. Each outline should be detailed and provide clear direction for writing the chapter. Ensure the chapter titles and outline tone reflect the chosen writing style.`;
     } else if (type === 'chapter') {
       prompt = `Write a complete chapter for a ${bookType} book with the following details:
-  
+
   Chapter Title: ${title}
   Chapter Outline: ${outline}
   Language: ${language}
-  
-  Please write a full, detailed chapter that expands on the outline. The chapter should be well-structured with proper paragraphs, engaging content, and appropriate length for a book chapter. Make it compelling and well-written.`;
+
+  Writing Style: ${writingStyle || 'formal'}
+  ${styleInstruction}
+
+  Please write a full, detailed chapter that expands on the outline. The chapter should be well-structured with proper paragraphs, engaging content, and appropriate length for a book chapter. Maintain the specified writing style consistently throughout the entire chapter.`;
     } else {
       throw new Error('Invalid request type');
     }

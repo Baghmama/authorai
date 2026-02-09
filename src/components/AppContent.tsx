@@ -68,7 +68,8 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
         idea.idea,
         idea.language,
         idea.chapters,
-        idea.type
+        idea.type,
+        idea.writingStyle
       );
 
       const parsedOutlines = parseChapterOutlines(outlinesText);

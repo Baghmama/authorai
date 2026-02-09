@@ -1,8 +1,11 @@
+export type WritingStyle = 'formal' | 'conversational' | 'literary' | 'humorous' | 'academic' | 'descriptive';
+
 export interface BookIdea {
   idea: string;
   language: string;
   chapters: number;
   type: 'Fiction' | 'Non-Fiction' | 'Educative';
+  writingStyle: WritingStyle;
 }
 
 export interface ChapterOutline {

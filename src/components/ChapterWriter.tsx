@@ -84,6 +84,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
         chapter.outline,
         bookIdea.language,
         bookIdea.type,
+        bookIdea.writingStyle,
       );
 
       const updatedOutlines = outlines.map((c) =>
@@ -119,6 +120,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
         chapter.outline,
         bookIdea.language,
         bookIdea.type,
+        bookIdea.writingStyle,
       );
 
       const creditResult = await deductCreditsForChapterGeneration(1);

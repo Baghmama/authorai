@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
-import { BookIdea } from '../types';
-import { Lightbulb, Globe, BookOpen, Layers, Sparkles } from 'lucide-react';
+import { BookIdea, WritingStyle } from '../types';
+import { Lightbulb, Globe, BookOpen, Layers, Sparkles, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette } from 'lucide-react';
 import { calculateCreditsNeeded } from '../utils/creditManager';
+
+const WRITING_STYLES: { value: WritingStyle; label: string; description: string; icon: React.ReactNode }[] = [
+  { value: 'formal', label: 'Formal', description: 'Polished and professional tone', icon: <Feather className="h-4 w-4" /> },
+  { value: 'conversational', label: 'Conversational', description: 'Friendly and approachable', icon: <MessageCircle className="h-4 w-4" /> },
+  { value: 'literary', label: 'Literary', description: 'Rich, artistic prose', icon: <BookMarked className="h-4 w-4" /> },
+  { value: 'humorous', label: 'Humorous', description: 'Witty and entertaining', icon: <Laugh className="h-4 w-4" /> },
+  { value: 'academic', label: 'Academic', description: 'Scholarly and research-driven', icon: <GraduationCap className="h-4 w-4" /> },
+  { value: 'descriptive', label: 'Descriptive', description: 'Vivid and immersive detail', icon: <Palette className="h-4 w-4" /> },
+];
 
 interface IdeaFormProps {
   onSubmit: (idea: BookIdea) => void;
@@ -14,6 +23,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
     language: 'English',
     chapters: 1,
     type: 'Fiction',
+    writingStyle: 'formal',
   });
 
   const creditsNeeded = calculateCreditsNeeded(formData.chapters);
@@ -124,6 +134,39 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                 <option value="Non-Fiction">Non-Fiction</option>
                 <option value="Educative">Educative</option>
               </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-3">
+              <Feather className="h-4 w-4 text-orange-500" />
+              <span>Writing Style</span>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {WRITING_STYLES.map((style) => (
+                <button
+                  key={style.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, writingStyle: style.value })}
+                  className={`group relative flex flex-col items-start gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 text-left ${
+                    formData.writingStyle === style.value
+                      ? 'border-orange-400 bg-orange-50/80 shadow-sm shadow-orange-500/10'
+                      : 'border-slate-200 bg-slate-50/50 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className={`flex items-center gap-2 ${
+                    formData.writingStyle === style.value ? 'text-orange-600' : 'text-slate-500 group-hover:text-slate-700'
+                  } transition-colors`}>
+                    {style.icon}
+                    <span className={`text-sm font-semibold ${
+                      formData.writingStyle === style.value ? 'text-orange-700' : 'text-slate-700'
+                    }`}>{style.label}</span>
+                  </div>
+                  <span className={`text-xs leading-snug ${
+                    formData.writingStyle === style.value ? 'text-orange-600/80' : 'text-slate-400'
+                  }`}>{style.description}</span>
+                </button>
+              ))}
             </div>
           </div>
 
