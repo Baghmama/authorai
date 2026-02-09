@@ -98,14 +98,14 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                 <input
                   type="range"
                   min="1"
-                  max="10"
+                  max="18"
                   value={formData.chapters}
                   onChange={(e) =>
                     setFormData({ ...formData, chapters: parseInt(e.target.value) })
                   }
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
                   style={{
-                    background: `linear-gradient(to right, #f97316 0%, #f97316 ${(formData.chapters - 1) * 11.11}%, #e2e8f0 ${(formData.chapters - 1) * 11.11}%, #e2e8f0 100%)`,
+                    background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 100%)`,
                   }}
                 />
                 <div className="flex justify-between text-xs text-slate-500">
@@ -113,7 +113,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                   <span className="font-semibold text-orange-600">
                     {formData.chapters} chapters ({creditsNeeded} credits)
                   </span>
-                  <span>10</span>
+                  <span>18</span>
                 </div>
               </div>
             </div>
