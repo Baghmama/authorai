@@ -3,6 +3,30 @@ import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Bord
 import { saveAs } from 'file-saver';
 import { BookProject } from '../types';
 
+function stripLeadingTitle(content: string, title: string): string {
+  const lines = content.split('\n');
+  const titleLower = title.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  let startIndex = 0;
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    const lineCleaned = lines[i].trim().replace(/^#+\s*/, '').replace(/\*\*/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!lineCleaned) {
+      startIndex = i + 1;
+      continue;
+    }
+    if (lineCleaned.includes(titleLower) || titleLower.includes(lineCleaned)) {
+      startIndex = i + 1;
+      while (startIndex < lines.length && lines[startIndex].trim() === '') {
+        startIndex++;
+      }
+      break;
+    }
+    break;
+  }
+
+  return lines.slice(startIndex).join('\n').trim();
+}
+
 export async function generatePDF(project: BookProject): Promise<void> {
   const pdf = new jsPDF();
   let yPosition = 20;
@@ -36,7 +60,8 @@ export async function generatePDF(project: BookProject): Promise<void> {
     
     if (chapter.content) {
       pdf.setFontSize(12);
-      const contentLines = pdf.splitTextToSize(chapter.content, 170);
+      const cleanedContent = stripLeadingTitle(chapter.content, chapter.title);
+      const contentLines = pdf.splitTextToSize(cleanedContent, 170);
       
       contentLines.forEach((line: string) => {
         if (yPosition > 280) {
@@ -111,7 +136,8 @@ export async function generateWord(project: BookProject): Promise<void> {
       );
       
       if (chapter.content) {
-        const paragraphs = chapter.content.split('\n').filter(p => p.trim());
+        const cleanedContent = stripLeadingTitle(chapter.content, chapter.title);
+        const paragraphs = cleanedContent.split('\n').filter(p => p.trim());
         paragraphs.forEach((paragraph) => {
           sections.push(
             new Paragraph({
