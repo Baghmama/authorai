@@ -55,8 +55,16 @@ export async function generatePDF(project: BookProject): Promise<void> {
     }
     
     pdf.setFontSize(18);
-    pdf.text(chapter.title, 20, yPosition);
-    yPosition += 15;
+    const titleLines = pdf.splitTextToSize(chapter.title, 170);
+    titleLines.forEach((line: string) => {
+      if (yPosition > 270) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      pdf.text(line, 20, yPosition);
+      yPosition += 10;
+    });
+    yPosition += 5;
     
     if (chapter.content) {
       pdf.setFontSize(12);
