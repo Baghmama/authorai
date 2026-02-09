@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ChapterOutline, BookIdea } from '../types';
 import { writeChapter } from '../utils/geminiApi';
@@ -13,6 +13,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Timer,
 } from 'lucide-react';
 
 interface ChapterWriterProps {
@@ -34,6 +35,29 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const [editContent, setEditContent] = useState<string>('');
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState<string | null>(null);
   const [expandedOutlines, setExpandedOutlines] = useState<Record<string, boolean>>({});
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const cooldownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCooldown = useCallback(() => {
+    setCooldownSeconds(15);
+    if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+    cooldownTimerRef.current = setInterval(() => {
+      setCooldownSeconds((prev) => {
+        if (prev <= 1) {
+          if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+          cooldownTimerRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+    };
+  }, []);
 
   React.useEffect(() => {
     const initialExpanded: Record<string, boolean> = {};
@@ -66,6 +90,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
         c.id === chapter.id ? { ...c, content, isWritten: true } : c,
       );
       onUpdateOutlines(updatedOutlines);
+      startCooldown();
     } catch (error) {
       alert('Failed to write chapter. Please try again.');
     } finally {
@@ -105,6 +130,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
         c.id === chapterId ? { ...c, content, isWritten: true } : c,
       );
       onUpdateOutlines(updatedOutlines);
+      startCooldown();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       alert('Failed to regenerate chapter: ' + errorMessage);
@@ -135,7 +161,8 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
   const allChaptersWritten = outlines.every((chapter) => chapter.isWritten);
   const completedCount = outlines.filter((c) => c.isWritten).length;
-  const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null;
+  const isCoolingDown = cooldownSeconds > 0;
+  const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null || isCoolingDown;
 
   return (
     <div className="max-w-4xl mx-auto px-2 sm:px-0">
@@ -154,6 +181,21 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
           </span>
         </div>
       </div>
+
+      {isCoolingDown && (
+        <div className="flex items-center justify-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mb-6">
+          <Timer className="h-4 w-4 text-amber-600 animate-pulse" />
+          <span className="text-sm font-medium text-amber-800">
+            Cooldown: {cooldownSeconds}s remaining before next chapter
+          </span>
+          <div className="h-1.5 w-24 bg-amber-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
+              style={{ width: `${(cooldownSeconds / 15) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="space-y-4">
         {outlines.map((chapter, index) => (
