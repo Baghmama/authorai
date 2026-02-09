@@ -33,7 +33,7 @@ const FreeCreditsModal: React.FC<FreeCreditsModalProps> = ({ isOpen, onClose, us
 
   const tweetText = 'Created a whole book with just a simple prompt. @shuvodip99 \nMust try: https://authorai.site';
   const twitterHandle = '@shuvodip99';
-  const websiteUrl = 'https://authorai.tech';
+  const websiteUrl = 'https://authorai.site';
   const playStoreUrl = 'https://play.google.com/store/apps/details?id=tech.authorai.twa&pli=1';
 
   React.useEffect(() => {
