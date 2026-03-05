@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import LegalPages from './components/LegalPages';
 import Auth from './components/Auth';
+import AuthCallback from './components/AuthCallback';
 import AppContent from './components/AppContent';
 import ConfigurationMessage from './components/ConfigurationMessage';
 import AdminPanel from './components/AdminPanel';
@@ -103,23 +104,29 @@ function App() {
   return (
     <Routes>
       {/* Landing page for non-logged-in users */}
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
           !user ? <LandingPage onGetStarted={handleGetStarted} /> : (
             <AppContent user={user} onSignOut={handleSignOut} />
           )
-        } 
+        }
       />
-      
+
+      {/* OAuth callback handler */}
+      <Route
+        path="/auth/callback"
+        element={<AuthCallback onAuthSuccess={handleAuthSuccess} />}
+      />
+
       {/* Dedicated authentication page */}
-      <Route 
-        path="/auth" 
+      <Route
+        path="/auth"
         element={
           !user ? <Auth onAuthSuccess={handleAuthSuccess} /> : (
             <AppContent user={user} onSignOut={handleSignOut} />
           )
-        } 
+        }
       />
       
       {/* App routes for logged-in users */}
