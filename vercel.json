@@ -8,17 +8,6 @@
       "has": [
         {
           "type": "host",
-          "value": "authorai.site"
-        }
-      ],
-      "destination": "https://authorai.site/$1",
-      "permanent": true
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
           "value": "www.authorai.site"
         }
       ],
