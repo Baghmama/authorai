@@ -70,7 +70,7 @@ const SaleBanner: React.FC = () => {
             <div className="flex items-center space-x-3 flex-1">
               <span className="text-2xl font-bold text-pink-200 animate-pulse">1</span>
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-                <span className="font-bold text-lg">1s Anniversary Sale</span>
+                <span className="font-bold text-lg">1st Anniversary Sale</span>
                 <span className="text-sm text-pink-100">Credit Packs Starting from Just $1</span>
               </div>
             </div>
