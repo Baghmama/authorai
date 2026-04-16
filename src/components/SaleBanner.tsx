@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, Heart } from 'lucide-react';
+import { X, ShoppingCart } from 'lucide-react';
 import PaymentModal from './PaymentModal';
 import { getUserCredits } from '../utils/creditManager';
 
@@ -61,16 +61,16 @@ const SaleBanner: React.FC = () => {
               animationDelay: `${(i % 6) * 0.6}s`,
             }}
           >
-            &#x2764;
+            1
           </div>
         ))}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1">
-              <Heart className="h-5 w-5 animate-pulse text-pink-200 fill-pink-200" />
+              <span className="text-2xl font-bold text-pink-200 animate-pulse">1</span>
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-                <span className="font-bold text-lg">Valentine's Month Sale is Live!</span>
+                <span className="font-bold text-lg">1s Anniversary Sale</span>
                 <span className="text-sm text-pink-100">Credit Packs Starting from Just $1</span>
               </div>
             </div>
