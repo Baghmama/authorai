@@ -24,7 +24,7 @@ const SaleBanner: React.FC = () => {
 
   return (
     <>
-      <div className="relative bg-gradient-to-r from-rose-600 via-pink-500 to-rose-600 text-white shadow-lg overflow-hidden">
+      <div className="relative bg-gradient-to-r from-rose-600 via-blue-500 to-rose-600 text-white shadow-lg overflow-hidden">
         <style>{`
           @keyframes floatHeart {
             0% {
