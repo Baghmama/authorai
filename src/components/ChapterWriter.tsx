@@ -294,7 +294,8 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null || isCoolingDown;
 
   return (
-    <div className="max-w-6xl mx-auto px-2 sm:px-4 py-8 sm:py-12">
+  return (
+    <div className="w-full max-w-[1600px] mx-auto px-2 sm:px-6 py-4 sm:py-10">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest mb-4">
           <Zap className="h-3 w-3" strokeWidth={3} />
@@ -581,53 +582,55 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                           src={aState.audioUrl}
                           onEnded={() => handleAudioEnded(chapter.id)}
                         />
-                      <div className="mt-8 p-6 bg-slate-50 border border-slate-100 rounded-[2rem] shadow-inner relative overflow-hidden group/player">
-                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                      <div className="mt-6 bg-slate-900 rounded-2xl p-3 sm:p-4 border border-slate-800 shadow-2xl relative overflow-hidden">
+                        <div className="flex items-center gap-4 relative">
                           <button
                             onClick={() => handlePlayPause(chapter.id)}
-                            className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
+                            className="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-400 transition-colors"
                           >
                             {isPlaying
-                              ? <Pause className="h-6 w-6 text-white" strokeWidth={2.5} fill="currentColor" />
-                              : <Play className="h-6 w-6 text-white ml-1" strokeWidth={2.5} fill="currentColor" />}
+                              ? <Pause className="h-4 w-4" fill="currentColor" />
+                              : <Play className="h-4 w-4 ml-0.5" fill="currentColor" />}
                           </button>
 
-                          <div className="flex-1 min-w-0 w-full">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2 overflow-hidden">
-                                <span className="px-2 py-0.5 rounded-lg bg-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1.5 px-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest px-1.5 py-0.5 bg-indigo-500/10 rounded border border-indigo-500/20">
                                   {qualityLabel}
                                 </span>
-                                <span className="text-slate-300 text-xs">•</span>
-                                <span className="text-xs font-bold text-slate-900 truncate">
+                                <span className="text-[10px] font-bold text-slate-300 truncate max-w-[120px] sm:max-w-none">
                                   {chapter.title}
                                 </span>
                               </div>
-                              <a
-                                href={aState.audioUrl}
-                                download={`chapter-${index + 1}-${aState.quality}.wav`}
-                                className="p-2 rounded-xl bg-white text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all border border-slate-100"
-                                title="Download Audio"
-                              >
-                                <Download className="h-4 w-4" strokeWidth={2} />
-                              </a>
+                              <div className="flex items-center gap-4">
+                                <span className="text-[8px] font-black text-slate-600 hidden sm:block tracking-[0.2em]">STUDIO MASTER</span>
+                                <a
+                                  href={aState.audioUrl}
+                                  download={`chapter-${index + 1}-${aState.quality}.wav`}
+                                  className="text-slate-500 hover:text-white transition-colors"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
                             </div>
                             
-                            <div className="flex items-end gap-1 h-10 bg-white/50 rounded-xl px-4 py-2 border border-slate-100/50 overflow-hidden">
-                              {[30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50].map((h, i) => (
-                                <div
-                                  key={i}
-                                  className={`flex-1 rounded-full transition-all duration-300 ${
-                                    isPlaying
-                                      ? 'bg-gradient-to-t from-indigo-500 via-purple-500 to-pink-500'
-                                      : 'bg-slate-200'
-                                  }`}
-                                  style={{
-                                    height: `${h * (isPlaying ? (0.4 + Math.random() * 0.6) : 0.2)}%`,
-                                    transitionDelay: `${i * 15}ms`,
-                                  }}
-                                />
-                              ))}
+                            <div className="flex items-end gap-1 h-6 bg-slate-950/50 rounded px-2 py-1 overflow-hidden border border-white/5">
+                              {Array.from({ length: 80 }).map((_, i) => {
+                                const h = [30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,70,40,90,30,50,80,40,60,30,50,70,40,80,30,60,90,40,50,70,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50][i];
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`flex-1 rounded-full transition-all duration-300 ${
+                                      isPlaying ? 'bg-indigo-500' : 'bg-slate-800'
+                                    }`}
+                                    style={{
+                                      height: `${h * (isPlaying ? (0.4 + Math.random() * 0.6) : 0.2)}%`,
+                                      transitionDelay: `${i * 8}ms`,
+                                    }}
+                                  />
+                                );
+                              })}
                             </div>
                           </div>
                         </div>

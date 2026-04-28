@@ -111,7 +111,7 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
       <Navigation userEmail={user.email} />
       <SaleBanner />
 
-      <main className="flex-1 py-6 sm:py-10 px-3 sm:px-4 lg:px-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 py-4 sm:py-8 px-2 sm:px-6 w-full max-w-none mx-auto">
         <ProgressIndicator currentStep={currentStep} />
 
         {currentStep === 'idea' && (
