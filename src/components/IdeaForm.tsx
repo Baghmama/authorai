@@ -39,7 +39,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-5 sm:px-8 sm:py-6 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shrink-0 shadow-lg shadow-orange-600/30">
             <Lightbulb className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -51,14 +51,14 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
         <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6">
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-              <Pen className="h-4 w-4 text-orange-500" />
+              <Pen className="h-4 w-4 text-orange-600" />
               <span>Book Idea</span>
             </label>
             <textarea
               value={formData.idea}
               onChange={(e) => setFormData({ ...formData, idea: e.target.value })}
               placeholder="Describe your book idea in detail..."
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none transition-all text-slate-700 placeholder:text-slate-400 bg-slate-50/50"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 resize-none transition-all text-slate-700 placeholder:text-slate-400 bg-slate-50/50"
               rows={4}
               required
             />
@@ -67,13 +67,13 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <Globe className="h-4 w-4 text-orange-500" />
+                <Globe className="h-4 w-4 text-orange-600" />
                 <span>Language</span>
               </label>
               <select
                 value={formData.language}
                 onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all bg-slate-50/50 text-slate-700"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 transition-all bg-slate-50/50 text-slate-700"
               >
                 <option value="English">English</option>
                 <option value="Spanish">Spanish</option>
@@ -91,7 +91,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
 
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <Layers className="h-4 w-4 text-orange-500" />
+                <Layers className="h-4 w-4 text-orange-600" />
                 <span>Chapters</span>
               </label>
               <div className="space-y-3">
@@ -105,7 +105,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                   }
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
                   style={{
-                    background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 100%)`,
+                    background: `linear-gradient(to right, #ea580c 0%, #ea580c ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 ${((formData.chapters - 1) / 17) * 100}%, #e2e8f0 100%)`,
                   }}
                 />
                 <div className="flex justify-between text-xs text-slate-500">
@@ -120,7 +120,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
 
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-                <BookOpen className="h-4 w-4 text-orange-500" />
+                <BookOpen className="h-4 w-4 text-orange-600" />
                 <span>Book Type</span>
               </label>
               <select
@@ -128,7 +128,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value as BookIdea['type'] })
                 }
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all bg-slate-50/50 text-slate-700"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 transition-all bg-slate-50/50 text-slate-700"
               >
                 <option value="Fiction">Fiction</option>
                 <option value="Non-Fiction">Non-Fiction</option>
@@ -139,7 +139,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
 
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-3">
-              <Feather className="h-4 w-4 text-orange-500" />
+              <Feather className="h-4 w-4 text-orange-600" />
               <span>Writing Style</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -173,7 +173,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
           <button
             type="submit"
             disabled={isLoading || !formData.idea.trim()}
-            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold py-3.5 px-6 rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/25"
+            className="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold py-3.5 px-6 rounded-xl hover:from-orange-700 hover:to-amber-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-orange-600/20 hover:shadow-xl hover:shadow-orange-600/25"
           >
             {isLoading ? (
               <>

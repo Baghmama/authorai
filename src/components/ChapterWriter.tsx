@@ -296,7 +296,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-600 text-[10px] font-black uppercase tracking-widest mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest mb-4">
           <Zap className="h-3 w-3" strokeWidth={3} />
           <span>Manuscript Phase</span>
         </div>
@@ -414,7 +414,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
               <div className="bg-slate-50/30 px-10 py-8 border-b border-slate-100 animate-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
-                    <Edit3 className="h-4 w-4 text-orange-600" strokeWidth={2} />
+                    <Edit3 className="h-4 w-4 text-orange-700" strokeWidth={2} />
                   </div>
                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Directives & Outline</h4>
                 </div>
@@ -441,7 +441,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   <button
                     onClick={() => setShowRegenerateConfirm(chapter.id)}
                     disabled={isBusy}
-                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-orange-600 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-orange-700 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
                   >
                     <RefreshCw className="h-4 w-4 text-slate-400 group-hover:text-orange-500 transition-colors" strokeWidth={1.5} />
                     <span>Regenerate</span>
@@ -665,7 +665,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 backdrop-blur-sm">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
-                  <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/30">
+                  <div className="p-2 bg-orange-600 rounded-xl shadow-lg shadow-orange-600/30">
                     <Headphones className="h-6 w-6 text-white" strokeWidth={2} />
                   </div>
                   Pro Voice Studio
@@ -677,14 +677,14 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   </div>
                   <div className="w-[1px] h-3 bg-slate-300" />
                   <p className="text-sm text-slate-500 font-medium">
-                    Cost: <span className="font-bold text-orange-600">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
+                    Cost: <span className="font-bold text-orange-700">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
                   </p>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-3 pr-4">
                 <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
                   <div className="p-1.5 bg-orange-50 rounded-lg">
-                    <Zap className="h-4 w-4 text-orange-500" strokeWidth={2} />
+                    <Zap className="h-4 w-4 text-orange-600" strokeWidth={2} />
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">Pace Control</span>
@@ -697,7 +697,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         step="0.1"
                         value={selectedPace}
                         onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
-                        className="w-24 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                        className="w-24 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-600"
                       />
                     </div>
                   </div>
