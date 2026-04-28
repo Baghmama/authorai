@@ -294,7 +294,6 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null || isCoolingDown;
 
   return (
-  return (
     <div className="w-full max-w-[1600px] mx-auto px-2 sm:px-6 py-4 sm:py-10">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest mb-4">
