@@ -879,42 +879,60 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
               </div>
 
               <div className="space-y-10">
-                {/* Voice Profile */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Voice Profile</label>
-                    <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest">
-                      {choosingAudio.quality === 'pro' ? 'STUDIO MASTER' : 'REGULAR'}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {['female', 'male'].map((gender) => (
-                      <button
-                        key={gender}
-                        onClick={() => setAudioState(choosingAudio.chapter.id, { speaker: VOICES[choosingAudio.quality][gender as 'female' | 'male'][0] })}
-                        className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center gap-3 ${
-                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
-                            ? 'border-indigo-500 bg-indigo-50/50 shadow-lg shadow-indigo-100'
-                            : 'border-slate-100 hover:border-slate-200 bg-white'
-                        }`}
-                      >
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
-                            ? 'bg-indigo-500 text-white'
-                            : 'bg-slate-100 text-slate-400'
-                        }`}>
-                          {gender === 'female' ? <Volume2 className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
-                        </div>
-                        <span className={`text-xs font-black uppercase tracking-widest ${
-                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
-                            ? 'text-indigo-600'
-                            : 'text-slate-500'
-                        }`}>
-                          {gender} Engine
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                {/* Voice Profile Selection */}
+                <div className="space-y-8 max-h-[40vh] overflow-y-auto pr-4 -mr-4">
+                  {(['female', 'male'] as const).map((gender) => (
+                    <div key={gender}>
+                      <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-slate-300" />
+                        {gender} Voices
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {VOICES[choosingAudio.quality][gender].map((voiceName) => {
+                          const isSelected = (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]) === voiceName;
+                          const isPreviewPlaying = playingPreview === voiceName;
+
+                          return (
+                            <div
+                              key={voiceName}
+                              className={`group flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+                                isSelected
+                                  ? 'border-indigo-500 bg-indigo-50/50 shadow-lg shadow-indigo-100'
+                                  : 'border-slate-100 hover:border-slate-200 bg-white'
+                              }`}
+                            >
+                              <button
+                                onClick={() => setAudioState(choosingAudio.chapter.id, { speaker: voiceName })}
+                                className="flex-1 flex items-center gap-3 text-left"
+                              >
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                  isSelected ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-400'
+                                }`}>
+                                  <Star className="h-4 w-4" fill={isSelected ? 'currentColor' : 'none'} />
+                                </div>
+                                <span className={`text-sm font-bold capitalize ${
+                                  isSelected ? 'text-indigo-700' : 'text-slate-600'
+                                }`}>
+                                  {voiceName}
+                                </span>
+                              </button>
+                              
+                              <button
+                                onClick={() => handlePreviewVoice(voiceName)}
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                                  isPreviewPlaying
+                                    ? 'bg-slate-900 text-white shadow-lg'
+                                    : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-900'
+                                }`}
+                              >
+                                {isPreviewPlaying ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="h-4 w-4 ml-0.5" fill="currentColor" />}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Pace Control */}
