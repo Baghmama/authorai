@@ -266,8 +266,12 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   };
 
   const handlePlayPause = (chapterId: string) => {
+    console.log('Playback Triggered for:', chapterId);
+    console.log('Current Audio States:', audioStates);
+    
     // If we're already playing this chapter, just toggle it
     if (playingChapterId === chapterId) {
+      console.log('Toggling existing chapter');
       const audio = audioRefs.current[chapterId];
       if (audio) {
         if (audio.paused) {
@@ -846,15 +850,24 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       )}
       {/* Global Bottom Audio Ribbon */}
       {(() => {
-        if (!playingChapterId) return null;
+        if (!playingChapterId) {
+          console.log('Ribbon Hidden: No playingChapterId');
+          return null;
+        }
         
         const playingChapter = outlines.find(c => c.id === playingChapterId);
         const aState = audioStates[playingChapterId];
-        if (!aState || !aState.audioUrl) return null;
+        
+        if (!aState || !aState.audioUrl) {
+          console.log('Ribbon Hidden: No aState or audioUrl for', playingChapterId);
+          return null;
+        }
+
+        console.log('Rendering Ribbon for:', playingChapterId, aState.audioUrl);
         
         return (
-          <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 animate-in slide-in-from-bottom-full duration-500">
-            <div className="max-w-[1600px] mx-auto">
+          <div className="fixed bottom-0 left-0 right-0 z-[9999] p-2 sm:p-4 animate-in slide-in-from-bottom-full duration-500 pointer-events-none">
+            <div className="max-w-[1600px] mx-auto pointer-events-auto">
               <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.4)] flex items-center gap-4 sm:gap-6 overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-transparent pointer-events-none" />
                 
