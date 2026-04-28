@@ -581,51 +581,53 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                           src={aState.audioUrl}
                           onEnded={() => handleAudioEnded(chapter.id)}
                         />
-                      <div className="mt-6 bg-slate-900 rounded-2xl p-3 sm:p-4 border border-slate-800 shadow-2xl relative overflow-hidden">
-                        <div className="flex items-center gap-4 relative">
+                      <div className="mt-8 -mx-6 sm:-mx-12 -mb-6 sm:-mb-12 bg-slate-900 p-4 sm:p-6 relative overflow-hidden group/player">
+                        <div className="flex items-center gap-4 sm:gap-8 relative">
                           <button
                             onClick={() => handlePlayPause(chapter.id)}
-                            className="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-400 transition-colors"
+                            className="flex-shrink-0 w-14 h-14 rounded-2xl bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-400 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
                           >
                             {isPlaying
-                              ? <Pause className="h-4 w-4" fill="currentColor" />
-                              : <Play className="h-4 w-4 ml-0.5" fill="currentColor" />}
+                              ? <Pause className="h-6 w-6" fill="currentColor" />
+                              : <Play className="h-6 w-6 ml-1" fill="currentColor" />}
                           </button>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1.5 px-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest px-1.5 py-0.5 bg-indigo-500/10 rounded border border-indigo-500/20">
-                                  {qualityLabel}
-                                </span>
-                                <span className="text-[10px] font-bold text-slate-300 truncate max-w-[120px] sm:max-w-none">
+                            <div className="flex items-center justify-between mb-3 px-1">
+                              <div className="flex items-center gap-3">
+                                <div className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-wider border border-indigo-500/30">
+                                  {aState.quality.toUpperCase()} VOICE
+                                </div>
+                                <span className="text-xs font-bold text-slate-100 truncate sm:max-w-md">
                                   {chapter.title}
                                 </span>
                               </div>
                               <div className="flex items-center gap-4">
-                                <span className="text-[8px] font-black text-slate-600 hidden sm:block tracking-[0.2em]">STUDIO MASTER</span>
+                                <span className="text-[10px] font-black text-slate-500 tracking-[0.2em] hidden md:block">MASTERED AUDIO</span>
                                 <a
                                   href={aState.audioUrl}
                                   download={`chapter-${index + 1}-${aState.quality}.wav`}
-                                  className="text-slate-500 hover:text-white transition-colors"
+                                  className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 shadow-sm"
+                                  title="Download Audio"
                                 >
-                                  <Download className="h-3.5 w-3.5" />
+                                  <Download className="h-4 w-4" />
+                                  <span className="text-xs font-black uppercase tracking-tighter hidden sm:inline">Save</span>
                                 </a>
                               </div>
                             </div>
                             
-                            <div className="flex items-end gap-1 h-6 bg-slate-950/50 rounded px-2 py-1 overflow-hidden border border-white/5">
-                              {Array.from({ length: 80 }).map((_, i) => {
-                                const h = [30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,70,40,90,30,50,80,40,60,30,50,70,40,80,30,60,90,40,50,70,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50][i];
+                            <div className="flex items-end gap-1.5 h-8 bg-black/40 rounded-xl px-4 py-2 overflow-hidden border border-white/5">
+                              {Array.from({ length: 100 }).map((_, i) => {
+                                const h = [30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,70,40,90,30,50,80,40,60,30,50,70,40,80,30,60,90,40,50,70,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50][i];
                                 return (
                                   <div
                                     key={i}
                                     className={`flex-1 rounded-full transition-all duration-300 ${
-                                      isPlaying ? 'bg-indigo-500' : 'bg-slate-800'
+                                      isPlaying ? 'bg-indigo-400' : 'bg-slate-700'
                                     }`}
                                     style={{
                                       height: `${h * (isPlaying ? (0.4 + Math.random() * 0.6) : 0.2)}%`,
-                                      transitionDelay: `${i * 8}ms`,
+                                      transitionDelay: `${i * 5}ms`,
                                     }}
                                   />
                                 );
