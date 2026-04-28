@@ -284,187 +284,224 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null || isCoolingDown;
 
   return (
-    <div className="max-w-4xl mx-auto px-2 sm:px-0">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Write Chapters</h2>
-        <p className="text-slate-500 mb-4">Generate content for each chapter using AI</p>
-        <div className="inline-flex items-center gap-3 bg-slate-100 rounded-xl px-4 py-2.5">
-          <div className="h-2 flex-1 min-w-[120px] bg-slate-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
-              style={{ width: `${(completedCount / outlines.length) * 100}%` }}
-            />
+    <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-600 text-[10px] font-black uppercase tracking-widest mb-4">
+          <Zap className="h-3 w-3" strokeWidth={3} />
+          <span>Manuscript Phase</span>
+        </div>
+        <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+          Write Your <span className="gradient-text">Masterpiece</span>
+        </h2>
+        <p className="text-slate-500 max-w-lg mx-auto text-lg leading-relaxed font-medium">
+          Refine your chapters and generate high-fidelity audio narrations.
+        </p>
+        
+        <div className="mt-8 inline-flex items-center gap-6 glass-panel rounded-2xl px-6 py-3 shadow-xl shadow-slate-200/50">
+          <div className="flex flex-col items-start">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Completion Progress</span>
+            <div className="flex items-center gap-3 mt-1">
+              <div className="h-2 w-48 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-1000"
+                  style={{ width: `${(completedCount / outlines.length) * 100}%` }}
+                />
+              </div>
+              <span className="text-sm font-black text-slate-900">
+                {Math.round((completedCount / outlines.length) * 100)}%
+              </span>
+            </div>
           </div>
-          <span className="text-sm font-medium text-slate-700 whitespace-nowrap">
-            {completedCount} / {outlines.length}
-          </span>
+          <div className="w-[1px] h-8 bg-slate-200" />
+          <div className="flex flex-col items-start">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Chapters</span>
+            <span className="text-xl font-black text-slate-900">{completedCount} <span className="text-slate-300 font-medium">/ {outlines.length}</span></span>
+          </div>
         </div>
       </div>
 
       {isCoolingDown && (
-        <div className="flex items-center justify-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mb-6">
-          <Timer className="h-4 w-4 text-amber-600 animate-pulse" />
-          <span className="text-sm font-medium text-amber-800">
-            Cooldown: {cooldownSeconds}s remaining before next chapter
-          </span>
-          <div className="h-1.5 w-24 bg-amber-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
-              style={{ width: `${(cooldownSeconds / 15) * 100}%` }}
-            />
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 animate-in fade-in slide-in-from-bottom-8 duration-500">
+          <div className="glass-panel border-amber-200/50 rounded-2xl px-6 py-4 shadow-2xl flex items-center gap-4">
+            <div className="p-2 bg-amber-100 rounded-xl">
+              <Timer className="h-5 w-5 text-amber-600 animate-spin-slow" strokeWidth={2} />
+            </div>
+            <div>
+              <p className="text-sm font-black text-slate-900 leading-none">Cooling Down</p>
+              <p className="text-xs text-amber-700 mt-1">Available in {cooldownSeconds}s</p>
+            </div>
+            <div className="h-8 w-[1px] bg-amber-200" />
+            <div className="relative w-12 h-12">
+              <svg className="w-12 h-12 transform -rotate-90">
+                <circle cx="24" cy="24" r="20" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-amber-100" />
+                <circle cx="24" cy="24" r="20" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-amber-500 transition-all duration-1000 ease-linear" strokeDasharray={125.6} strokeDashoffset={125.6 - (cooldownSeconds / 15) * 125.6} />
+              </svg>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-12">
         {outlines.map((chapter, index) => (
           <div
             key={chapter.id}
-            className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden"
+            className="premium-card rounded-[2.5rem] overflow-hidden group border-none"
           >
-            <div className="p-4 sm:p-6">
-              <div className="flex items-start gap-3">
-                <button
-                  onClick={() => toggleOutlineVisibility(chapter.id)}
-                  className="mt-0.5 p-1 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100 flex-shrink-0"
-                >
-                  {expandedOutlines[chapter.id] ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </button>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">
-                      Ch. {index + 1}
-                    </span>
-                    <h3 className="text-sm sm:text-base font-semibold text-slate-900 leading-snug break-words">
-                      {chapter.title}
-                    </h3>
-                  </div>
-
-                  {chapter.isWritten && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <button
-                        onClick={() => handleStartEdit(chapter)}
-                        disabled={isBusy}
-                        className="flex items-center gap-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <Edit3 className="h-3 w-3" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => setShowRegenerateConfirm(chapter.id)}
-                        disabled={isBusy}
-                        className="flex items-center gap-1 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-lg hover:bg-orange-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <RefreshCw className="h-3 w-3" />
-                        <span>Regenerate <span className="hidden sm:inline">(6 credits)</span></span>
-                      </button>
-                      {/* Audio episode buttons */}
-                      {(() => {
-                        const aState = audioStates[chapter.id];
-                        if (aState?.status === 'generating') return null;
-                        return (
-                          <>
-                            <button
-                              onClick={() => setChoosingAudio({ chapter, quality: 'regular' })}
-                              disabled={isBusy || aState?.status === 'generating'}
-                              className="flex items-center gap-1 bg-violet-50 text-violet-700 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                              title="Regular audio using bulbul:v2"
-                            >
-                              <Music className="h-3 w-3" />
-                              <span>Audio <span className="hidden sm:inline">(4 credits)</span></span>
-                            </button>
-                            <button
-                              onClick={() => setChoosingAudio({ chapter, quality: 'pro' })}
-                              disabled={isBusy || aState?.status === 'generating'}
-                              className="flex items-center gap-1 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                              title="Pro audio using bulbul:v3"
-                            >
-                              <Star className="h-3 w-3" />
-                              <span>Pro Audio <span className="hidden sm:inline">(7 credits)</span></span>
-                            </button>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  )}
+            {/* Chapter Header (Glassy) */}
+            <div className="bg-slate-50/80 backdrop-blur-sm px-8 py-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-white shadow-inner flex items-center justify-center border border-slate-100">
+                  <span className="text-lg font-black text-slate-900 tracking-tighter">{index + 1}</span>
                 </div>
-
-                <div className="flex-shrink-0">
-                  {chapter.isWritten ? (
-                    <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="text-xs font-medium hidden sm:inline">Done</span>
-                    </div>
-                  ) : writingChapterId === chapter.id || regeneratingChapterId === chapter.id ? (
-                    <div className="flex items-center gap-1.5 text-orange-600 bg-orange-50 px-2.5 py-1 rounded-lg">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-orange-600 border-t-transparent" />
-                      <span className="text-xs font-medium hidden sm:inline">
-                        {writingChapterId === chapter.id ? 'Writing' : 'Regen'}...
-                      </span>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleWriteChapter(chapter)}
-                      disabled={isBusy}
-                      className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-3 sm:px-4 py-1.5 rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm font-medium flex items-center gap-1.5"
-                    >
-                      <PenTool className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                      <span>Write</span>
-                    </button>
-                  )}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Chapter Title</span>
+                    {chapter.isWritten && (
+                      <div className="w-1 h-1 rounded-full bg-emerald-400" />
+                    )}
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 tracking-tight">{chapter.title}</h3>
                 </div>
               </div>
-
-              {expandedOutlines[chapter.id] && (
-                <div className="mt-3 ml-9 text-slate-500 text-sm prose prose-sm max-w-none border-l-2 border-slate-100 pl-4">
-                  <ReactMarkdown>{chapter.outline}</ReactMarkdown>
-                </div>
-              )}
+              
+              <div className="flex items-center gap-3">
+                {chapter.isWritten ? (
+                  <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider border border-emerald-100/50">
+                    <CheckCircle className="h-4 w-4" strokeWidth={2} />
+                    <span>Manuscript Ready</span>
+                  </div>
+                ) : writingChapterId === chapter.id || regeneratingChapterId === chapter.id ? (
+                  <div className="flex items-center gap-3 bg-indigo-50 text-indigo-600 px-5 py-2.5 rounded-2xl text-sm font-bold border border-indigo-100">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-600 border-t-transparent" />
+                    <span>{writingChapterId === chapter.id ? 'Writing' : 'Regen'} with AI...</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleWriteChapter(chapter)}
+                    disabled={isBusy}
+                    className="premium-button-gradient text-white px-8 py-3 rounded-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:grayscale text-sm font-black uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-indigo-200"
+                  >
+                    <PenTool className="h-4 w-4" strokeWidth={2} />
+                    <span>Begin Writing</span>
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => toggleOutlineVisibility(chapter.id)}
+                  className="p-3 text-slate-400 hover:text-slate-900 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-100 shadow-sm"
+                >
+                  {expandedOutlines[chapter.id] ? (
+                    <ChevronUp className="h-5 w-5" strokeWidth={1.5} />
+                  ) : (
+                    <ChevronDown className="h-5 w-5" strokeWidth={1.5} />
+                  )}
+                </button>
+              </div>
             </div>
 
-            {chapter.content && (
-              <div className="border-t border-slate-100 p-4 sm:p-6 bg-slate-50/50">
-                <div className="flex justify-between items-center mb-3">
-                  <h4 className="text-sm font-semibold text-slate-700">Generated Content</h4>
-                  {editingChapterId === chapter.id && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="flex items-center gap-1 bg-emerald-500 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-600 transition-colors text-xs font-medium"
-                      >
-                        <Save className="h-3 w-3" />
-                        <span>Save</span>
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="flex items-center gap-1 bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-300 transition-colors text-xs font-medium"
-                      >
-                        <X className="h-3 w-3" />
-                        <span>Cancel</span>
-                      </button>
+            {/* Outline Section */}
+            {expandedOutlines[chapter.id] && (
+              <div className="bg-slate-50/30 px-10 py-8 border-b border-slate-100 animate-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
+                    <Edit3 className="h-4 w-4 text-orange-600" strokeWidth={2} />
+                  </div>
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Directives & Outline</h4>
+                </div>
+                <div className="prose prose-slate prose-sm max-w-none text-slate-500 font-medium leading-relaxed italic">
+                  <ReactMarkdown>{chapter.outline}</ReactMarkdown>
+                </div>
+              </div>
+            )}
+
+            {/* Content & Actions Section */}
+            {chapter.isWritten && (
+              <div className="p-10">
+                {/* Actions Ribbon */}
+                <div className="flex flex-wrap items-center gap-3 mb-10 p-2 bg-slate-50/50 rounded-[1.5rem] border border-slate-100 w-fit">
+                  <button
+                    onClick={() => handleStartEdit(chapter)}
+                    disabled={isBusy}
+                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-slate-900 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                  >
+                    <Edit3 className="h-4 w-4 text-slate-400 group-hover:text-orange-500 transition-colors" strokeWidth={1.5} />
+                    <span>Refine Text</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowRegenerateConfirm(chapter.id)}
+                    disabled={isBusy}
+                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-orange-600 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                  >
+                    <RefreshCw className="h-4 w-4 text-slate-400 group-hover:text-orange-500 transition-colors" strokeWidth={1.5} />
+                    <span>Regenerate</span>
+                  </button>
+
+                  <div className="w-[1px] h-6 bg-slate-200 mx-1" />
+
+                  <button
+                    onClick={() => setChoosingAudio({ chapter, quality: 'regular' })}
+                    disabled={isBusy}
+                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-indigo-600 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                  >
+                    <Music className="h-4 w-4 text-slate-400 group-hover:text-indigo-500 transition-colors" strokeWidth={1.5} />
+                    <span>Regular Voice</span>
+                  </button>
+
+                  <button
+                    onClick={() => setChoosingAudio({ chapter, quality: 'pro' })}
+                    disabled={isBusy}
+                    className="group flex items-center gap-3 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-xl hover:shadow-indigo-200 transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                  >
+                    <Sparkles className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
+                    <span>Studio Pro</span>
+                  </button>
+                </div>
+
+                {/* The Story Display */}
+                <div className="relative group/content">
+                  {editingId === chapter.id ? (
+                    <div className="space-y-6 relative">
+                      <textarea
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        className="w-full h-[32rem] p-10 rounded-[2rem] border-2 border-orange-200 focus:border-orange-500 focus:ring-8 focus:ring-orange-500/5 transition-all serif-content resize-none outline-none bg-white shadow-2xl"
+                        placeholder="Write your story..."
+                      />
+                      <div className="flex justify-end gap-4">
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="px-8 py-3 rounded-2xl text-slate-500 font-black uppercase tracking-widest hover:bg-slate-100 transition-all text-xs"
+                        >
+                          Discard
+                        </button>
+                        <button
+                          onClick={() => handleSaveEdit(chapter.id)}
+                          className="px-10 py-3 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 text-xs"
+                        >
+                          Commit Changes
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative bg-white border border-slate-100 rounded-[2rem] p-10 sm:p-16 shadow-inner">
+                      <div className="max-w-prose mx-auto">
+                        <div className="serif-content text-xl sm:text-2xl prose prose-slate max-w-none prose-p:mb-8 prose-p:leading-[2] prose-headings:text-slate-900 prose-headings:font-black prose-headings:tracking-tight prose-headings:mb-8 prose-blockquote:border-l-4 prose-blockquote:border-orange-200 prose-blockquote:bg-orange-50/30 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:italic">
+                          <ReactMarkdown>{chapter.content || ''}</ReactMarkdown>
+                        </div>
+                      </div>
+                      
+                      {/* Chapter Footer Ornament */}
+                      <div className="mt-16 flex items-center justify-center gap-4 opacity-20">
+                        <div className="h-[1px] w-12 bg-slate-400" />
+                        <div className="w-2 h-2 rounded-full border-2 border-slate-400" />
+                        <div className="h-[1px] w-12 bg-slate-400" />
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {editingChapterId === chapter.id ? (
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full h-64 sm:h-96 p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none font-mono text-sm bg-white"
-                    placeholder="Edit your chapter content here..."
-                  />
-                ) : (
-                  <div className="prose prose-sm sm:prose-base max-w-none text-slate-700">
-                    <ReactMarkdown>{chapter.content}</ReactMarkdown>
-                  </div>
-                )}
-
-                {/* ── Audio Episode Section ── */}
+                {/* Audio Status Overlay */}
                 {(() => {
                   const aState = audioStates[chapter.id];
                   if (!aState || aState.status === 'idle') return null;
@@ -472,21 +509,22 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   if (aState.status === 'generating') {
                     const pct = Math.round((aState.progress ?? 0) * 100);
                     return (
-                      <div className="mt-4 rounded-xl bg-gradient-to-r from-violet-50 to-amber-50 border border-violet-200/60 p-4">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-violet-500 border-t-transparent flex-shrink-0" />
-                          <div>
-                            <p className="text-sm font-semibold text-violet-800">
-                              Generating {aState.quality === 'pro' ? '⭐ Pro' : '🎵 Regular'} Audio Episode...
-                            </p>
-                            <p className="text-xs text-violet-600 mt-0.5">
-                              {pct > 0 ? `${pct}% — processing text chunks` : 'Starting up...'}
-                            </p>
+                      <div className="mt-10 glass-panel border-indigo-100 rounded-3xl p-8 animate-in zoom-in-95 duration-500">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-200 animate-pulse">
+                              <Music className="h-6 w-6 text-white" strokeWidth={2} />
+                            </div>
+                            <div>
+                              <p className="text-lg font-black text-slate-900 leading-none">Studio Rendering</p>
+                              <p className="text-sm text-slate-500 mt-1 font-medium">Processing text-to-speech engine</p>
+                            </div>
                           </div>
+                          <span className="text-2xl font-black text-indigo-600">{pct}%</span>
                         </div>
-                        <div className="h-1.5 bg-violet-100 rounded-full overflow-hidden">
+                        <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-violet-500 to-amber-400 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-500"
                             style={{ width: `${Math.max(pct, 5)}%` }}
                           />
                         </div>
@@ -496,16 +534,18 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
                   if (aState.status === 'error') {
                     return (
-                      <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3">
-                        <X className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+                      <div className="mt-8 rounded-3xl bg-red-50 border border-red-100 p-6 flex items-start gap-4">
+                        <div className="p-3 bg-white rounded-2xl shadow-sm">
+                          <X className="h-6 w-6 text-red-500" strokeWidth={2} />
+                        </div>
                         <div>
-                          <p className="text-sm font-semibold text-red-800">Audio Generation Failed</p>
-                          <p className="text-xs text-red-600 mt-1">{aState.error}</p>
+                          <p className="text-lg font-black text-red-900 leading-none">Studio Error</p>
+                          <p className="text-sm text-red-700 mt-2 font-medium">{aState.error}</p>
                           <button
                             onClick={() => setAudioState(chapter.id, { status: 'idle' })}
-                            className="text-xs text-red-700 underline mt-2"
+                            className="mt-4 text-xs font-black uppercase tracking-widest text-red-500 hover:text-red-700 underline underline-offset-4"
                           >
-                            Dismiss
+                            Dismiss Report
                           </button>
                         </div>
                       </div>
@@ -514,67 +554,64 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
                   if (aState.status === 'ready' && aState.audioUrl) {
                     const isPlaying = playingChapterId === chapter.id;
-                    const qualityLabel = aState.quality === 'pro' ? '⭐ Pro' : '🎵 Regular';
+                    const qualityLabel = aState.quality === 'pro' ? 'Studio Pro' : 'Regular Voice';
                     return (
-                      <div className="mt-4 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-4 shadow-lg">
-                        {/* Hidden native audio element */}
+                      <div className="mt-10 glass-panel bg-slate-900 border-slate-800 rounded-[2.5rem] p-8 shadow-2xl shadow-indigo-900/20 group/player">
                         <audio
                           ref={(el) => { audioRefs.current[chapter.id] = el; }}
                           src={aState.audioUrl}
                           onEnded={() => handleAudioEnded(chapter.id)}
                         />
-                        <div className="flex items-center gap-3">
-                          {/* Play/Pause */}
+                        <div className="flex items-center gap-8">
                           <button
                             onClick={() => handlePlayPause(chapter.id)}
-                            className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-amber-400 flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                            className="flex-shrink-0 w-20 h-20 rounded-[2rem] bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center shadow-xl shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all group-hover/player:rotate-3"
                           >
                             {isPlaying
-                              ? <Pause className="h-4 w-4 text-white" />
-                              : <Play className="h-4 w-4 text-white ml-0.5" />}
+                              ? <Pause className="h-8 w-8 text-white" strokeWidth={2.5} />
+                              : <Play className="h-8 w-8 text-white ml-1.5" strokeWidth={2.5} />}
                           </button>
 
-                          {/* Info + waveform bars */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Headphones className="h-3 w-3 text-violet-300 flex-shrink-0" />
-                              <span className="text-xs font-semibold text-white truncate">
-                                Ch. {index + 1} — {chapter.title}
-                              </span>
-                              <span className="text-xs text-violet-300 ml-auto flex-shrink-0">{qualityLabel}</span>
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-3">
+                                <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest border border-slate-700">
+                                  {qualityLabel}
+                                </span>
+                                <span className="text-slate-400 text-sm font-medium opacity-50">•</span>
+                                <span className="text-sm font-bold text-white truncate">
+                                  {chapter.title}
+                                </span>
+                              </div>
+                              <a
+                                href={aState.audioUrl}
+                                download={`chapter-${index + 1}-${aState.quality}.wav`}
+                                className="p-3 rounded-2xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-slate-700"
+                                title="Export Manuscript Audio"
+                              >
+                                <Download className="h-5 w-5" strokeWidth={1.5} />
+                              </a>
                             </div>
-                            {/* Animated waveform (decorative) */}
-                            <div className="flex items-end gap-0.5 h-5">
-                              {[3,5,4,6,3,5,7,4,6,3,5,4,6,5,3].map((h, i) => (
+                            
+                            {/* Animated waveform visualization */}
+                            <div className="flex items-end gap-1.5 h-12 bg-slate-800/30 rounded-2xl p-4 overflow-hidden border border-slate-800">
+                              {[30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50].map((h, i) => (
                                 <div
                                   key={i}
-                                  className={`w-1 rounded-full transition-all ${
+                                  className={`flex-1 rounded-full transition-all duration-300 ${
                                     isPlaying
-                                      ? 'bg-gradient-to-t from-violet-500 to-amber-300 animate-pulse'
-                                      : 'bg-slate-600'
+                                      ? 'bg-gradient-to-t from-indigo-500 via-purple-500 to-pink-500'
+                                      : 'bg-slate-700'
                                   }`}
                                   style={{
-                                    height: `${h * (isPlaying ? 1 : 0.5)}px`,
-                                    animationDelay: `${i * 80}ms`,
+                                    height: `${h * (isPlaying ? (0.5 + Math.random() * 0.5) : 0.2)}%`,
+                                    transitionDelay: `${i * 20}ms`,
                                   }}
                                 />
                               ))}
                             </div>
                           </div>
-
-                          {/* Download */}
-                          <a
-                            href={aState.audioUrl}
-                            download={`chapter-${index + 1}-${aState.quality}-audio.wav`}
-                            className="flex-shrink-0 w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center hover:bg-slate-600 transition-colors"
-                            title="Download audio"
-                          >
-                            <Download className="h-3.5 w-3.5 text-slate-200" />
-                          </a>
                         </div>
-                        <p className="text-[10px] text-slate-500 mt-2 text-right">
-                          Regenerate episode using the buttons above
-                        </p>
                       </div>
                     );
                   }
@@ -587,20 +624,27 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
         ))}
 
         {allChaptersWritten && (
-          <div className="text-center pt-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 mb-6">
-              <CheckCircle className="h-10 w-10 text-emerald-600 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-emerald-900 mb-1">All Chapters Complete!</h3>
-              <p className="text-emerald-700 text-sm">Your book is ready to be compiled and downloaded.</p>
-            </div>
+          <div className="text-center pt-12 pb-24">
+            <div className="glass-panel border-emerald-100 rounded-[3rem] p-12 mb-10 shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
+              <div className="relative">
+                <div className="w-20 h-20 rounded-[2rem] bg-emerald-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-emerald-500/30 group-hover:rotate-12 transition-transform duration-500">
+                  <Book className="h-10 w-10 text-white" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Manuscript Finalized</h3>
+                <p className="text-slate-500 text-lg font-medium max-w-md mx-auto mb-10">
+                  Every chapter has been polished and rendered. Your complete book is ready for compilation.
+                </p>
 
-            <button
-              onClick={onCompleteWriting}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-3 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg shadow-emerald-500/20"
-            >
-              <Book className="h-5 w-5" />
-              <span>Compile Book</span>
-            </button>
+                <button
+                  onClick={onCompleteWriting}
+                  className="bg-slate-900 text-white px-12 py-5 rounded-[2rem] hover:bg-black transition-all duration-300 font-black uppercase tracking-widest shadow-2xl shadow-slate-900/40 flex items-center gap-4 mx-auto group/btn"
+                >
+                  <Book className="h-6 w-6 text-emerald-400 group-hover/btn:scale-110 transition-transform" strokeWidth={2} />
+                  <span>Compile Complete Book</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
