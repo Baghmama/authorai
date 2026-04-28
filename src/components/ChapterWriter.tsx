@@ -674,56 +674,61 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       {choosingAudio && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col scale-in-center border border-white/20">
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 backdrop-blur-sm">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
-                  <div className="p-2 bg-orange-600 rounded-xl shadow-lg shadow-orange-600/30">
-                    <Headphones className="h-6 w-6 text-white" strokeWidth={2} />
-                  </div>
-                  Pro Voice Studio
-                </h3>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className={`w-2 h-2 rounded-full ${choosingAudio.quality === 'pro' ? 'bg-amber-400' : 'bg-indigo-400'}`} />
-                    <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">{choosingAudio.quality} Mode</span>
-                  </div>
-                  <div className="w-[1px] h-3 bg-slate-300" />
-                  <p className="text-sm text-slate-500 font-medium">
-                    Cost: <span className="font-bold text-orange-700">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-3 pr-4">
-                <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
-                  <div className="p-1.5 bg-orange-50 rounded-lg">
-                    <Zap className="h-4 w-4 text-orange-600" strokeWidth={2} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">Pace Control</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-700 w-8">{selectedPace.toFixed(1)}x</span>
-                      <input
-                        type="range"
-                        min="0.5"
-                        max="2.0"
-                        step="0.1"
-                        value={selectedPace}
-                        onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
-                        className="w-24 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-600"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/80 backdrop-blur-sm relative">
+              {/* Absolute Close Button */}
               <button
                 onClick={() => {
                   stopPreview();
                   setChoosingAudio(null);
                 }}
-                className="p-3 hover:bg-slate-100 rounded-2xl transition-all hover:rotate-90"
+                className="absolute top-4 right-4 p-2 hover:bg-slate-200/50 rounded-xl transition-all hover:rotate-90 z-10"
               >
-                <X className="h-6 w-6 text-slate-400" strokeWidth={1.5} />
+                <X className="h-5 w-5 text-slate-400" strokeWidth={2} />
               </button>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 bg-orange-600 rounded-2xl shadow-lg shadow-orange-600/30 shrink-0">
+                    <Headphones className="h-6 w-6 text-white" strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                      Pro Voice Studio
+                    </h3>
+                    <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{choosingAudio.quality} MODE</span>
+                      </div>
+                      <div className="w-[1px] h-3 bg-slate-300" />
+                      <p className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider">
+                        Cost: <span className="text-orange-700">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-slate-200 w-full md:w-auto">
+                  <div className="p-2 bg-orange-50 rounded-xl shrink-0">
+                    <Zap className="h-4 w-4 text-orange-600" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] font-black text-slate-400 uppercase leading-none tracking-wider">Pace Control</span>
+                      <span className="text-[10px] font-black text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">{selectedPace}x</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="2.0"
+                      step="0.1"
+                      value={selectedPace}
+                      onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-600"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
