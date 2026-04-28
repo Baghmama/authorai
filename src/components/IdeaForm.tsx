@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BookIdea, WritingStyle } from '../types';
-import { Lightbulb, Globe, BookOpen, Layers, Pen, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette } from 'lucide-react';
+import { Lightbulb, Globe, BookOpen, Layers, Pen, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette, ChevronDown, Music } from 'lucide-react';
 import { calculateCreditsNeeded } from '../utils/creditManager';
 
 const WRITING_STYLES: { value: WritingStyle; label: string; description: string; icon: React.ReactNode }[] = [
@@ -70,23 +70,32 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                 <Globe className="h-4 w-4 text-orange-600" />
                 <span>Language</span>
               </label>
-              <select
-                value={formData.language}
-                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 transition-all bg-slate-50/50 text-slate-700"
-              >
-                <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Italian">Italian</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Korean">Korean</option>
-                <option value="Arabic">Arabic</option>
-                <option value="Hindi">Hindi</option>
-              </select>
+              <div className="relative group">
+                <select
+                  value={formData.language}
+                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 transition-all bg-slate-50/50 text-slate-700 appearance-none"
+                >
+                  <option value="English">English (Audio Available 🎙️)</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Portuguese">Portuguese</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Arabic">Arabic</option>
+                  <option value="Hindi">Hindi (Audio Available 🎙️)</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
+              <p className="mt-2 text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
+                <Music className="h-3 w-3" />
+                <span>Audio supported for English & Hindi</span>
+              </p>
             </div>
 
             <div>
