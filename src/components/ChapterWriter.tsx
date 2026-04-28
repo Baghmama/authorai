@@ -22,6 +22,7 @@ import {
   Star,
   Music,
   Volume2,
+  FastForward,
 } from 'lucide-react';
 
 type AudioStatus = 'idle' | 'choosing' | 'generating' | 'ready' | 'error';
@@ -75,6 +76,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const [choosingAudio, setChoosingAudio] = useState<{ chapter: ChapterOutline, quality: AudioQuality } | null>(null);
   const [playingPreview, setPlayingPreview] = useState<string | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [selectedPace, setSelectedPace] = useState(1.0);
 
   const startCooldown = useCallback(() => {
     setCooldownSeconds(15);
@@ -206,7 +208,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
     }));
   };
 
-  const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality, speaker: string) => {
+  const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality, speaker: string, pace: number) => {
     if (!chapter.content) return;
 
     setChoosingAudio(null);
@@ -221,7 +223,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       }
 
       // Generate audio
-      const blob = await generateAudioEpisode(chapter.content, quality, speaker, (progress) => {
+      const blob = await generateAudioEpisode(chapter.content, quality, speaker, pace, (progress) => {
         setAudioState(chapter.id, { progress });
       });
 
@@ -614,6 +616,21 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   Cost: <span className="font-bold text-orange-600">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
                 </p>
               </div>
+              <div className="flex flex-col items-end gap-2 pr-4">
+                <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-100">
+                  <FastForward className="h-4 w-4 text-orange-500" />
+                  <span className="text-xs font-bold text-orange-700">{selectedPace.toFixed(1)}x Speed</span>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2.0"
+                    step="0.1"
+                    value={selectedPace}
+                    onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
+                    className="w-24 h-1.5 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-500 ml-2"
+                  />
+                </div>
+              </div>
               <button
                 onClick={() => setChoosingAudio(null)}
                 className="p-2 hover:bg-slate-200 rounded-full transition-colors"
@@ -623,6 +640,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+
               {/* Female Voices */}
               <div>
                 <h4 className="text-xs font-bold text-pink-500 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -651,7 +669,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         )}
                       </button>
                       <button
-                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice, selectedPace)}
                         className="flex-1 text-left py-3 pr-4"
                       >
                         <span className="block text-sm font-bold text-pink-700 capitalize">
@@ -659,7 +677,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         </span>
                       </button>
                       <button
-                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice, selectedPace)}
                         className="bg-white/80 text-pink-600 px-3 py-1.5 rounded-xl text-[10px] font-bold mr-2 shadow-sm hover:bg-white transition-colors"
                       >
                         SELECT
@@ -697,7 +715,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         )}
                       </button>
                       <button
-                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice, selectedPace)}
                         className="flex-1 text-left py-3 pr-4"
                       >
                         <span className="block text-sm font-bold text-blue-700 capitalize">
@@ -705,7 +723,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         </span>
                       </button>
                       <button
-                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice, selectedPace)}
                         className="bg-white/80 text-blue-600 px-3 py-1.5 rounded-xl text-[10px] font-bold mr-2 shadow-sm hover:bg-white transition-colors"
                       >
                         SELECT
