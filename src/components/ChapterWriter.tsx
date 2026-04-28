@@ -571,6 +571,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     );
                   }
 
+                  if (aState.status === 'ready' && aState.audioUrl) {
                     const isPlaying = playingChapterId === chapter.id;
                     return (
                       <div className="mt-8 flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
