@@ -23,6 +23,8 @@ import {
   Music,
   Volume2,
   FastForward,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 
 type AudioStatus = 'idle' | 'choosing' | 'generating' | 'ready' | 'error';
@@ -604,38 +606,54 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       </div>
 
       {choosingAudio && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col scale-in-center">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col scale-in-center border border-white/20">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 backdrop-blur-sm">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <Headphones className="h-5 w-5 text-orange-500" />
-                  Select Voice — {choosingAudio.quality === 'pro' ? '⭐ Pro' : '🎵 Regular'}
+                <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                  <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/30">
+                    <Headphones className="h-6 w-6 text-white" strokeWidth={2} />
+                  </div>
+                  Narration Studio
                 </h3>
-                <p className="text-sm text-slate-500 mt-0.5">
-                  Cost: <span className="font-bold text-orange-600">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
-                </p>
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className={`w-2 h-2 rounded-full ${choosingAudio.quality === 'pro' ? 'bg-amber-400' : 'bg-indigo-400'}`} />
+                    <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">{choosingAudio.quality} Mode</span>
+                  </div>
+                  <div className="w-[1px] h-3 bg-slate-300" />
+                  <p className="text-sm text-slate-500 font-medium">
+                    Cost: <span className="font-bold text-orange-600">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-col items-end gap-2 pr-4">
-                <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-100">
-                  <FastForward className="h-4 w-4 text-orange-500" />
-                  <span className="text-xs font-bold text-orange-700">{selectedPace.toFixed(1)}x Speed</span>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="2.0"
-                    step="0.1"
-                    value={selectedPace}
-                    onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
-                    className="w-24 h-1.5 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-500 ml-2"
-                  />
+              <div className="flex flex-col items-end gap-3 pr-4">
+                <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+                  <div className="p-1.5 bg-orange-50 rounded-lg">
+                    <Zap className="h-4 w-4 text-orange-500" strokeWidth={2} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">Pace Control</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-700 w-8">{selectedPace.toFixed(1)}x</span>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="2.0"
+                        step="0.1"
+                        value={selectedPace}
+                        onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
+                        className="w-24 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               <button
                 onClick={() => setChoosingAudio(null)}
-                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                className="p-3 hover:bg-slate-100 rounded-2xl transition-all hover:rotate-90"
               >
-                <X className="h-5 w-5 text-slate-500" />
+                <X className="h-6 w-6 text-slate-400" strokeWidth={1.5} />
               </button>
             </div>
 

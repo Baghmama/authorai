@@ -121,3 +121,63 @@ html {
   mask-image: linear-gradient(90deg, black 60%, transparent 100%);
   -webkit-mask-image: linear-gradient(90deg, black 60%, transparent 100%);
 }
+
+/* Premium UI Additions */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.premium-card {
+  background: white;
+  border: 1px solid #f1f5f9;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.02),
+    0 10px 20px -5px rgba(15, 23, 42, 0.04);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 20px 40px -10px rgba(15, 23, 42, 0.08);
+  border-color: #e2e8f0;
+}
+
+.serif-content {
+  font-family: 'Georgia', 'Cambria', 'Times New Roman', Times, serif;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  color: #334155;
+}
+
+.premium-button-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+  background-size: 200% auto;
+  transition: all 0.3s ease;
+}
+
+.premium-button-gradient:hover {
+  background-position: right center;
+  box-shadow: 0 8px 20px -6px rgba(124, 58, 237, 0.4);
+  transform: translateY(-1px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
