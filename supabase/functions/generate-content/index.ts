@@ -18,7 +18,10 @@ const GEMINI_API_KEYS = [
 const GROQ_API_KEYS = [
   Deno.env.get('GROQ_API_KEY_1'),
   Deno.env.get('GROQ_API_KEY_2'),
-  Deno.env.get('GROQ_API_KEY_3')
+  Deno.env.get('GROQ_API_KEY_3'),
+  Deno.env.get('GROQ_API_KEY_4'),
+  Deno.env.get('GROQ_API_KEY_5'),
+  Deno.env.get('GROQ_API_KEY_6')
 ].filter(key => key && key.trim() !== '');
 
 let groqKeyIndex = 0;
@@ -117,6 +120,11 @@ async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
 }
 
 async function generateContent(prompt: string): Promise<string> {
+  // Diagnostic check
+  if (GEMINI_API_KEYS.length === 0 && GROQ_API_KEYS.length === 0) {
+    throw new Error('No API keys found in Supabase Environment. Please ensure GEMINI_API_KEY_1 or GROQ_API_KEY_1 are set in your project secrets.');
+  }
+
   const providers = [
     { name: 'Groq', fn: () => tryGroq(prompt) },
     { name: 'Gemini', fn: () => tryGemini(prompt) }
@@ -133,7 +141,7 @@ async function generateContent(prompt: string): Promise<string> {
     }
   }
 
-  throw new Error('All AI providers exhausted. Please try again later.');
+  throw new Error(`All AI providers exhausted. [Debug: Loaded ${GROQ_API_KEYS.length} Groq keys, ${GEMINI_API_KEYS.length} Gemini keys]. Please check your Supabase secrets.`);
 }
 
 Deno.serve(async (req: Request) => {
