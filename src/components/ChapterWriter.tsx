@@ -835,11 +835,11 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       )}
       {/* Global Bottom Audio Ribbon */}
       {(() => {
-        const playingChapterId = Object.keys(activeAudioStates).find(id => activeAudioStates[id].isPlaying);
         if (!playingChapterId) return null;
         
         const playingChapter = outlines.find(c => c.id === playingChapterId);
-        const aState = activeAudioStates[playingChapterId];
+        const aState = audioStates[playingChapterId];
+        if (!aState || !aState.audioUrl) return null;
         
         return (
           <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 animate-in slide-in-from-bottom-full duration-500">
@@ -865,7 +865,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="px-2 py-0.5 rounded bg-indigo-500 text-white text-[8px] sm:text-[10px] font-black uppercase tracking-widest">
-                        {aState.quality.toUpperCase()} VOICE
+                        {(aState.quality || 'pro').toUpperCase()} VOICE
                       </div>
                       <span className="text-[10px] sm:text-xs font-bold text-white truncate max-w-[120px] sm:max-w-none">
                         {playingChapter?.title}
@@ -882,7 +882,12 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         <Download className="h-4 w-4" />
                       </a>
                       <button
-                        onClick={() => handlePlayPause(playingChapterId)}
+                        onClick={() => {
+                          if (audioRefs.current[playingChapterId]) {
+                            audioRefs.current[playingChapterId]?.pause();
+                          }
+                          setPlayingChapterId(null);
+                        }}
                         className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all"
                       >
                         <X className="h-4 w-4" />
