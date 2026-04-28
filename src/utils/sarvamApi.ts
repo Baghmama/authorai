@@ -74,12 +74,13 @@ function stripMarkdown(text: string): string {
   const lines = text.split('\n');
   let contentLines = lines;
 
-  // Pattern to match common chapter title starts: Chapter, अध्याय, Capítulo, Chapitre, etc.
-  const titlePattern = /^(?:Chapter|Capítulo|Chapitre|अध्याय|Capitolo|Kapitel|Kapittel|Kapitel|#)\s*\d*[:.]?/i;
+  // Pattern to match common chapter title starts, ignoring leading markdown symbols like **, #, etc.
+  const titlePattern = /^[*#\s-]*(?:Chapter|Capítulo|Chapitre|अध्याय|Capitolo|Kapitel|Kapittel|Kapitel)\s*\d*[:.]?/i;
 
   // If the first non-empty line looks like a title, remove it
-  for (let i = 0; i < Math.min(lines.length, 3); i++) {
-    if (lines[i].trim() && titlePattern.test(lines[i].trim())) {
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    const trimmedLine = lines[i].trim();
+    if (trimmedLine && titlePattern.test(trimmedLine)) {
       contentLines = lines.slice(i + 1);
       break;
     }
