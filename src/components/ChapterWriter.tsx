@@ -210,9 +210,19 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
     }));
   };
 
+  const stopPreview = () => {
+    if (previewAudioRef.current) {
+      previewAudioRef.current.pause();
+      previewAudioRef.current.currentTime = 0;
+      previewAudioRef.current = null;
+    }
+    setPlayingPreview(null);
+  };
+
   const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality, speaker: string, pace: number) => {
     if (!chapter.content) return;
 
+    stopPreview();
     setChoosingAudio(null);
     setAudioState(chapter.id, { status: 'generating', quality, speaker, progress: 0 });
 
@@ -694,7 +704,10 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                 </div>
               </div>
               <button
-                onClick={() => setChoosingAudio(null)}
+                onClick={() => {
+                  stopPreview();
+                  setChoosingAudio(null);
+                }}
                 className="p-3 hover:bg-slate-100 rounded-2xl transition-all hover:rotate-90"
               >
                 <X className="h-6 w-6 text-slate-400" strokeWidth={1.5} />
