@@ -848,6 +848,108 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
           </div>
         </div>
       )}
+      {/* Narration Studio Modal */}
+      {choosingAudio && (
+        <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500">
+            <div className="p-8 sm:p-12">
+              <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-xl shadow-indigo-100">
+                    <Headphones className="h-7 w-7 text-white" strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Narration Studio</h2>
+                    <p className="text-slate-500 font-medium">Fine-tune your chapter's audio profile</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setChoosingAudio(null)}
+                  className="p-3 rounded-2xl bg-slate-100 text-slate-400 hover:text-slate-900 transition-all"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="space-y-10">
+                {/* Voice Profile */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Voice Profile</label>
+                    <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest">
+                      {choosingAudio.quality === 'pro' ? 'STUDIO MASTER' : 'REGULAR'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {['female', 'male'].map((gender) => (
+                      <button
+                        key={gender}
+                        onClick={() => setAudioState(choosingAudio.chapter.id, { speaker: VOICES[choosingAudio.quality][gender as 'female' | 'male'][0] })}
+                        className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center gap-3 ${
+                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
+                            ? 'border-indigo-500 bg-indigo-50/50 shadow-lg shadow-indigo-100'
+                            : 'border-slate-100 hover:border-slate-200 bg-white'
+                        }`}
+                      >
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
+                            ? 'bg-indigo-500 text-white'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}>
+                          {gender === 'female' ? <Volume2 className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
+                        </div>
+                        <span className={`text-xs font-black uppercase tracking-widest ${
+                          (audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0]).includes(VOICES[choosingAudio.quality][gender as 'female' | 'male'][0])
+                            ? 'text-indigo-600'
+                            : 'text-slate-500'
+                        }`}>
+                          {gender} Engine
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pace Control */}
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pace & Rhythm</label>
+                    <span className="text-xs font-black text-indigo-600">{selectedPace}x Speed</span>
+                  </div>
+                  <div className="px-2">
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="2.0"
+                      step="0.1"
+                      value={selectedPace}
+                      onChange={(e) => setSelectedPace(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    />
+                    <div className="flex justify-between mt-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      <span>Slow</span>
+                      <span>Natural</span>
+                      <span>Fast</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action */}
+                <button
+                  onClick={() => {
+                    const speaker = audioStates[choosingAudio.chapter.id]?.speaker || VOICES[choosingAudio.quality].female[0];
+                    handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, speaker, selectedPace);
+                  }}
+                  className="w-full py-6 rounded-[2rem] bg-slate-900 text-white text-sm font-black uppercase tracking-[0.2em] shadow-2xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-[0.98]"
+                >
+                  Initiate Audio Synthesis
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Global Bottom Audio Ribbon */}
       {(() => {
         if (!playingChapterId) {
