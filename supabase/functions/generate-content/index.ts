@@ -62,12 +62,16 @@ async function tryGroq(prompt: string, retryCount = 0): Promise<string> {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error(`Groq key ${maskedKey} failed: ${response.status}`);
-    if (response.status === 429 || response.status === 403) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+    console.error(`Groq key ${maskedKey} failed with status ${response.status}: ${error}`);
+    
+    // Always try the next key if we have more attempts left
+    if (retryCount + 1 < GROQ_API_KEYS.length) {
+      console.log(`Retrying with next Groq key...`);
+      await new Promise(resolve => setTimeout(resolve, 800)); // Slight delay
       return tryGroq(prompt, retryCount + 1);
     }
-    throw new Error(`Groq failed: ${response.status} ${error}`);
+    
+    throw new Error(`All Groq keys failed. Last error: ${response.status} ${error}`);
   }
 
   const data = await response.json();
@@ -95,12 +99,16 @@ async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error(`Gemini key ${maskedKey} failed: ${response.status}`);
-    if (response.status === 429 || response.status === 403 || response.status === 404) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+    console.error(`Gemini key ${maskedKey} failed with status ${response.status}: ${errorText}`);
+    
+    // Always try the next key if we have more attempts left
+    if (retryCount + 1 < GEMINI_API_KEYS.length) {
+      console.log(`Retrying with next Gemini key...`);
+      await new Promise(resolve => setTimeout(resolve, 800)); // Slight delay
       return tryGemini(prompt, retryCount + 1);
     }
-    throw new Error(`Gemini failed: ${response.status} ${errorText}`);
+    
+    throw new Error(`All Gemini keys failed. Last error: ${response.status} ${errorText}`);
   }
 
   const data = await response.json();
