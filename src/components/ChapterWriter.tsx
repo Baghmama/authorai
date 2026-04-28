@@ -29,9 +29,23 @@ interface AudioState {
   status: AudioStatus;
   audioUrl?: string;
   quality?: AudioQuality;
+  speaker?: string;
   progress?: number;
   error?: string;
 }
+
+const VOICES: Record<AudioQuality, { female: string[], male: string[] }> = {
+  pro: {
+    female: ['priya', 'ritu', 'ishita', 'kavya', 'pooja', 'shreya', 'simran'],
+    male: ['shubh', 'aditya', 'amit', 'rahul', 'rohan', 'ratan']
+  },
+  regular: {
+    female: ['anushka', 'manisha', 'vidya'],
+    male: ['abhilash', 'hitesh', 'karun']
+  }
+};
+
+const PREVIEW_BASE_URL = 'https://pub-2a5b45b3640e4493b3b146d143ef868a.r2.dev';
 
 interface ChapterWriterProps {
   outlines: ChapterOutline[];
@@ -57,6 +71,9 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const [audioStates, setAudioStates] = useState<Record<string, AudioState>>({});
   const [playingChapterId, setPlayingChapterId] = useState<string | null>(null);
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
+  const [choosingAudio, setChoosingAudio] = useState<{ chapter: ChapterOutline, quality: AudioQuality } | null>(null);
+  const [playingPreview, setPlayingPreview] = useState<string | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const startCooldown = useCallback(() => {
     setCooldownSeconds(15);
@@ -188,21 +205,11 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
     }));
   };
 
-  const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality) => {
+  const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality, speaker: string) => {
     if (!chapter.content) return;
 
-    // Credit check
-    const userCredits = await getUserCredits();
-    const needed = AUDIO_EPISODE_CREDITS[quality];
-    if (!userCredits || userCredits.credits < needed) {
-      setAudioState(chapter.id, {
-        status: 'error',
-        error: `Insufficient credits. You need ${needed} credits to generate a ${quality === 'pro' ? 'Pro' : 'Regular'} audio episode.`,
-      });
-      return;
-    }
-
-    setAudioState(chapter.id, { status: 'generating', quality, progress: 0 });
+    setChoosingAudio(null);
+    setAudioState(chapter.id, { status: 'generating', quality, speaker, progress: 0 });
 
     try {
       // Deduct credits first
@@ -213,16 +220,34 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
       }
 
       // Generate audio
-      const blob = await generateAudioEpisode(chapter.content, quality, (progress) => {
+      const blob = await generateAudioEpisode(chapter.content, quality, speaker, (progress) => {
         setAudioState(chapter.id, { progress });
       });
 
       const url = URL.createObjectURL(blob);
-      setAudioState(chapter.id, { status: 'ready', audioUrl: url, quality, progress: 1 });
+      setAudioState(chapter.id, { status: 'ready', audioUrl: url, quality, speaker, progress: 1 });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       setAudioState(chapter.id, { status: 'error', error: msg });
     }
+  };
+
+  const handlePreviewVoice = (voice: string) => {
+    if (previewAudioRef.current) {
+      previewAudioRef.current.pause();
+      if (playingPreview === voice) {
+        setPlayingPreview(null);
+        return;
+      }
+    }
+
+    const url = `${PREVIEW_BASE_URL}/${voice}_tts_audio.mp3`;
+    const audio = new Audio(url);
+    previewAudioRef.current = audio;
+    setPlayingPreview(voice);
+    
+    audio.play().catch(console.error);
+    audio.onended = () => setPlayingPreview(null);
   };
 
   const handlePlayPause = (chapterId: string) => {
@@ -340,7 +365,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         return (
                           <>
                             <button
-                              onClick={() => handleCreateEpisode(chapter, 'regular')}
+                              onClick={() => setChoosingAudio({ chapter, quality: 'regular' })}
                               disabled={isBusy || aState?.status === 'generating'}
                               className="flex items-center gap-1 bg-violet-50 text-violet-700 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Regular audio using bulbul:v2"
@@ -349,7 +374,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                               <span>Audio <span className="hidden sm:inline">(4 credits)</span></span>
                             </button>
                             <button
-                              onClick={() => handleCreateEpisode(chapter, 'pro')}
+                              onClick={() => setChoosingAudio({ chapter, quality: 'pro' })}
                               disabled={isBusy || aState?.status === 'generating'}
                               className="flex items-center gap-1 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Pro audio using bulbul:v3"
@@ -574,6 +599,130 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
           </div>
         )}
       </div>
+
+      {choosingAudio && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col scale-in-center">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Headphones className="h-5 w-5 text-orange-500" />
+                  Select Voice — {choosingAudio.quality === 'pro' ? '⭐ Pro' : '🎵 Regular'}
+                </h3>
+                <p className="text-sm text-slate-500 mt-0.5">
+                  Cost: <span className="font-bold text-orange-600">{AUDIO_EPISODE_CREDITS[choosingAudio.quality]} credits</span>
+                </p>
+              </div>
+              <button
+                onClick={() => setChoosingAudio(null)}
+                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5 text-slate-500" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+              {/* Female Voices */}
+              <div>
+                <h4 className="text-xs font-bold text-pink-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-pink-400" />
+                  Female Voices
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {VOICES[choosingAudio.quality].female.map((voice) => (
+                    <div
+                      key={voice}
+                      className="group flex items-center p-1 rounded-2xl border border-pink-100 bg-pink-50/50 hover:bg-pink-100 transition-all"
+                    >
+                      <button
+                        onClick={() => handlePreviewVoice(voice)}
+                        className="p-3 text-pink-500 hover:text-pink-600 transition-colors"
+                        title="Play preview"
+                      >
+                        {playingPreview === voice ? (
+                          <div className="flex gap-0.5 items-end h-4">
+                            <div className="w-0.5 h-full bg-pink-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-0.5 h-3 bg-pink-500 animate-bounce" style={{ animationDelay: '100ms' }} />
+                            <div className="w-0.5 h-full bg-pink-500 animate-bounce" style={{ animationDelay: '200ms' }} />
+                          </div>
+                        ) : (
+                          <Volume2 className="h-5 w-5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        className="flex-1 text-left py-3 pr-4"
+                      >
+                        <span className="block text-sm font-bold text-pink-700 capitalize">
+                          {voice}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        className="bg-white/80 text-pink-600 px-3 py-1.5 rounded-xl text-[10px] font-bold mr-2 shadow-sm hover:bg-white transition-colors"
+                      >
+                        SELECT
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Male Voices */}
+              <div>
+                <h4 className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  Male Voices
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {VOICES[choosingAudio.quality].male.map((voice) => (
+                    <div
+                      key={voice}
+                      className="group flex items-center p-1 rounded-2xl border border-blue-100 bg-blue-50/50 hover:bg-blue-100 transition-all"
+                    >
+                      <button
+                        onClick={() => handlePreviewVoice(voice)}
+                        className="p-3 text-blue-500 hover:text-blue-600 transition-colors"
+                        title="Play preview"
+                      >
+                        {playingPreview === voice ? (
+                          <div className="flex gap-0.5 items-end h-4">
+                            <div className="w-0.5 h-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-0.5 h-3 bg-blue-500 animate-bounce" style={{ animationDelay: '100ms' }} />
+                            <div className="w-0.5 h-full bg-blue-500 animate-bounce" style={{ animationDelay: '200ms' }} />
+                          </div>
+                        ) : (
+                          <Volume2 className="h-5 w-5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        className="flex-1 text-left py-3 pr-4"
+                      >
+                        <span className="block text-sm font-bold text-blue-700 capitalize">
+                          {voice}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => handleCreateEpisode(choosingAudio.chapter, choosingAudio.quality, voice)}
+                        className="bg-white/80 text-blue-600 px-3 py-1.5 rounded-xl text-[10px] font-bold mr-2 shadow-sm hover:bg-white transition-colors"
+                      >
+                        SELECT
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+              <p className="text-[10px] text-slate-400">
+                AI generation takes ~10-20 seconds depending on chapter length.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showRegenerateConfirm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">

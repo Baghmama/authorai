@@ -113,11 +113,13 @@ function mergeWavChunks(chunks: Uint8Array[]): Blob {
  *
  * @param text - Chapter content (markdown is automatically stripped)
  * @param quality - 'regular' (bulbul:v2, 4 credits) or 'pro' (bulbul:v3, 7 credits)
+ * @param speaker - The selected voice ID (e.g., 'shubh', 'anushka')
  * @param onProgress - Optional progress callback 0–1
  */
 export async function generateAudioEpisode(
   text: string,
   quality: AudioQuality,
+  speaker: string,
   onProgress?: (progress: number) => void,
 ): Promise<Blob> {
   // Get the current user's session token to authenticate the edge function call
@@ -145,7 +147,7 @@ export async function generateAudioEpisode(
       body: JSON.stringify({
         text: chunks[i],
         model: config.model,
-        speaker: config.speaker,
+        speaker: speaker, // Use the selected speaker
         pace: 1.0,
         sample_rate: 22050,
         ...(quality === 'pro' ? { temperature: 0.6 } : {}),
