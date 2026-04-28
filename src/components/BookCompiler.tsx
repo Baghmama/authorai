@@ -190,14 +190,14 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
             </div>
           </div>
 
-          {project.idea.language.toLowerCase() !== 'english' && (
+          {['hindi', 'arabic', 'chinese', 'japanese', 'korean', 'russian', 'bengali', 'telugu', 'marathi', 'tamil', 'urdu'].includes(project.idea.language.toLowerCase()) && (
             <div className="bg-amber-50 border border-amber-200/60 rounded-xl p-4 mb-5 animate-in slide-in-from-top-2 duration-500">
               <div className="flex items-start gap-3">
                 <Sparkles className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <h4 className="font-bold text-amber-900 text-sm mb-0.5">Recommended for {project.idea.language}</h4>
                   <p className="text-xs text-amber-700 leading-relaxed">
-                    For non-English languages, the <strong>Word Document</strong> provides the best character rendering and layout. You can also save the Word file as a PDF after opening it.
+                    For scripts like {project.idea.language}, the <strong>Word Document</strong> provides the best character rendering and layout. You can also save the Word file as a PDF after opening it.
                   </p>
                 </div>
               </div>
