@@ -449,23 +449,32 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
                   <div className="w-[1px] h-6 bg-slate-200 mx-1" />
 
-                  <button
-                    onClick={() => setChoosingAudio({ chapter, quality: 'regular' })}
-                    disabled={isBusy}
-                    className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-indigo-600 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
-                  >
-                    <Music className="h-4 w-4 text-slate-400 group-hover:text-indigo-500 transition-colors" strokeWidth={1.5} />
-                    <span>Regular Voice</span>
-                  </button>
+                  {audioStates[chapter.id]?.status === 'generating' ? (
+                    <div className="flex items-center gap-3 bg-slate-100 text-slate-500 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider animate-pulse">
+                      <div className="animate-spin rounded-full h-3 w-3 border-2 border-slate-400 border-t-transparent" />
+                      <span>Audio is being Generated</span>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setChoosingAudio({ chapter, quality: 'regular' })}
+                        disabled={isBusy}
+                        className="group flex items-center gap-2 bg-white text-slate-600 px-5 py-2.5 rounded-xl hover:text-indigo-600 hover:shadow-md transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                      >
+                        <Music className="h-4 w-4 text-slate-400 group-hover:text-indigo-500 transition-colors" strokeWidth={1.5} />
+                        <span>Regular Voice</span>
+                      </button>
 
-                  <button
-                    onClick={() => setChoosingAudio({ chapter, quality: 'pro' })}
-                    disabled={isBusy}
-                    className="group flex items-center gap-3 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-xl hover:shadow-indigo-200 transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
-                  >
-                    <Pen className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
-                    <span>Pro Voice</span>
-                  </button>
+                      <button
+                        onClick={() => setChoosingAudio({ chapter, quality: 'pro' })}
+                        disabled={isBusy}
+                        className="group flex items-center gap-3 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-xl hover:shadow-indigo-200 transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
+                      >
+                        <Pen className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
+                        <span>Pro Voice</span>
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 {/* The Story Display */}
