@@ -294,7 +294,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const isBusy = writingChapterId !== null || regeneratingChapterId !== null || editingChapterId !== null || isCoolingDown;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
+    <div className="max-w-6xl mx-auto px-2 sm:px-4 py-8 sm:py-12">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest mb-4">
           <Zap className="h-3 w-3" strokeWidth={3} />
@@ -503,9 +503,9 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="relative bg-white border border-slate-100 rounded-[2rem] p-10 sm:p-16 shadow-inner">
+                    <div className="relative bg-white border border-slate-100 rounded-[2rem] p-6 sm:p-12 shadow-inner">
                       <div className="max-w-prose mx-auto">
-                        <div className="serif-content text-xl sm:text-2xl prose prose-slate max-w-none prose-p:mb-8 prose-p:leading-[2] prose-headings:text-slate-900 prose-headings:font-black prose-headings:tracking-tight prose-headings:mb-8 prose-blockquote:border-l-4 prose-blockquote:border-orange-200 prose-blockquote:bg-orange-50/30 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:italic">
+                        <div className="serif-content text-lg sm:text-xl prose prose-slate max-w-none prose-p:mb-6 prose-p:leading-[1.8] prose-headings:text-slate-900 prose-headings:font-black prose-headings:tracking-tight prose-headings:mb-6 prose-blockquote:border-l-4 prose-blockquote:border-orange-200 prose-blockquote:bg-orange-50/30 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:italic">
                           <ReactMarkdown>{chapter.content || ''}</ReactMarkdown>
                         </div>
                       </div>
@@ -581,56 +581,57 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                           src={aState.audioUrl}
                           onEnded={() => handleAudioEnded(chapter.id)}
                         />
-                        <div className="flex items-center gap-8">
+                      <div className="mt-8 p-6 bg-slate-50 border border-slate-100 rounded-[2rem] shadow-inner relative overflow-hidden group/player">
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
                           <button
                             onClick={() => handlePlayPause(chapter.id)}
-                            className="flex-shrink-0 w-20 h-20 rounded-[2rem] bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center shadow-xl shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all group-hover/player:rotate-3"
+                            className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all"
                           >
                             {isPlaying
-                              ? <Pause className="h-8 w-8 text-white" strokeWidth={2.5} />
-                              : <Play className="h-8 w-8 text-white ml-1.5" strokeWidth={2.5} />}
+                              ? <Pause className="h-6 w-6 text-white" strokeWidth={2.5} fill="currentColor" />
+                              : <Play className="h-6 w-6 text-white ml-1" strokeWidth={2.5} fill="currentColor" />}
                           </button>
 
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="flex items-center gap-3">
-                                <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest border border-slate-700">
+                          <div className="flex-1 min-w-0 w-full">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2 overflow-hidden">
+                                <span className="px-2 py-0.5 rounded-lg bg-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
                                   {qualityLabel}
                                 </span>
-                                <span className="text-slate-400 text-sm font-medium opacity-50">•</span>
-                                <span className="text-sm font-bold text-white truncate">
+                                <span className="text-slate-300 text-xs">•</span>
+                                <span className="text-xs font-bold text-slate-900 truncate">
                                   {chapter.title}
                                 </span>
                               </div>
                               <a
                                 href={aState.audioUrl}
                                 download={`chapter-${index + 1}-${aState.quality}.wav`}
-                                className="p-3 rounded-2xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-slate-700"
-                                title="Export Manuscript Audio"
+                                className="p-2 rounded-xl bg-white text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all border border-slate-100"
+                                title="Download Audio"
                               >
-                                <Download className="h-5 w-5" strokeWidth={1.5} />
+                                <Download className="h-4 w-4" strokeWidth={2} />
                               </a>
                             </div>
                             
-                            {/* Animated waveform visualization */}
-                            <div className="flex items-end gap-1.5 h-12 bg-slate-800/30 rounded-2xl p-4 overflow-hidden border border-slate-800">
-                              {[30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50].map((h, i) => (
+                            <div className="flex items-end gap-1 h-10 bg-white/50 rounded-xl px-4 py-2 border border-slate-100/50 overflow-hidden">
+                              {[30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50].map((h, i) => (
                                 <div
                                   key={i}
                                   className={`flex-1 rounded-full transition-all duration-300 ${
                                     isPlaying
                                       ? 'bg-gradient-to-t from-indigo-500 via-purple-500 to-pink-500'
-                                      : 'bg-slate-700'
+                                      : 'bg-slate-200'
                                   }`}
                                   style={{
-                                    height: `${h * (isPlaying ? (0.5 + Math.random() * 0.5) : 0.2)}%`,
-                                    transitionDelay: `${i * 20}ms`,
+                                    height: `${h * (isPlaying ? (0.4 + Math.random() * 0.6) : 0.2)}%`,
+                                    transitionDelay: `${i * 15}ms`,
                                   }}
                                 />
                               ))}
                             </div>
                           </div>
                         </div>
+                      </div>
                       </div>
                     );
                   }

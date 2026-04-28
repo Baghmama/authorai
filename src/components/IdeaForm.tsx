@@ -36,9 +36,9 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-5 sm:px-8 sm:py-6 flex items-center gap-4">
+    <div className="max-w-4xl mx-auto px-2 sm:px-4">
+      <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-6 sm:px-10 sm:py-8 flex items-center gap-5">
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shrink-0 shadow-lg shadow-orange-600/30">
             <Lightbulb className="h-5 w-5 text-white" />
           </div>
