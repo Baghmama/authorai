@@ -68,9 +68,24 @@ function chunkText(text: string, maxLen: number): string[] {
   return chunks.filter((c) => c.length > 0);
 }
 
-/** Strips markdown formatting before sending to TTS */
+/** Strips markdown formatting and excludes chapter titles before sending to TTS */
 function stripMarkdown(text: string): string {
-  return text
+  // Split into lines to identify and remove the title
+  const lines = text.split('\n');
+  let contentLines = lines;
+
+  // Pattern to match common chapter title starts: Chapter, अध्याय, Capítulo, Chapitre, etc.
+  const titlePattern = /^(?:Chapter|Capítulo|Chapitre|अध्याय|Capitolo|Kapitel|Kapittel|Kapitel|#)\s*\d*[:.]?/i;
+
+  // If the first non-empty line looks like a title, remove it
+  for (let i = 0; i < Math.min(lines.length, 3); i++) {
+    if (lines[i].trim() && titlePattern.test(lines[i].trim())) {
+      contentLines = lines.slice(i + 1);
+      break;
+    }
+  }
+
+  return contentLines.join('\n')
     .replace(/#{1,6}\s+/g, '')
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/\*(.+?)\*/g, '$1')
@@ -114,12 +129,14 @@ function mergeWavChunks(chunks: Uint8Array[]): Blob {
  * @param text - Chapter content (markdown is automatically stripped)
  * @param quality - 'regular' (bulbul:v2, 4 credits) or 'pro' (bulbul:v3, 7 credits)
  * @param speaker - The selected voice ID (e.g., 'shubh', 'anushka')
+ * @param pace - Speed of speech (0.5 to 2.0)
  * @param onProgress - Optional progress callback 0–1
  */
 export async function generateAudioEpisode(
   text: string,
   quality: AudioQuality,
   speaker: string,
+  pace: number = 1.0,
   onProgress?: (progress: number) => void,
 ): Promise<Blob> {
   // Get the current user's session token to authenticate the edge function call
@@ -147,8 +164,8 @@ export async function generateAudioEpisode(
       body: JSON.stringify({
         text: chunks[i],
         model: config.model,
-        speaker: speaker, // Use the selected speaker
-        pace: 1.0,
+        speaker: speaker,
+        pace: pace, // Use the selected pace
         sample_rate: 22050,
         ...(quality === 'pro' ? { temperature: 0.6 } : {}),
       }),
