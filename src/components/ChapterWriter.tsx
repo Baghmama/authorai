@@ -454,7 +454,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     className="group flex items-center gap-3 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-xl hover:shadow-indigo-200 transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
                   >
                     <Pen className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
-                    <span>Studio Pro</span>
+                    <span>Pro Voice</span>
                   </button>
                 </div>
 
@@ -658,7 +658,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                   <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/30">
                     <Headphones className="h-6 w-6 text-white" strokeWidth={2} />
                   </div>
-                  Narration Studio
+                  Pro Voice Studio
                 </h3>
                 <div className="flex items-center gap-4 mt-2">
                   <div className="flex items-center gap-1.5">
