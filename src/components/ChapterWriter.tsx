@@ -571,71 +571,29 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     );
                   }
 
-                  if (aState.status === 'ready' && aState.audioUrl) {
                     const isPlaying = playingChapterId === chapter.id;
-                    const qualityLabel = aState.quality === 'pro' ? 'Studio Pro' : 'Regular Voice';
                     return (
-                      <div className="mt-10 glass-panel bg-slate-900 border-slate-800 rounded-[2.5rem] p-8 shadow-2xl shadow-indigo-900/20 group/player">
-                        <audio
-                          ref={(el) => { audioRefs.current[chapter.id] = el; }}
-                          src={aState.audioUrl}
-                          onEnded={() => handleAudioEnded(chapter.id)}
-                        />
-                      <div className="mt-8 -mx-6 sm:-mx-12 -mb-6 sm:-mb-12 bg-slate-900 p-4 sm:p-6 relative overflow-hidden group/player">
-                        <div className="flex items-center gap-4 sm:gap-8 relative">
-                          <button
-                            onClick={() => handlePlayPause(chapter.id)}
-                            className="flex-shrink-0 w-14 h-14 rounded-2xl bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-400 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
-                          >
-                            {isPlaying
-                              ? <Pause className="h-6 w-6" fill="currentColor" />
-                              : <Play className="h-6 w-6 ml-1" fill="currentColor" />}
-                          </button>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-3 px-1">
-                              <div className="flex items-center gap-3">
-                                <div className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-wider border border-indigo-500/30">
-                                  {aState.quality.toUpperCase()} VOICE
-                                </div>
-                                <span className="text-xs font-bold text-slate-100 truncate sm:max-w-md">
-                                  {chapter.title}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <span className="text-[10px] font-black text-slate-500 tracking-[0.2em] hidden md:block">MASTERED AUDIO</span>
-                                <a
-                                  href={aState.audioUrl}
-                                  download={`chapter-${index + 1}-${aState.quality}.wav`}
-                                  className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 shadow-sm"
-                                  title="Download Audio"
-                                >
-                                  <Download className="h-4 w-4" />
-                                  <span className="text-xs font-black uppercase tracking-tighter hidden sm:inline">Save</span>
-                                </a>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-end gap-1.5 h-8 bg-black/40 rounded-xl px-4 py-2 overflow-hidden border border-white/5">
-                              {Array.from({ length: 100 }).map((_, i) => {
-                                const h = [30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,70,40,90,30,50,80,40,60,30,50,70,40,80,30,60,90,40,50,70,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50][i];
-                                return (
-                                  <div
-                                    key={i}
-                                    className={`flex-1 rounded-full transition-all duration-300 ${
-                                      isPlaying ? 'bg-indigo-400' : 'bg-slate-700'
-                                    }`}
-                                    style={{
-                                      height: `${h * (isPlaying ? (0.4 + Math.random() * 0.6) : 0.2)}%`,
-                                      transitionDelay: `${i * 5}ms`,
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </div>
+                      <div className="mt-8 flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300'}`} />
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                            {isPlaying ? 'Now Playing' : 'Audio Ready'}
+                          </span>
                         </div>
-                      </div>
+                        <button
+                          onClick={() => handlePlayPause(chapter.id)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                            isPlaying 
+                              ? 'bg-slate-900 text-white shadow-lg' 
+                              : 'bg-white text-slate-900 border border-slate-200 hover:border-slate-300 shadow-sm'
+                          }`}
+                        >
+                          {isPlaying ? (
+                            <><Pause className="h-3.5 w-3.5" fill="currentColor" /> Stop</>
+                          ) : (
+                            <><Play className="h-3.5 w-3.5" fill="currentColor" /> Listen</>
+                          )}
+                        </button>
                       </div>
                     );
                   }
@@ -874,6 +832,82 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
           </div>
         </div>
       )}
+      {/* Global Bottom Audio Ribbon */}
+      {(() => {
+        const playingChapterId = Object.keys(activeAudioStates).find(id => activeAudioStates[id].isPlaying);
+        if (!playingChapterId) return null;
+        
+        const playingChapter = outlines.find(c => c.id === playingChapterId);
+        const aState = activeAudioStates[playingChapterId];
+        
+        return (
+          <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 animate-in slide-in-from-bottom-full duration-500">
+            <div className="max-w-[1600px] mx-auto">
+              <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.4)] flex items-center gap-4 sm:gap-6 overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-transparent pointer-events-none" />
+                
+                <audio
+                  ref={(el) => (audioRefs.current[playingChapterId] = el)}
+                  src={aState.audioUrl}
+                  onEnded={() => handleAudioEnded(playingChapterId)}
+                  autoPlay
+                />
+
+                <button
+                  onClick={() => handlePlayPause(playingChapterId)}
+                  className="flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-indigo-500 text-white flex items-center justify-center hover:bg-indigo-400 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+                >
+                  <Pause className="h-5 w-5 sm:h-6 sm:w-6" fill="currentColor" />
+                </button>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="px-2 py-0.5 rounded bg-indigo-500 text-white text-[8px] sm:text-[10px] font-black uppercase tracking-widest">
+                        {aState.quality.toUpperCase()} VOICE
+                      </div>
+                      <span className="text-[10px] sm:text-xs font-bold text-white truncate max-w-[120px] sm:max-w-none">
+                        {playingChapter?.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <span className="text-[8px] sm:text-[10px] font-black text-slate-500 tracking-[0.2em] hidden sm:block">STUDIO MASTER</span>
+                      <a
+                        href={aState.audioUrl}
+                        download={`chapter-${playingChapter?.title}-${aState.quality}.wav`}
+                        className="p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-all border border-slate-700"
+                        title="Download"
+                      >
+                        <Download className="h-4 w-4" />
+                      </a>
+                      <button
+                        onClick={() => handlePlayPause(playingChapterId)}
+                        className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-end gap-1 h-6 sm:h-8 bg-black/40 rounded-lg px-2 sm:px-4 py-1.5 overflow-hidden border border-white/5">
+                    {Array.from({ length: 80 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 rounded-full bg-indigo-400 animate-pulse"
+                        style={{
+                          height: `${[30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50,30,50,40,70,30,50,90,40,60,30,50,40,80,50,30,60,40,70,30,50,40,60,30,80,40,50,70,30,60,40,90,50,30,70,40,60,30,80,40,50][i]}%`,
+                          animationDelay: `${i * 20}ms`,
+                          animationDuration: '1.5s'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
