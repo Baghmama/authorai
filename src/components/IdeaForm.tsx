@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BookIdea, WritingStyle } from '../types';
-import { Lightbulb, Globe, BookOpen, Layers, Sparkles, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette } from 'lucide-react';
+import { Lightbulb, Globe, BookOpen, Layers, Pen, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette } from 'lucide-react';
 import { calculateCreditsNeeded } from '../utils/creditManager';
 
 const WRITING_STYLES: { value: WritingStyle; label: string; description: string; icon: React.ReactNode }[] = [
@@ -51,7 +51,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
         <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6">
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
-              <Sparkles className="h-4 w-4 text-orange-500" />
+              <Pen className="h-4 w-4 text-orange-500" />
               <span>Book Idea</span>
             </label>
             <textarea
@@ -182,7 +182,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
               </>
             ) : (
               <>
-                <Sparkles className="h-5 w-5" />
+                <Pen className="h-5 w-5" />
                 <span>Generate Chapter Outlines ({creditsNeeded} credits)</span>
               </>
             )}

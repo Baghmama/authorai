@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BookProject } from '../types';
 import { generatePDF, generateWord } from '../utils/bookGenerator';
-import { Download, FileText, BookOpen, Check, FileDown, Sparkles } from 'lucide-react';
+import { Download, FileText, BookOpen, Check, FileDown, Pen } from 'lucide-react';
 
 interface BookCompilerProps {
   project: BookProject;
@@ -43,7 +43,7 @@ const BookCompiler: React.FC<BookCompilerProps> = ({ project, onNewProject }) =>
     <div className="max-w-4xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-8">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/25">
-          <Sparkles className="h-8 w-8 text-white" />
+          <Pen className="h-8 w-8 text-white" />
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Book Complete!</h2>
         <p className="text-slate-500">Your book has been generated and is ready for download</p>

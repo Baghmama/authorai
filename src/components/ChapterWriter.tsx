@@ -23,7 +23,7 @@ import {
   Music,
   Volume2,
   FastForward,
-  Sparkles,
+  Pen,
   Zap,
 } from 'lucide-react';
 
@@ -453,7 +453,7 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     disabled={isBusy}
                     className="group flex items-center gap-3 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-xl hover:shadow-indigo-200 transition-all text-xs font-black uppercase tracking-wider disabled:opacity-50"
                   >
-                    <Sparkles className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
+                    <Pen className="h-4 w-4 text-indigo-100" strokeWidth={1.5} />
                     <span>Studio Pro</span>
                   </button>
                 </div>
