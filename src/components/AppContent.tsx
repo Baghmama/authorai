@@ -26,7 +26,8 @@ const AppContent: React.FC<AppContentProps> = ({ user, onSignOut }) => {
 
   const parseChapterOutlines = (text: string): ChapterOutline[] => {
     const chapters: ChapterOutline[] = [];
-    const sections = text.split(/Chapter \d+:/);
+    // Split by "Chapter/Capítulo/Chapitre/अध्याय [number]:" (case insensitive)
+    const sections = text.split(/(?:Chapter|Capítulo|Chapitre|अध्याय|Capitolo|Kapitel|Kapittel|Kapitel)\s*\d+[:.]/i);
 
     sections.slice(1).forEach((section, index) => {
       const lines = section.trim().split('\n');

@@ -159,14 +159,16 @@ Deno.serve(async (req: Request) => {
   Writing Style: ${writingStyle || 'formal'}
   ${styleInstruction}
 
-  Format the response as follows:
-  Chapter 1: [Title]
-  [Detailed outline for chapter 1]
+  IMPORTANT: Even though the book is in ${language}, you MUST use the English word "Chapter" followed by the number and a colon as the delimiter for each section.
+  
+  Format the response EXACTLY as follows:
+  Chapter 1: [Title in ${language}]
+  [Detailed outline for chapter 1 in ${language}]
 
-  Chapter 2: [Title]
-  [Detailed outline for chapter 2]
+  Chapter 2: [Title in ${language}]
+  [Detailed outline for chapter 2 in ${language}]
 
-  Continue this pattern for all ${chapters} chapters. Each outline should be detailed and provide clear direction for writing the chapter. Ensure the chapter titles and outline tone reflect the chosen writing style.`;
+  Continue this pattern for all ${chapters} chapters. Ensure the chapter titles and outline tone reflect the chosen writing style.`;
     } else if (type === 'chapter') {
       prompt = `Write a complete chapter for a ${bookType} book with the following details:
 
