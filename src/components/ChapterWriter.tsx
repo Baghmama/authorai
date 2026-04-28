@@ -21,6 +21,7 @@ import {
   Download,
   Star,
   Music,
+  Volume2,
 } from 'lucide-react';
 
 type AudioStatus = 'idle' | 'choosing' | 'generating' | 'ready' | 'error';
