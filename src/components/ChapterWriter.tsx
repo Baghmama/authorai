@@ -460,17 +460,17 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
 
                 {/* The Story Display */}
                 <div className="relative group/content">
-                  {editingId === chapter.id ? (
+                  {editingChapterId === chapter.id ? (
                     <div className="space-y-6 relative">
                       <textarea
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
                         className="w-full h-[32rem] p-10 rounded-[2rem] border-2 border-orange-200 focus:border-orange-500 focus:ring-8 focus:ring-orange-500/5 transition-all serif-content resize-none outline-none bg-white shadow-2xl"
                         placeholder="Write your story..."
                       />
                       <div className="flex justify-end gap-4">
                         <button
-                          onClick={() => setEditingId(null)}
+                          onClick={() => setEditingChapterId(null)}
                           className="px-8 py-3 rounded-2xl text-slate-500 font-black uppercase tracking-widest hover:bg-slate-100 transition-all text-xs"
                         >
                           Discard
