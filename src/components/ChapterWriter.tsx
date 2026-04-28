@@ -266,19 +266,30 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   };
 
   const handlePlayPause = (chapterId: string) => {
-    const audio = audioRefs.current[chapterId];
-    if (!audio) return;
-    if (playingChapterId === chapterId && !audio.paused) {
-      audio.pause();
-      setPlayingChapterId(null);
-    } else {
-      // Pause any other playing audio
-      Object.entries(audioRefs.current).forEach(([id, el]) => {
-        if (id !== chapterId && el && !el.paused) el.pause();
-      });
-      audio.play();
-      setPlayingChapterId(chapterId);
+    // If we're already playing this chapter, just toggle it
+    if (playingChapterId === chapterId) {
+      const audio = audioRefs.current[chapterId];
+      if (audio) {
+        if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+          setPlayingChapterId(null);
+        }
+      } else {
+        setPlayingChapterId(null);
+      }
+      return;
     }
+
+    // If we're switching chapters or starting fresh
+    // Pause any existing audio first
+    Object.values(audioRefs.current).forEach(el => {
+      if (el && !el.paused) el.pause();
+    });
+
+    // Set the new chapter. The Global Ribbon will mount and its 'autoPlay' will take over.
+    setPlayingChapterId(chapterId);
   };
 
   const handleAudioEnded = (chapterId: string) => {
