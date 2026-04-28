@@ -171,3 +171,45 @@ export function calculateCreditsNeeded(chapters: number): number {
   const creditsPerChapter = 6;
   return chapters * creditsPerChapter;
 }
+
+/** Credits cost per audio quality tier */
+export const AUDIO_EPISODE_CREDITS = {
+  regular: 4,
+  pro: 7,
+} as const;
+
+export type AudioQuality = 'regular' | 'pro';
+
+/**
+ * Deduct credits for generating an audio episode.
+ * @param quality 'regular' (4 credits, bulbul:v2) | 'pro' (7 credits, bulbul:v3)
+ */
+export async function deductCreditsForAudioEpisode(quality: AudioQuality): Promise<CreditResult> {
+  const credits = AUDIO_EPISODE_CREDITS[quality];
+  const label = quality === 'pro' ? 'Pro (bulbul:v3)' : 'Regular (bulbul:v2)';
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, credits: 0, error: 'User not authenticated' };
+    }
+
+    const { data, error } = await supabase.rpc('deduct_credits', {
+      p_user_id: user.id,
+      p_amount: credits,
+      p_transaction_type: 'audio_episode',
+      p_description: `Generated audio episode — ${label}`,
+    });
+
+    if (error) {
+      console.error('Error deducting credits for audio episode:', error);
+      return { success: false, credits: 0, error: 'Failed to deduct credits' };
+    }
+
+    return data as CreditResult;
+  } catch (error) {
+    console.error('Error in deductCreditsForAudioEpisode:', error);
+    return { success: false, credits: 0, error: 'An unexpected error occurred' };
+  }
+}

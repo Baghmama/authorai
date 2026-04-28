@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ChapterOutline, BookIdea } from '../types';
 import { writeChapter } from '../utils/geminiApi';
-import { deductCreditsForChapterGeneration, getUserCredits } from '../utils/creditManager';
+import { deductCreditsForChapterGeneration, getUserCredits, deductCreditsForAudioEpisode, AUDIO_EPISODE_CREDITS } from '../utils/creditManager';
+import { generateAudioEpisode, AudioQuality } from '../utils/sarvamApi';
 import {
   PenTool,
   CheckCircle,
@@ -14,7 +15,23 @@ import {
   ChevronDown,
   ChevronUp,
   Timer,
+  Headphones,
+  Play,
+  Pause,
+  Download,
+  Star,
+  Music,
 } from 'lucide-react';
+
+type AudioStatus = 'idle' | 'choosing' | 'generating' | 'ready' | 'error';
+
+interface AudioState {
+  status: AudioStatus;
+  audioUrl?: string;
+  quality?: AudioQuality;
+  progress?: number;
+  error?: string;
+}
 
 interface ChapterWriterProps {
   outlines: ChapterOutline[];
@@ -37,6 +54,9 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
   const [expandedOutlines, setExpandedOutlines] = useState<Record<string, boolean>>({});
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const cooldownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [audioStates, setAudioStates] = useState<Record<string, AudioState>>({});
+  const [playingChapterId, setPlayingChapterId] = useState<string | null>(null);
+  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
 
   const startCooldown = useCallback(() => {
     setCooldownSeconds(15);
@@ -161,6 +181,73 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
     setEditContent('');
   };
 
+  const setAudioState = (chapterId: string, update: Partial<AudioState>) => {
+    setAudioStates((prev) => ({
+      ...prev,
+      [chapterId]: { ...(prev[chapterId] ?? { status: 'idle' }), ...update },
+    }));
+  };
+
+  const handleCreateEpisode = async (chapter: ChapterOutline, quality: AudioQuality) => {
+    if (!chapter.content) return;
+
+    // Credit check
+    const userCredits = await getUserCredits();
+    const needed = AUDIO_EPISODE_CREDITS[quality];
+    if (!userCredits || userCredits.credits < needed) {
+      setAudioState(chapter.id, {
+        status: 'error',
+        error: `Insufficient credits. You need ${needed} credits to generate a ${quality === 'pro' ? 'Pro' : 'Regular'} audio episode.`,
+      });
+      return;
+    }
+
+    setAudioState(chapter.id, { status: 'generating', quality, progress: 0 });
+
+    try {
+      // Deduct credits first
+      const creditResult = await deductCreditsForAudioEpisode(quality);
+      if (!creditResult.success) {
+        setAudioState(chapter.id, { status: 'error', error: creditResult.error || 'Failed to deduct credits.' });
+        return;
+      }
+
+      // Generate audio
+      const blob = await generateAudioEpisode(chapter.content, quality, (progress) => {
+        setAudioState(chapter.id, { progress });
+      });
+
+      const url = URL.createObjectURL(blob);
+      setAudioState(chapter.id, { status: 'ready', audioUrl: url, quality, progress: 1 });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      setAudioState(chapter.id, { status: 'error', error: msg });
+    }
+  };
+
+  const handlePlayPause = (chapterId: string) => {
+    const audio = audioRefs.current[chapterId];
+    if (!audio) return;
+    if (playingChapterId === chapterId && !audio.paused) {
+      audio.pause();
+      setPlayingChapterId(null);
+    } else {
+      // Pause any other playing audio
+      Object.entries(audioRefs.current).forEach(([id, el]) => {
+        if (id !== chapterId && el && !el.paused) el.pause();
+      });
+      audio.play();
+      setPlayingChapterId(chapterId);
+    }
+  };
+
+  const handleAudioEnded = (chapterId: string) => {
+    setPlayingChapterId(null);
+    // Reset audio position
+    const audio = audioRefs.current[chapterId];
+    if (audio) audio.currentTime = 0;
+  };
+
   const allChaptersWritten = outlines.every((chapter) => chapter.isWritten);
   const completedCount = outlines.filter((c) => c.isWritten).length;
   const isCoolingDown = cooldownSeconds > 0;
@@ -246,6 +333,33 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                         <RefreshCw className="h-3 w-3" />
                         <span>Regenerate <span className="hidden sm:inline">(6 credits)</span></span>
                       </button>
+                      {/* Audio episode buttons */}
+                      {(() => {
+                        const aState = audioStates[chapter.id];
+                        if (aState?.status === 'generating') return null;
+                        return (
+                          <>
+                            <button
+                              onClick={() => handleCreateEpisode(chapter, 'regular')}
+                              disabled={isBusy || aState?.status === 'generating'}
+                              className="flex items-center gap-1 bg-violet-50 text-violet-700 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Regular audio using bulbul:v2"
+                            >
+                              <Music className="h-3 w-3" />
+                              <span>Audio <span className="hidden sm:inline">(4 credits)</span></span>
+                            </button>
+                            <button
+                              onClick={() => handleCreateEpisode(chapter, 'pro')}
+                              disabled={isBusy || aState?.status === 'generating'}
+                              className="flex items-center gap-1 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Pro audio using bulbul:v3"
+                            >
+                              <Star className="h-3 w-3" />
+                              <span>Pro Audio <span className="hidden sm:inline">(7 credits)</span></span>
+                            </button>
+                          </>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
@@ -319,6 +433,124 @@ const ChapterWriter: React.FC<ChapterWriterProps> = ({
                     <ReactMarkdown>{chapter.content}</ReactMarkdown>
                   </div>
                 )}
+
+                {/* ── Audio Episode Section ── */}
+                {(() => {
+                  const aState = audioStates[chapter.id];
+                  if (!aState || aState.status === 'idle') return null;
+
+                  if (aState.status === 'generating') {
+                    const pct = Math.round((aState.progress ?? 0) * 100);
+                    return (
+                      <div className="mt-4 rounded-xl bg-gradient-to-r from-violet-50 to-amber-50 border border-violet-200/60 p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-violet-500 border-t-transparent flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-semibold text-violet-800">
+                              Generating {aState.quality === 'pro' ? '⭐ Pro' : '🎵 Regular'} Audio Episode...
+                            </p>
+                            <p className="text-xs text-violet-600 mt-0.5">
+                              {pct > 0 ? `${pct}% — processing text chunks` : 'Starting up...'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="h-1.5 bg-violet-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-violet-500 to-amber-400 rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max(pct, 5)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (aState.status === 'error') {
+                    return (
+                      <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3">
+                        <X className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-semibold text-red-800">Audio Generation Failed</p>
+                          <p className="text-xs text-red-600 mt-1">{aState.error}</p>
+                          <button
+                            onClick={() => setAudioState(chapter.id, { status: 'idle' })}
+                            className="text-xs text-red-700 underline mt-2"
+                          >
+                            Dismiss
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (aState.status === 'ready' && aState.audioUrl) {
+                    const isPlaying = playingChapterId === chapter.id;
+                    const qualityLabel = aState.quality === 'pro' ? '⭐ Pro' : '🎵 Regular';
+                    return (
+                      <div className="mt-4 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-4 shadow-lg">
+                        {/* Hidden native audio element */}
+                        <audio
+                          ref={(el) => { audioRefs.current[chapter.id] = el; }}
+                          src={aState.audioUrl}
+                          onEnded={() => handleAudioEnded(chapter.id)}
+                        />
+                        <div className="flex items-center gap-3">
+                          {/* Play/Pause */}
+                          <button
+                            onClick={() => handlePlayPause(chapter.id)}
+                            className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-amber-400 flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                          >
+                            {isPlaying
+                              ? <Pause className="h-4 w-4 text-white" />
+                              : <Play className="h-4 w-4 text-white ml-0.5" />}
+                          </button>
+
+                          {/* Info + waveform bars */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Headphones className="h-3 w-3 text-violet-300 flex-shrink-0" />
+                              <span className="text-xs font-semibold text-white truncate">
+                                Ch. {index + 1} — {chapter.title}
+                              </span>
+                              <span className="text-xs text-violet-300 ml-auto flex-shrink-0">{qualityLabel}</span>
+                            </div>
+                            {/* Animated waveform (decorative) */}
+                            <div className="flex items-end gap-0.5 h-5">
+                              {[3,5,4,6,3,5,7,4,6,3,5,4,6,5,3].map((h, i) => (
+                                <div
+                                  key={i}
+                                  className={`w-1 rounded-full transition-all ${
+                                    isPlaying
+                                      ? 'bg-gradient-to-t from-violet-500 to-amber-300 animate-pulse'
+                                      : 'bg-slate-600'
+                                  }`}
+                                  style={{
+                                    height: `${h * (isPlaying ? 1 : 0.5)}px`,
+                                    animationDelay: `${i * 80}ms`,
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Download */}
+                          <a
+                            href={aState.audioUrl}
+                            download={`chapter-${index + 1}-${aState.quality}-audio.wav`}
+                            className="flex-shrink-0 w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center hover:bg-slate-600 transition-colors"
+                            title="Download audio"
+                          >
+                            <Download className="h-3.5 w-3.5 text-slate-200" />
+                          </a>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-2 text-right">
+                          Regenerate episode using the buttons above
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return null;
+                })()}
               </div>
             )}
           </div>
