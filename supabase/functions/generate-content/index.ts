@@ -194,7 +194,14 @@ Deno.serve(async (req: Request) => {
   Writing Style: ${writingStyle || 'formal'}
   ${styleInstruction}
 
-  Please write a full, detailed chapter that expands on the outline. The chapter should be well-structured with proper paragraphs, engaging content, and appropriate length for a book chapter. Maintain the specified writing style consistently throughout the entire chapter.`;
+  CRITICAL INSTRUCTIONS:
+  1. START WRITING THE STORY CONTENT IMMEDIATELY.
+  2. DO NOT include the Chapter Title ("${title}") in your response.
+  3. DO NOT include "Chapter 1", "Introduction", or any other header.
+  4. DO NOT include any introductory or concluding remarks.
+  5. Provide ONLY the body text of the story. If you include the title, the system will fail.
+
+  Please write a full, detailed chapter that expands on the outline. The chapter should be well-structured with proper paragraphs, engaging content, and appropriate length for a book chapter.`;
     } else {
       throw new Error('Invalid request type');
     }
