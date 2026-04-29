@@ -98,6 +98,35 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Recovery script for Service Worker Cache Traps -->
+    <script>
+      window.addEventListener('error', function(e) {
+        // Detect "Failed to load module script" errors
+        if (e.target.tagName === 'SCRIPT' && e.target.src.includes('/assets/')) {
+          console.warn('Critical asset failed to load. Clearing Service Worker and reloading...');
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for (let registration of registrations) {
+                registration.unregister();
+              }
+              // Clear caches as well
+              if ('caches' in window) {
+                caches.keys().then(function(names) {
+                  for (let name of names) caches.delete(name);
+                });
+              }
+              // Only reload if we haven't already reloaded recently to avoid loops
+              const lastReload = localStorage.getItem('last_sw_recovery');
+              const now = Date.now();
+              if (!lastReload || (now - lastReload > 10000)) {
+                localStorage.setItem('last_sw_recovery', now);
+                window.location.reload(true);
+              }
+            });
+          }
+        }
+      }, true);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

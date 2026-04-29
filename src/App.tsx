@@ -35,7 +35,13 @@ function App() {
     }
 
     // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error fetching session:', error);
+        setLoading(false);
+        return;
+      }
+
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -43,8 +49,16 @@ function App() {
         });
         
         // Check if user is admin
-        checkIsAdmin().then(setIsAdmin);
+        checkIsAdmin()
+          .then(setIsAdmin)
+          .catch(err => {
+            console.error('Error checking admin status:', err);
+            setIsAdmin(false);
+          });
       }
+      setLoading(false);
+    }).catch(err => {
+      console.error('Unexpected error during session check:', err);
       setLoading(false);
     });
 
@@ -57,7 +71,9 @@ function App() {
         });
         
         // Check if user is admin
-        checkIsAdmin().then(setIsAdmin);
+        checkIsAdmin()
+          .then(setIsAdmin)
+          .catch(() => setIsAdmin(false));
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -65,7 +81,21 @@ function App() {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Safety timeout: Ensure loading is disabled after 10 seconds even if auth hangs
+    const timeout = setTimeout(() => {
+      setLoading(prev => {
+        if (prev) {
+          console.warn('Auth initialization timed out, forcing loading to false');
+          return false;
+        }
+        return prev;
+      });
+    }, 10000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleAuthSuccess = () => {
