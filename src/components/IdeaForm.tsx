@@ -128,7 +128,7 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                   <ChevronDown className={`h-4 w-4 text-slate-400 shrink-0 transition-transform ${isLanguageMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isLanguageMenuOpen && (
-                  <div role="listbox" aria-label="Choose a language" className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-900/10">
+                  <div role="listbox" aria-label="Choose a language" className="absolute left-0 right-0 top-full z-20 mt-2 max-h-60 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-900/10">
                     {LANGUAGES.map((language) => {
                       const isSelected = language.value === formData.language;
                       return (
