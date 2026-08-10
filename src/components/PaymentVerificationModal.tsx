@@ -115,7 +115,7 @@ Please add ${paymentData.credits} credits to my account.
 
 Thank you!`);
     
-    window.open(`mailto:sv@goodaiclub.com?subject=${subject}&body=${body}`);
+    window.open(`mailto:shuvo@manifesto.page?subject=${subject}&body=${body}`);
   };
 
   if (!isOpen) return null;

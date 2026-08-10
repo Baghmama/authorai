@@ -38,10 +38,10 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
               <div>
                 <p className="font-medium text-gray-900">Email</p>
                 <a
-                  href="mailto:sv@goodaiclub.com"
+                  href="mailto:shuvo@manifesto.page"
                   className="text-orange-600 hover:text-orange-700"
                 >
-                  sv@goodaiclub.com
+                  shuvo@manifesto.page
                 </a>
               </div>
             </div>
@@ -160,7 +160,7 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">How to Request a Refund</h3>
               <ol className="list-decimal list-inside text-gray-700 space-y-2">
-                <li>Contact us at <a href="mailto:sv@goodaiclub.com" className="text-orange-600 hover:text-orange-700">sv@goodaiclub.com</a></li>
+                <li>Contact us at <a href="mailto:shuvo@manifesto.page" className="text-orange-600 hover:text-orange-700">shuvo@manifesto.page</a></li>
                 <li>Include your transaction ID and reason for refund</li>
                 <li>Our team will review your request within 24 hours</li>
                 <li>Once approved, refund will be processed to your original payment method</li>
@@ -180,8 +180,8 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
               <h3 className="text-lg font-medium text-orange-900 mb-2">Need Help?</h3>
               <p className="text-orange-800">
                 If you have any questions about our refund policy, please don't hesitate to contact us at{' '}
-                <a href="mailto:sv@goodaiclub.com" className="font-medium underline">
-                  sv@goodaiclub.com
+                <a href="mailto:shuvo@manifesto.page" className="font-medium underline">
+                  shuvo@manifesto.page
                 </a>{' '}
                 or call us at{' '}
                 <a href="tel:+919144433606" className="font-medium underline">
@@ -399,8 +399,8 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">10. Contact Information</h2>
               <p className="text-gray-700">
                 For questions about these terms, please contact us at{' '}
-                <a href="mailto:sv@goodaiclub.com" className="text-orange-600 hover:text-orange-700 underline">
-                  sv@goodaiclub.com
+                <a href="mailto:shuvo@manifesto.page" className="text-orange-600 hover:text-orange-700 underline">
+                  shuvo@manifesto.page
                 </a>{' '}
                 or call{' '}
                 <a href="tel:+919144433606" className="text-orange-600 hover:text-orange-700 underline">
@@ -547,8 +547,8 @@ const LegalPages: React.FC<LegalPagesProps> = ({ currentPage, onClose }) => {
               <p className="text-orange-800">
                 If you have questions about this privacy policy or want to exercise your rights, 
                 please contact us at{' '}
-                <a href="mailto:sv@goodaiclub.com" className="font-medium underline">
-                  sv@goodaiclub.com
+                <a href="mailto:shuvo@manifesto.page" className="font-medium underline">
+                  shuvo@manifesto.page
                 </a>{' '}
                 or call{' '}
                 <a href="tel:+919144433606" className="font-medium underline">
