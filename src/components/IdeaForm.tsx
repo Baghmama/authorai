@@ -1,7 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BookIdea, WritingStyle } from '../types';
-import { Lightbulb, Globe, BookOpen, Layers, Pen, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette, ChevronDown, Music } from 'lucide-react';
+import { Lightbulb, Globe, BookOpen, Layers, Pen, Feather, MessageCircle, BookMarked, Laugh, GraduationCap, Palette, ChevronDown, Music, Check } from 'lucide-react';
 import { calculateCreditsNeeded } from '../utils/creditManager';
+
+const LANGUAGES = [
+  { value: 'English', label: 'English', audio: true },
+  { value: 'Spanish', label: 'Spanish', audio: false },
+  { value: 'French', label: 'French', audio: false },
+  { value: 'German', label: 'German', audio: false },
+  { value: 'Italian', label: 'Italian', audio: false },
+  { value: 'Portuguese', label: 'Portuguese', audio: false },
+  { value: 'Chinese', label: 'Chinese', audio: false },
+  { value: 'Japanese', label: 'Japanese', audio: false },
+  { value: 'Korean', label: 'Korean', audio: false },
+  { value: 'Arabic', label: 'Arabic', audio: false },
+  { value: 'Hindi', label: 'Hindi', audio: true },
+];
 
 const WRITING_STYLES: { value: WritingStyle; label: string; description: string; icon: React.ReactNode }[] = [
   { value: 'formal', label: 'Formal', description: 'Polished and professional tone', icon: <Feather className="h-4 w-4" /> },
@@ -25,8 +39,29 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
     type: 'Fiction',
     writingStyle: 'formal',
   });
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
 
   const creditsNeeded = calculateCreditsNeeded(formData.chapters);
+  const selectedLanguage = LANGUAGES.find((language) => language.value === formData.language) ?? LANGUAGES[0];
+
+  useEffect(() => {
+    const closeMenu = (event: MouseEvent) => {
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsLanguageMenuOpen(false);
+    };
+
+    document.addEventListener('mousedown', closeMenu);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeMenu);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,27 +105,55 @@ const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
                 <Globe className="h-4 w-4 text-orange-600" />
                 <span>Language</span>
               </label>
-              <div className="relative group">
-                <select
-                  value={formData.language}
-                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-600/20 focus:border-orange-500 transition-all bg-slate-50/50 text-slate-700 appearance-none"
+              <div className="relative" ref={languageMenuRef}>
+                <button
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={isLanguageMenuOpen}
+                  onClick={() => setIsLanguageMenuOpen((isOpen) => !isOpen)}
+                  className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all bg-slate-50/50 text-slate-700 ${
+                    isLanguageMenuOpen
+                      ? 'border-orange-500 ring-4 ring-orange-500/10'
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
                 >
-                  <option value="English">English (Audio Available 🎙️)</option>
-                  <option value="Spanish">Spanish</option>
-                  <option value="French">French</option>
-                  <option value="German">German</option>
-                  <option value="Italian">Italian</option>
-                  <option value="Portuguese">Portuguese</option>
-                  <option value="Chinese">Chinese</option>
-                  <option value="Japanese">Japanese</option>
-                  <option value="Korean">Korean</option>
-                  <option value="Arabic">Arabic</option>
-                  <option value="Hindi">Hindi (Audio Available 🎙️)</option>
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <ChevronDown className="h-4 w-4" />
-                </div>
+                  <span className="flex items-center gap-2.5 min-w-0">
+                    <span className="font-medium truncate">{selectedLanguage.label}</span>
+                    {selectedLanguage.audio && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-orange-700 shrink-0">
+                        <Music className="h-3 w-3" /> Audio
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown className={`h-4 w-4 text-slate-400 shrink-0 transition-transform ${isLanguageMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isLanguageMenuOpen && (
+                  <div role="listbox" aria-label="Choose a language" className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-900/10">
+                    {LANGUAGES.map((language) => {
+                      const isSelected = language.value === formData.language;
+                      return (
+                        <button
+                          key={language.value}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          onClick={() => {
+                            setFormData({ ...formData, language: language.value });
+                            setIsLanguageMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${isSelected ? 'bg-orange-50 text-orange-700' : 'text-slate-700 hover:bg-slate-50'}`}
+                        >
+                          <span className="flex items-center gap-2.5">
+                            <span className={`h-2 w-2 rounded-full ${isSelected ? 'bg-orange-500' : 'bg-slate-200'}`} />
+                            <span className="font-medium">{language.label}</span>
+                            {language.audio && <span className="text-xs text-slate-400">Audio</span>}
+                          </span>
+                          {isSelected && <Check className="h-4 w-4 text-orange-600" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               <p className="mt-2 text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
                 <Music className="h-3 w-3" />
