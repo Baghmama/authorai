@@ -125,7 +125,7 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess,
       description: `${pkg.credits} Credits - ${pkg.name}`,
       order_id: orderData.id,
       prefill: {
-        email: '', // Will be filled by user if needed
+        email: user.email || '',
       },
       theme: {
         color: '#f97316', // Orange color matching our theme
@@ -167,31 +167,12 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess,
 
     console.log('Razorpay options:', options);
 
-    // Check if Razorpay is available
     if (!window.Razorpay) {
       throw new Error('Razorpay SDK not loaded');
     }
 
-    // Test the key by creating a Razorpay instance first
-    try {
-      console.log('Testing Razorpay key validity...');
-      const testRazorpay = new window.Razorpay({
-        key: razorpayKey,
-        amount: 100,
-        currency: 'INR',
-        name: 'Test',
-        handler: function() {}
-      });
-      console.log('Razorpay key test passed');
-    } catch (keyError) {
-      console.error('Razorpay key test failed:', keyError);
-      throw new Error('Invalid Razorpay key. Please check your configuration.');
-    }
-
-    // Open Razorpay checkout
-    console.log('Opening Razorpay checkout...');
     const razorpay = new window.Razorpay(options);
-    
+
     razorpay.on('payment.failed', function (response: any) {
       console.error('Payment failed:', response.error);
       alert(`Payment failed: ${response.error.description}`);
