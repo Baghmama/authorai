@@ -1,4 +1,4 @@
-const CACHE_NAME = 'author-ai-v2';
+const CACHE_NAME = 'author-ai-v3';
 const urlsToPrecache = [
   '/',
   '/manifest.json',
@@ -42,6 +42,14 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
+  const requestUrl = new URL(event.request.url);
+
+  // Never intercept cross-origin requests (e.g. Razorpay checkout, analytics, CDNs).
+  // Letting the service worker handle third-party requests breaks payment flows.
+  if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
   // Navigation requests (like the main page) - Network First
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -82,9 +90,9 @@ self.addEventListener('fetch', (event) => {
 
           // Don't cache everything, just assets and static files
           if (
-            networkResponse.ok && 
-            (event.request.url.includes('/assets/') || 
-             event.request.url.includes('.png') || 
+            networkResponse.ok &&
+            (event.request.url.includes('/assets/') ||
+             event.request.url.includes('.png') ||
              event.request.url.includes('.json'))
           ) {
             const responseClone = networkResponse.clone();
@@ -97,4 +105,3 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
-
