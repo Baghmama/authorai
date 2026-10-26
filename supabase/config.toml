@@ -1,0 +1,11 @@
+[functions.create-payment-order]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true
+
+[functions.generate-content]
+verify_jwt = true
+
+[functions.generate-audio]
+verify_jwt = false

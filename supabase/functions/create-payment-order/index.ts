@@ -90,7 +90,7 @@ Deno.serve(async (req: Request) => {
     console.log('Razorpay order created successfully:', order.id);
 
     return new Response(
-      JSON.stringify(order),
+      JSON.stringify({ ...order, key_id: razorpayKeyId }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

@@ -1,0 +1,21 @@
+{
+  "projectId": "51047689",
+  "functions": {
+    "create-payment-order": {
+      "hasChanged": false,
+      "hash": "10858c0a4baa6db43463e0417cf959b5ddf771a9a5af54221cef0401eb01e173"
+    },
+    "generate-audio": {
+      "hasChanged": false,
+      "hash": "3b09a34899c9005fddb671510b2cc90b6478e0e719c5b783726375565f115c2d"
+    },
+    "generate-content": {
+      "hasChanged": false,
+      "hash": "877ce677b7242bbb21368410d7a753d7905f3ec360247ac7cf5f2df569d87491"
+    },
+    "verify-payment": {
+      "hasChanged": false,
+      "hash": "406945e9a6b94146eebd00c77a7dcaa2a3395df244132df573d4fac4beca9b16"
+    }
+  }
+}

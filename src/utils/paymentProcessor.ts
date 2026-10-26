@@ -116,9 +116,15 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess,
     
     console.log('Order created:', orderData);
 
-    // Configure Razorpay options with better error handling
+    // Use the key returned by the server so the checkout key always matches
+    // the key that created the order (prevents 401 on Razorpay preferences API).
+    const checkoutKey = orderData.key_id || razorpayKey;
+    if (checkoutKey !== razorpayKey) {
+      console.warn('Server key differs from client key. Using server key for checkout.');
+    }
+
     const options = {
-      key: razorpayKey,
+      key: checkoutKey,
       amount: orderData.amount,
       currency: orderData.currency,
       name: 'Author AI',
