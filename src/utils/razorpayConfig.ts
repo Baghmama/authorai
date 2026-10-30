@@ -1,7 +1,7 @@
 // Razorpay configuration and utilities
 export const RAZORPAY_CONFIG = {
   // Live keys for production
-  keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
+  keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TsQ8XprFPKUDwH',
   keySecret: import.meta.env.VITE_RAZORPAY_KEY_SECRET || '',
 };
 
