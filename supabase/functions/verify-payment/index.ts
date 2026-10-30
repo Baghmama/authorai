@@ -142,7 +142,7 @@ Deno.serve(async (req: Request) => {
       throw new Error(`Failed to verify payment: ${paymentResponse.status}`);
     }
 
-    const paymentData = await paymentResponse.json();
+    let paymentData = await paymentResponse.json();
     console.log('Payment data from Razorpay:', {
       id: paymentData.id,
       status: paymentData.status,
@@ -152,6 +152,34 @@ Deno.serve(async (req: Request) => {
     });
 
     // Step 3: Verify payment status and order matching
+    // If the payment is authorized (e.g. manual capture mode or international card/wallet), capture it automatically
+    if (paymentData.status === 'authorized') {
+      console.log('Payment is authorized. Capturing payment now via Razorpay API...');
+      const captureResponse = await fetch(`https://api.razorpay.com/v1/payments/${razorpay_payment_id}/capture`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: paymentData.amount,
+          currency: paymentData.currency,
+        }),
+      });
+
+      if (!captureResponse.ok) {
+        const captureErrorText = await captureResponse.text();
+        console.error('Failed to capture authorized payment:', captureResponse.status, captureErrorText);
+        throw new Error(`Failed to capture authorized payment: ${captureResponse.status} - ${captureErrorText}`);
+      }
+
+      paymentData = await captureResponse.json();
+      console.log('Payment captured successfully:', {
+        id: paymentData.id,
+        status: paymentData.status,
+      });
+    }
+
     if (paymentData.status !== 'captured') {
       console.error('Payment not captured:', paymentData.status);
       throw new Error(`Payment not successful. Status: ${paymentData.status}`);

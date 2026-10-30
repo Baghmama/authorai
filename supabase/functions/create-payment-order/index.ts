@@ -63,6 +63,7 @@ Deno.serve(async (req: Request) => {
       amount,
       currency,
       receipt,
+      payment_capture: true, // Automatically capture authorized payments immediately
       notes: {
         user_id: user.id,
         user_email: user.email,

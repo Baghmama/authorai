@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, CreditCard, Shield, Sparkles, Check, Zap, Crown, Rocket, Building2 } from 'lucide-react';
+import { X, CreditCard, Shield, Sparkles, Check, Zap, Crown, Rocket, Building2, Wallet } from 'lucide-react';
 import { PaymentPackage } from '../types';
 import { CREDIT_PACKAGES, formatCurrency } from '../utils/razorpayConfig';
 import { processPayment } from '../utils/paymentProcessor';
@@ -130,6 +130,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                 </div>
               </div>
 
+              {selectedCurrency === 'USD' && (
+                <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200/80 rounded-xl px-3.5 py-2.5 text-xs text-amber-900 animate-[fadeIn_200ms_ease-out]">
+                  <div className="bg-amber-100 p-1.5 rounded-lg text-amber-700 flex-shrink-0">
+                    <Wallet className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="font-semibold">PayPal Wallet:</span> Dollar (USD) payments are accepted exclusively via PayPal wallet.
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2.5">
                 {CREDIT_PACKAGES.map((pkg) => {
                   const colors = PACKAGE_COLORS[pkg.id] || PACKAGE_COLORS.basic;
@@ -203,17 +214,34 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
                     <span>Processing...</span>
                   </>
+                ) : selectedCurrency === 'USD' ? (
+                  <>
+                    <Wallet className="h-4.5 w-4.5" />
+                    <span>
+                      {selectedPackage
+                        ? `Pay ${formatCurrency(selectedPackage.price.usd, 'USD')} with PayPal`
+                        : 'Select a package'}
+                    </span>
+                  </>
                 ) : (
                   <>
                     <CreditCard className="h-4.5 w-4.5" />
-                    <span>{selectedPackage ? `Pay ${formatCurrency(selectedCurrency === 'USD' ? selectedPackage.price.usd : selectedPackage.price.inr, selectedCurrency)}` : 'Select a package'}</span>
+                    <span>
+                      {selectedPackage
+                        ? `Pay ${formatCurrency(selectedPackage.price.inr, 'INR')}`
+                        : 'Select a package'}
+                    </span>
                   </>
                 )}
               </button>
 
               <div className="flex items-center justify-center gap-1.5 text-slate-400">
                 <Shield className="h-3.5 w-3.5" />
-                <span className="text-xs">Secured by Razorpay. 256-bit encryption.</span>
+                <span className="text-xs">
+                  {selectedCurrency === 'USD'
+                    ? 'Processed via PayPal Wallet (Razorpay) • 256-bit encryption'
+                    : 'Secured by Razorpay. 256-bit encryption.'}
+                </span>
               </div>
             </div>
           </div>

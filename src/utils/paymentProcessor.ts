@@ -123,7 +123,8 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess,
       console.warn('Server key differs from client key. Using server key for checkout.');
     }
 
-    const options = {
+    // Configure Razorpay options with better error handling
+    const options: any = {
       key: checkoutKey,
       amount: orderData.amount,
       currency: orderData.currency,
@@ -136,6 +137,37 @@ export async function processPayment({ package: pkg, currency, onPaymentSuccess,
       theme: {
         color: '#f97316', // Orange color matching our theme
       },
+      // For USD dollar payments, keep PayPal wallet option only
+      ...(actualCurrency === 'USD'
+        ? {
+            config: {
+              display: {
+                blocks: {
+                  paypal_wallet: {
+                    name: 'Pay with PayPal',
+                    instruments: [
+                      {
+                        method: 'wallet',
+                        wallets: ['paypal'],
+                      },
+                    ],
+                  },
+                },
+                sequence: ['block.paypal_wallet'],
+                preferences: {
+                  show_default_blocks: false,
+                },
+                hide: [
+                  { method: 'card' },
+                  { method: 'netbanking' },
+                  { method: 'upi' },
+                  { method: 'emi' },
+                  { method: 'paylater' },
+                ],
+              },
+            },
+          }
+        : {}),
       handler: async function (response: RazorpayResponse) {
         try {
           console.log('Payment successful, response:', response);
