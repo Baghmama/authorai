@@ -6,134 +6,271 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GEMINI_API_KEYS = [
-  Deno.env.get('GEMINI_API_KEY_1'),
-  Deno.env.get('GEMINI_API_KEY_2'),
-  Deno.env.get('GEMINI_API_KEY_3'),
-  Deno.env.get('GEMINI_API_KEY_4'),
-  Deno.env.get('GEMINI_API_KEY_5'),
-  Deno.env.get('GEMINI_API_KEY_6')
-].filter(key => key && key.trim() !== '');
+// ── Key Sanitization & Deduplication ──
+function cleanKeys(rawKeys: (string | undefined)[]): string[] {
+  const cleaned = rawKeys
+    .map(k => (k || '').trim().replace(/^["']|["']$/g, ''))
+    .filter(k => k.length > 0);
+  return Array.from(new Set(cleaned)); // Deduplicate
+}
 
-const GROQ_API_KEYS = [
+function maskKey(key: string): string {
+  if (!key) return '(empty)';
+  if (key.length <= 10) return key.substring(0, 3) + '...';
+  return key.substring(0, 6) + '...' + key.substring(key.length - 4);
+}
+
+// ── Load & Clean Provider Keys from Supabase Secrets ──
+const OPENROUTER_API_KEYS = cleanKeys([
+  Deno.env.get('OPENROUTER_API_KEY'),
+  Deno.env.get('OPENROUTER_API_KEY_1'),
+  Deno.env.get('OPENROUTER_API_KEY_2'),
+  Deno.env.get('OPENROUTER_API_KEY_3'),
+  Deno.env.get('OPENROUTER_API_KEY_4'),
+  Deno.env.get('OPENROUTER_API_KEY_5'),
+  Deno.env.get('OPENROUTER_API_KEY_6')
+]);
+
+const GROQ_API_KEYS = cleanKeys([
+  Deno.env.get('GROQ_API_KEY'),
   Deno.env.get('GROQ_API_KEY_1'),
   Deno.env.get('GROQ_API_KEY_2'),
   Deno.env.get('GROQ_API_KEY_3'),
   Deno.env.get('GROQ_API_KEY_4'),
   Deno.env.get('GROQ_API_KEY_5'),
   Deno.env.get('GROQ_API_KEY_6')
-].filter(key => key && key.trim() !== '');
+]);
 
-async function tryGroq(prompt: string, retryCount = 0, startIdx?: number): Promise<string> {
-  if (GROQ_API_KEYS.length === 0) throw new Error('No Groq API keys available');
-  if (retryCount >= GROQ_API_KEYS.length) throw new Error('All Groq keys exhausted');
+const GEMINI_API_KEYS = cleanKeys([
+  Deno.env.get('GEMINI_API_KEY'),
+  Deno.env.get('GEMINI_API_KEY_1'),
+  Deno.env.get('GEMINI_API_KEY_2'),
+  Deno.env.get('GEMINI_API_KEY_3'),
+  Deno.env.get('GEMINI_API_KEY_4'),
+  Deno.env.get('GEMINI_API_KEY_5'),
+  Deno.env.get('GEMINI_API_KEY_6')
+]);
 
-  const startIndex = startIdx ?? Math.floor(Math.random() * GROQ_API_KEYS.length);
-  const keyIndex = (startIndex + retryCount) % GROQ_API_KEYS.length;
-  const apiKey = GROQ_API_KEYS[keyIndex];
-  const maskedKey = apiKey.substring(0, 6) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log(`Trying Groq with key: ${maskedKey} (attempt ${retryCount + 1}/${GROQ_API_KEYS.length})`);
+console.log(`[Init] Loaded keys: ${GROQ_API_KEYS.length} unique Groq, ${GEMINI_API_KEYS.length} unique Gemini, ${OPENROUTER_API_KEYS.length} unique OpenRouter.`);
 
-  let response: Response;
-  try {
-    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 8000,
-      })
-    });
-  } catch (networkError) {
-    console.error(`Groq key ${maskedKey} network error:`, networkError instanceof Error ? networkError.message : networkError);
-    if (retryCount + 1 < GROQ_API_KEYS.length) {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return tryGroq(prompt, retryCount + 1, startIndex);
-    }
-    throw new Error(`All Groq keys failed. Last error: network error`);
+// ── OpenRouter Provider (Priority #1 if keys configured) ──
+async function tryOpenRouter(prompt: string, errors: string[]): Promise<string> {
+  if (OPENROUTER_API_KEYS.length === 0) {
+    return Promise.reject(new Error("No OpenRouter keys configured"));
   }
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error(`Groq key ${maskedKey} failed with status ${response.status}: ${error}`);
-    
-    if (retryCount + 1 < GROQ_API_KEYS.length) {
-      console.log(`Retrying with next Groq key...`);
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return tryGroq(prompt, retryCount + 1, startIndex);
+  const startOffset = Math.floor(Math.random() * OPENROUTER_API_KEYS.length);
+  const model = Deno.env.get('OPENROUTER_MODEL') || 'meta-llama/llama-3.3-70b-instruct';
+
+  for (let i = 0; i < OPENROUTER_API_KEYS.length; i++) {
+    const keyIndex = (startOffset + i) % OPENROUTER_API_KEYS.length;
+    const apiKey = OPENROUTER_API_KEYS[keyIndex];
+    const masked = maskKey(apiKey);
+
+    try {
+      console.log(`[OpenRouter] Trying ${model} with key ${masked} (${i + 1}/${OPENROUTER_API_KEYS.length})...`);
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': 'https://authorai.site',
+          'X-Title': 'Author AI',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+          max_tokens: 8000,
+        })
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        const summary = `HTTP ${response.status}: ${errText.substring(0, 80)}`;
+        console.warn(`[OpenRouter] Key ${masked} failed: ${summary}`);
+        errors.push(`OpenRouter [${masked}]: ${summary}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content || typeof content !== 'string') {
+        throw new Error('Empty response from OpenRouter');
+      }
+
+      console.log(`[OpenRouter] Success with key ${masked}!`);
+      return content;
+    } catch (fetchErr) {
+      const msg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+      console.error(`[OpenRouter] Key ${masked} error: ${msg}`);
+      errors.push(`OpenRouter [${masked}]: ${msg}`);
     }
-    
-    throw new Error(`All Groq keys failed. Last error: ${response.status} ${error}`);
   }
 
-  const data = await response.json();
-  console.log(`Groq API success with key ${maskedKey}!`);
-  return data.choices[0].message.content;
+  throw new Error("All OpenRouter attempts failed");
 }
 
-async function tryGemini(prompt: string, retryCount = 0, startIdx?: number): Promise<string> {
-  if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini API keys available');
-  if (retryCount >= GEMINI_API_KEYS.length) throw new Error('All Gemini keys exhausted');
-
-  const startIndex = startIdx ?? Math.floor(Math.random() * GEMINI_API_KEYS.length);
-  const keyIndex = (startIndex + retryCount) % GEMINI_API_KEYS.length;
-  const apiKey = GEMINI_API_KEYS[keyIndex];
-  const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log(`Trying Gemini with key: ${maskedKey} (attempt ${retryCount + 1}/${GEMINI_API_KEYS.length})`);
-
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
-  } catch (networkError) {
-    console.error(`Gemini key ${maskedKey} network error:`, networkError instanceof Error ? networkError.message : networkError);
-    if (retryCount + 1 < GEMINI_API_KEYS.length) {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return tryGemini(prompt, retryCount + 1, startIndex);
-    }
-    throw new Error(`All Gemini keys failed. Last error: network error`);
+// ── Groq Provider with 70B -> 8B Quota Resilience ──
+async function tryGroq(prompt: string, errors: string[]): Promise<string> {
+  if (GROQ_API_KEYS.length === 0) {
+    errors.push("Groq: No keys configured in Supabase secrets");
+    throw new Error("No Groq keys available");
   }
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`Gemini key ${maskedKey} failed with status ${response.status}: ${errorText}`);
-    
-    if (retryCount + 1 < GEMINI_API_KEYS.length) {
-      console.log(`Retrying with next Gemini key...`);
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return tryGemini(prompt, retryCount + 1, startIndex);
+  const startOffset = Math.floor(Math.random() * GROQ_API_KEYS.length);
+  // Try llama-3.3-70b first; if rate-limited (6k TPM limit), fallback to llama-3.1-8b-instant (30k TPM limit)
+  const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+
+  for (const model of models) {
+    let hitRateLimit = false;
+
+    for (let i = 0; i < GROQ_API_KEYS.length; i++) {
+      const keyIndex = (startOffset + i) % GROQ_API_KEYS.length;
+      const apiKey = GROQ_API_KEYS[keyIndex];
+      const masked = maskKey(apiKey);
+
+      try {
+        console.log(`[Groq] Trying ${model} with key ${masked} (${i + 1}/${GROQ_API_KEYS.length})...`);
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.7,
+            max_tokens: 8000,
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          let summary = `HTTP ${response.status}`;
+          if (response.status === 429) {
+            hitRateLimit = true;
+            summary += ' (Rate Limit / TPM)';
+          } else if (response.status === 401) {
+            summary += ' (Invalid Key)';
+          } else {
+            summary += `: ${errText.substring(0, 60)}`;
+          }
+          console.warn(`[Groq] Key ${masked} failed for ${model}: ${summary}`);
+          errors.push(`Groq [${masked} | ${model}]: ${summary}`);
+          continue;
+        }
+
+        const data = await response.json();
+        const content = data?.choices?.[0]?.message?.content;
+        if (!content || typeof content !== 'string') {
+          throw new Error('Empty response from Groq');
+        }
+
+        console.log(`[Groq] Success with key ${masked} using ${model}!`);
+        return content;
+      } catch (fetchErr) {
+        const msg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+        console.error(`[Groq] Key ${masked} error: ${msg}`);
+        errors.push(`Groq [${masked} | ${model}]: ${msg}`);
+      }
     }
-    
-    throw new Error(`All Gemini keys failed. Last error: ${response.status} ${errorText}`);
+
+    // If the failure was not a 429 rate limit (e.g. invalid keys), don't retry same invalid keys on 8B
+    if (!hitRateLimit && models.indexOf(model) === 0) {
+      break;
+    }
   }
 
-  const data = await response.json();
-  console.log(`Gemini API success with key ${maskedKey}!`);
-  return data.candidates[0].content.parts[0].text;
+  throw new Error("All Groq attempts failed");
 }
 
+// ── Gemini Provider (v1beta with 1.5-flash & 2.0-flash fallback) ──
+async function tryGemini(prompt: string, errors: string[]): Promise<string> {
+  if (GEMINI_API_KEYS.length === 0) {
+    errors.push("Gemini: No keys configured in Supabase secrets");
+    throw new Error("No Gemini keys available");
+  }
+
+  const startOffset = Math.floor(Math.random() * GEMINI_API_KEYS.length);
+  const geminiModels = ['gemini-1.5-flash', 'gemini-2.0-flash'];
+
+  for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
+    const keyIndex = (startOffset + i) % GEMINI_API_KEYS.length;
+    const apiKey = GEMINI_API_KEYS[keyIndex];
+    const masked = maskKey(apiKey);
+
+    for (const model of geminiModels) {
+      try {
+        console.log(`[Gemini] Trying ${model} with key ${masked} (${i + 1}/${GEMINI_API_KEYS.length})...`);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 8192,
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          let summary = `HTTP ${response.status}`;
+          if (response.status === 429) {
+            summary += ' (Quota / Rate Limit)';
+          } else if (response.status === 400 || response.status === 403) {
+            summary += ' (Invalid Key)';
+          } else {
+            summary += `: ${errText.substring(0, 60)}`;
+          }
+          console.warn(`[Gemini] Key ${masked} failed for ${model}: ${summary}`);
+          errors.push(`Gemini [${masked} | ${model}]: ${summary}`);
+          continue;
+        }
+
+        const data = await response.json();
+        const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!content || typeof content !== 'string') {
+          throw new Error('Empty response from Gemini');
+        }
+
+        console.log(`[Gemini] Success with key ${masked} using ${model}!`);
+        return content;
+      } catch (fetchErr) {
+        const msg = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+        console.error(`[Gemini] Key ${masked} error: ${msg}`);
+        errors.push(`Gemini [${masked} | ${model}]: ${msg}`);
+      }
+    }
+  }
+
+  throw new Error("All Gemini attempts failed");
+}
+
+// ── Orchestrator ──
 async function generateContent(prompt: string): Promise<string> {
-  // Diagnostic check
-  if (GEMINI_API_KEYS.length === 0 && GROQ_API_KEYS.length === 0) {
-    throw new Error('No API keys found in Supabase Environment. Please ensure GEMINI_API_KEY_1 or GROQ_API_KEY_1 are set in your project secrets.');
+  const totalKeys = OPENROUTER_API_KEYS.length + GROQ_API_KEYS.length + GEMINI_API_KEYS.length;
+  if (totalKeys === 0) {
+    throw new Error('No AI API keys found in Supabase Environment. Please check project secrets.');
   }
 
-  const providers = [
-    { name: 'Groq', fn: () => tryGroq(prompt) },
-    { name: 'Gemini', fn: () => tryGemini(prompt) }
-  ];
+  const allErrors: string[] = [];
+  const providers = [];
+
+  if (OPENROUTER_API_KEYS.length > 0) {
+    providers.push({ name: 'OpenRouter', fn: () => tryOpenRouter(prompt, allErrors) });
+  }
+  if (GROQ_API_KEYS.length > 0) {
+    providers.push({ name: 'Groq', fn: () => tryGroq(prompt, allErrors) });
+  }
+  if (GEMINI_API_KEYS.length > 0) {
+    providers.push({ name: 'Gemini', fn: () => tryGemini(prompt, allErrors) });
+  }
 
   for (const provider of providers) {
     try {
@@ -141,12 +278,18 @@ async function generateContent(prompt: string): Promise<string> {
       const result = await provider.fn();
       return result;
     } catch (error) {
-      console.error(`${provider.name} failed:`, error instanceof Error ? error.message : error);
+      console.warn(`${provider.name} failed:`, error instanceof Error ? error.message : error);
       console.log(`Falling back to next provider...\n`);
     }
   }
 
-  throw new Error(`All AI providers exhausted. [Debug: Loaded ${GROQ_API_KEYS.length} Groq keys, ${GEMINI_API_KEYS.length} Gemini keys]. Please check your Supabase secrets.`);
+  const errorSummary = allErrors.length > 0 
+    ? allErrors.join('; ') 
+    : 'All keys exhausted without specific error';
+
+  throw new Error(
+    `All AI providers exhausted. [Keys loaded: ${GROQ_API_KEYS.length} Groq, ${GEMINI_API_KEYS.length} Gemini, ${OPENROUTER_API_KEYS.length} OpenRouter]. Details: ${errorSummary}`
+  );
 }
 
 Deno.serve(async (req: Request) => {
