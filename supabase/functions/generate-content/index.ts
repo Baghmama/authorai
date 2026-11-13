@@ -24,54 +24,48 @@ const GROQ_API_KEYS = [
   Deno.env.get('GROQ_API_KEY_6')
 ].filter(key => key && key.trim() !== '');
 
-let groqKeyIndex = 0;
-let geminiKeyIndex = 0;
-
-function getNextGroqKey(): string {
-  if (GROQ_API_KEYS.length === 0) throw new Error('No Groq keys available');
-  const key = GROQ_API_KEYS[groqKeyIndex];
-  groqKeyIndex = (groqKeyIndex + 1) % GROQ_API_KEYS.length;
-  return key;
-}
-
-function getNextGeminiKey(): string {
-  if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini keys available');
-  const key = GEMINI_API_KEYS[geminiKeyIndex];
-  geminiKeyIndex = (geminiKeyIndex + 1) % GEMINI_API_KEYS.length;
-  return key;
-}
-
-async function tryGroq(prompt: string, retryCount = 0): Promise<string> {
+async function tryGroq(prompt: string, retryCount = 0, startIdx?: number): Promise<string> {
   if (GROQ_API_KEYS.length === 0) throw new Error('No Groq API keys available');
   if (retryCount >= GROQ_API_KEYS.length) throw new Error('All Groq keys exhausted');
 
-  const apiKey = getNextGroqKey();
+  const startIndex = startIdx ?? Math.floor(Math.random() * GROQ_API_KEYS.length);
+  const keyIndex = (startIndex + retryCount) % GROQ_API_KEYS.length;
+  const apiKey = GROQ_API_KEYS[keyIndex];
   const maskedKey = apiKey.substring(0, 6) + '...' + apiKey.substring(apiKey.length - 4);
   console.log(`Trying Groq with key: ${maskedKey} (attempt ${retryCount + 1}/${GROQ_API_KEYS.length})`);
 
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 8000,
-    })
-  });
+  let response: Response;
+  try {
+    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 8000,
+      })
+    });
+  } catch (networkError) {
+    console.error(`Groq key ${maskedKey} network error:`, networkError instanceof Error ? networkError.message : networkError);
+    if (retryCount + 1 < GROQ_API_KEYS.length) {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return tryGroq(prompt, retryCount + 1, startIndex);
+    }
+    throw new Error(`All Groq keys failed. Last error: network error`);
+  }
 
   if (!response.ok) {
     const error = await response.text();
     console.error(`Groq key ${maskedKey} failed with status ${response.status}: ${error}`);
     
-    // Always try the next key if we have more attempts left
     if (retryCount + 1 < GROQ_API_KEYS.length) {
       console.log(`Retrying with next Groq key...`);
-      await new Promise(resolve => setTimeout(resolve, 800)); // Slight delay
-      return tryGroq(prompt, retryCount + 1);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return tryGroq(prompt, retryCount + 1, startIndex);
     }
     
     throw new Error(`All Groq keys failed. Last error: ${response.status} ${error}`);
@@ -82,33 +76,44 @@ async function tryGroq(prompt: string, retryCount = 0): Promise<string> {
   return data.choices[0].message.content;
 }
 
-async function tryGemini(prompt: string, retryCount = 0): Promise<string> {
+async function tryGemini(prompt: string, retryCount = 0, startIdx?: number): Promise<string> {
   if (GEMINI_API_KEYS.length === 0) throw new Error('No Gemini API keys available');
   if (retryCount >= GEMINI_API_KEYS.length) throw new Error('All Gemini keys exhausted');
 
-  const apiKey = getNextGeminiKey();
+  const startIndex = startIdx ?? Math.floor(Math.random() * GEMINI_API_KEYS.length);
+  const keyIndex = (startIndex + retryCount) % GEMINI_API_KEYS.length;
+  const apiKey = GEMINI_API_KEYS[keyIndex];
   const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
   console.log(`Trying Gemini with key: ${maskedKey} (attempt ${retryCount + 1}/${GEMINI_API_KEYS.length})`);
 
   const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }]
-    })
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+  } catch (networkError) {
+    console.error(`Gemini key ${maskedKey} network error:`, networkError instanceof Error ? networkError.message : networkError);
+    if (retryCount + 1 < GEMINI_API_KEYS.length) {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return tryGemini(prompt, retryCount + 1, startIndex);
+    }
+    throw new Error(`All Gemini keys failed. Last error: network error`);
+  }
 
   if (!response.ok) {
     const errorText = await response.text();
     console.error(`Gemini key ${maskedKey} failed with status ${response.status}: ${errorText}`);
     
-    // Always try the next key if we have more attempts left
     if (retryCount + 1 < GEMINI_API_KEYS.length) {
       console.log(`Retrying with next Gemini key...`);
-      await new Promise(resolve => setTimeout(resolve, 800)); // Slight delay
-      return tryGemini(prompt, retryCount + 1);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return tryGemini(prompt, retryCount + 1, startIndex);
     }
     
     throw new Error(`All Gemini keys failed. Last error: ${response.status} ${errorText}`);
