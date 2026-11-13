@@ -425,7 +425,7 @@ Deno.serve(async (req: Request) => {
 
     let prompt = '';
 
-    if (type === 'outline') {
+    if (type === 'outline' || type === 'outlines') {
       prompt = `Generate a detailed chapter-by-chapter outline for a ${bookType} book with the following details:
 
 Book Idea: ${idea}
@@ -453,7 +453,7 @@ Chapter 2: [Chapter Title]
 Continue this pattern for all ${chapters} chapters.
 
 Ensure the chapter titles and outline tone reflect the chosen writing style.`;
-    } else if (type === 'chapter') {
+    } else if (type === 'chapter' || type === 'chapters') {
       prompt = `Write a complete chapter for a ${bookType} book with the following details:
 
 Chapter Title: ${title}
